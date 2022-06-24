@@ -158,7 +158,7 @@ abstract class MosaikRuntime(
             viewTree.ensureValuesAreCorrect()
 
         viewTree.uiLocked = true
-        // TODO coroutineScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(Dispatchers.Default) {
             try {
                 val fetchActionResponse =
                     backendConnector.fetchAction(
@@ -173,9 +173,9 @@ abstract class MosaikRuntime(
                     if (appVersion != appManifest!!.appVersion) ReloadAction().apply { id = "" }
                     else fetchActionResponse.action
 
-                // TODO withContext(Dispatchers.Main) {
+                withContext(Dispatchers.Main) {
                     runAction(newAction)
-                // }
+                }
 
             } catch (t: Throwable) {
                 MosaikLogger.logError("Error running Mosaik backend request", t)
@@ -183,7 +183,7 @@ abstract class MosaikRuntime(
             }
 
             viewTree.uiLocked = false
-        // }
+        }
 
     }
 
@@ -231,7 +231,7 @@ abstract class MosaikRuntime(
      */
     open fun loadMosaikApp(url: String, referrer: String? = null) {
         viewTree.uiLocked = true
-        // TODO coroutineScope.launch(Dispatchers.IO) {
+        coroutineScope.launch(Dispatchers.Default) {
             try {
                 val loadAppResponse = backendConnector.loadMosaikApp(url, referrer)
                 val mosaikApp = loadAppResponse.mosaikApp
@@ -245,7 +245,7 @@ abstract class MosaikRuntime(
             }
 
             viewTree.uiLocked = false
-        // }
+        }
     }
 
     private fun navigatedTo(urlHistoryEntry: UrlHistoryEntry, manifest: MosaikManifest) {

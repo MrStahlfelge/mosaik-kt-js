@@ -1,7 +1,5 @@
 package org.ergoplatform.mosaik.model
 
-import org.ergoplatform.mosaik.model.ViewContent
-import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.ViewElement
 
 /**

@@ -162,8 +162,9 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
         registerJobFor(treeElement) { scope ->
             MosaikLogger.logDebug("Start fetching contents for ${treeElement.idOrUuid}...")
             val lazyLoadBox = treeElement.element as LazyLoadBox
-            val newContent = // TODO withContext(Dispatchers.IO) {
+            val newContent = withContext(Dispatchers.Main) {
                 mosaikRuntime.fetchLazyContents(lazyLoadBox.requestUrl)
+            }
 
             if (scope.isActive) {
                 if (newContent != null) {
@@ -182,14 +183,14 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
     private fun startImageDownload(treeElement: TreeElement) {
         registerJobFor(treeElement) { scope ->
             MosaikLogger.logDebug("Start downloading image for ${treeElement.idOrUuid}...")
-            // TODO withContext(Dispatchers.IO) {
+            withContext(Dispatchers.Default) {
                 val bytes = mosaikRuntime.downloadImage((treeElement.element as Image).url)
                 if (scope.isActive) {
                     MosaikLogger.logDebug("Downloading image for ${treeElement.idOrUuid} done.")
                     resourceMap[treeElement.idOrUuid] = bytes
                     notifyViewTreeChanged()
                 }
-            // }
+            }
         }
     }
 
