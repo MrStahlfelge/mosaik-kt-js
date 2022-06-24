@@ -1,3 +1,8 @@
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
+import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import org.ergoplatform.mosaik.MosaikBackendConnector
@@ -9,12 +14,14 @@ import org.ergoplatform.mosaik.model.ViewContent
 import org.ergoplatform.mosaik.model.actions.ErgoAuthAction
 import org.ergoplatform.mosaik.model.actions.ErgoPayAction
 import org.ergoplatform.mosaik.model.actions.TokenInformationAction
+import org.ergoplatform.serialization.MosaikSerializers
 
 class JsMosaikRuntime: MosaikRuntime(JsBackendConnector()) {
     override val coroutineScope: CoroutineScope
         get() = MainScope()
 
     override fun showDialog(dialog: MosaikDialog) {
+        println("show dialog: ${dialog.message}")
         // TODO
     }
 
@@ -47,7 +54,7 @@ class JsMosaikRuntime: MosaikRuntime(JsBackendConnector()) {
     }
 
     override fun openBrowser(url: String) {
-        // TODO
+        window.document.open(url, "_blank")
     }
 
     override val fiatRate = 2.5
@@ -104,8 +111,16 @@ class JsMosaikRuntime: MosaikRuntime(JsBackendConnector()) {
 
 
 class JsBackendConnector: MosaikBackendConnector {
-    override fun loadMosaikApp(url: String, referrer: String?): MosaikBackendConnector.AppLoaded =
-        MosaikBackendConnector.AppLoaded(selectorApp(), "")
+    private val client = HttpClient()
+
+    override suspend fun loadMosaikApp(url: String, referrer: String?): MosaikBackendConnector.AppLoaded {
+        val response: HttpResponse = client.request(url) {
+            method = HttpMethod.Get
+        }
+
+        val mosaikApp = MosaikSerializers.parseMosaikAppFromJson(response.readText())
+        return MosaikBackendConnector.AppLoaded(selectorApp(mosaikApp.manifest.appName), url)
+    }
 
     override fun fetchAction(
         url: String,

@@ -9,9 +9,9 @@ import org.ergoplatform.mosaik.model.ui.layout.*
 import org.ergoplatform.mosaik.model.ui.text.Label
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
 
-fun selectorApp(): MosaikApp {
+fun selectorApp(name: String): MosaikApp {
     val loadBoxManifest = MosaikManifest(
-        "App Selector",
+        name,
         1,
         MosaikContext.LIBRARY_MOSAIK_VERSION,
         null,

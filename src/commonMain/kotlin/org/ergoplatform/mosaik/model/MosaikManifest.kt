@@ -1,19 +1,21 @@
 package org.ergoplatform.mosaik.model
 
+import kotlinx.serialization.Serializable
+
 /**
  * Manifest for a Mosaik app. A Mosaik app can declare properties to the Wallet application that
  * is executing it.
  */
+@Serializable
 class MosaikManifest(
     val appName: String,
-    val appVersion: Int, targetMosaikVersion: Int,
+    val appVersion: Int,
+    val targetMosaikVersion: Int,
     val targetCanvasDimension: CanvasDimension? = null,
-    cacheLifetime: Int
+    val cacheLifetime: Int
 ) {
     var appDescription: String? = null
     var iconUrl: String? = null
-    var targetMosaikVersion: Int = 0
-    var cacheLifetime: Int = 0
     var errorReportUrl: String? = null
 
     enum class CanvasDimension {

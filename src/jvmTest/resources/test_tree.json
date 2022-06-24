@@ -1,0 +1,170 @@
+{
+  "manifest": {
+    "appName": "Demo App (without backend)",
+    "appVersion": 0,
+    "targetMosaikVersion": 0,
+    "cacheLifetime": 0
+  },
+  "actions": [
+    {
+      "type": "BrowserAction",
+      "id": "openRepo",
+      "url": "https://github.com/MrStahlfelge/mosaik"
+    },
+    {
+      "type": "NavigateAction",
+      "id": "openLocalhost",
+      "url": "http://localhost:8080"
+    },
+    {
+      "type": "ChangeSiteAction",
+      "id": "replaceButton",
+      "newContent": {
+        "view": {
+          "id": "clickButton",
+          "type": "Button",
+          "enabled": false,
+          "text": "ChangeSiteAction replaced the button"
+        }
+      }
+    },
+    {
+      "type": "CopyClipboardAction",
+      "id": "copyText",
+      "text": "Copied by Mosaik demo"
+    },
+    {
+      "type": "DialogAction",
+      "id": "showDialog",
+      "message": "Do you really want to proceed?",
+      "positiveButtonText": "Yes",
+      "negativeButtonText": "Copy",
+      "onPositiveButtonClicked": "replaceButton",
+      "onNegativeButtonClicked": "copyText"
+    },
+    {
+      "type": "ChangeSiteAction",
+      "id": "replaceLabel",
+      "newContent": {
+        "view": {
+          "id": "clickLabel",
+          "type": "Label",
+          "text": "Label (alignment end, already clicked)",
+          "align": "END",
+          "style": "BODY1BOLD",
+          "textColor": "PRIMARY"
+        }
+      }
+    },
+    {
+      "type": "DialogAction",
+      "id": "showInfo",
+      "message": "Show some more information to the user",
+      "positiveButtonText": "OK"
+    }
+  ],
+  "view": {
+    "type": "Column",
+    "children": [
+      {
+        "type": "Label",
+        "text": "Welcome to Mosaik demo app",
+        "style": "HEADLINE2"
+      },
+      {
+        "type": "Label",
+        "style": "BODY1",
+        "text": "This is the demo app showing a built in placeholder view.\nIt demonstrates some offline capabilities, however, it is mainly intended to load a Mosaik app from a backend and help you debug it or tweak its interface. ",
+        "textAlignment": "CENTER"
+      },
+      {
+        "type": "Button",
+        "id": "backendButton",
+        "onClick": "openLocalhost",
+        "text": "Clicking to load app from http://localhost:8080"
+      },
+      {
+        "type": "Box",
+        "padding": "DEFAULT"
+      },
+      {
+        "id": "clickButton",
+        "type": "Button",
+        "text": "Clicking this button will run a ChangeSiteAction",
+        "onClick": "showDialog"
+      },
+      {
+        "type": "Row",
+        "children": [
+          {
+            "type": "Icon",
+            "icon": "WALLET",
+            "tintColor": "SECONDARY",
+            "size": "MEDIUM"
+          },
+          {
+            "type": "Box",
+            "padding": "DEFAULT",
+            "weight": 2,
+            "children": [
+              {
+                "type": "Label",
+                "text": "This label is surrounded by a padding and\ntakes 2 times the space than the label on the right",
+                "textAlignment": "START",
+                "style": "BODY1"
+              }
+            ]
+          },
+          {
+            "type": "Label",
+            "text": "Label (alignment top, truncated)",
+            "align": "TOP",
+            "weight": 1,
+            "maxLines": 1,
+            "style": "BODY1"
+          }
+        ]
+      },
+      {
+        "id": "clickLabel",
+        "type": "Label",
+        "text": "Label (alignment end, click it)",
+        "align": "END",
+        "style": "BODY1BOLD",
+        "onClick": "replaceLabel"
+      },
+      {
+        "type": "Box",
+        "padding": "DEFAULT",
+        "children": [
+          {
+            "id": "inputText",
+            "type": "TextInputField",
+            "value": "initial text",
+            "minValue": 3,
+            "maxValue": 20,
+            "placeholder": "An input text field",
+            "endIcon": "INFO",
+            "onEndIconClicked": "showInfo"
+          }
+        ]
+      },
+      {
+        "type": "LoadingIndicator",
+        "size": "MEDIUM"
+      },
+      {
+        "type": "Image",
+        "size": "LARGE",
+        "url": "https://picsum.photos/300"
+      },
+      {
+        "type": "Label",
+        "text": "Open on GitHub",
+        "style": "BODY1LINK",
+        "textColor": "PRIMARY",
+        "onClick": "openRepo"
+      }
+    ]
+  }
+}

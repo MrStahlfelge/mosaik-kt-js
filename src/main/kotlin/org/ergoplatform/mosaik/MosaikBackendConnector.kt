@@ -11,7 +11,7 @@ interface MosaikBackendConnector {
     /**
      * first load of a Mosaik app. Blocking, call on a background thread
      */
-    fun loadMosaikApp(
+    suspend fun loadMosaikApp(
         url: String,
         referrer: String?,
     ): AppLoaded
