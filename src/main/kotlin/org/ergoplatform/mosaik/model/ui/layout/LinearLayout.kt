@@ -1,95 +1,54 @@
-package org.ergoplatform.mosaik.model.ui.layout;
+package org.ergoplatform.mosaik.model.ui.layout
 
-import org.ergoplatform.mosaik.model.ui.ViewElement;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
+import org.ergoplatform.mosaik.model.ui.ViewElement
 
 /**
  * LinearLayout places items stacked on the screen
  */
-public abstract class LinearLayout<CSA> extends ViewElement implements LayoutElement {
-    @Nonnull
-    private Padding padding = Padding.NONE;
-    private final List<ViewElement> children = new ArrayList<>();
-    private final List<CSA> childAlignment = new ArrayList<>();
-    private final List<Integer> childWeight = new ArrayList<>();
+abstract class LinearLayout<CSA> : ViewElement(), LayoutElement {
+    override var padding = Padding.NONE
 
-    @Override
-    @Nonnull
-    public Padding getPadding() {
-        return padding;
+    override val children: MutableList<ViewElement> = ArrayList()
+    private val childAlignment: MutableList<CSA> = ArrayList()
+    private val childWeight: MutableList<Int> = ArrayList()
+
+    override fun addChild(element: ViewElement) {
+        addChild(element, defaultChildAlignment(), 0)
     }
 
-    @Override
-    public void setPadding(@Nonnull Padding padding) {
-        Objects.requireNonNull(padding);
-        this.padding = padding;
+    abstract fun defaultChildAlignment(): CSA
+    fun addChild(
+        element: ViewElement,
+        alignment: CSA,
+        childWeight: Int
+    ) {
+        children.add(element)
+        childAlignment.add(alignment)
+        this.childWeight.add(childWeight)
     }
 
-    @Nonnull
-    @Override
-    public List<ViewElement> getChildren() {
-        return children;
+    override fun replaceChild(
+        elementToReplace: ViewElement,
+        newElement: ViewElement
+    ) {
+        children.set(getChildPos(elementToReplace), newElement)
     }
 
-    @Override
-    public void addChild(@Nonnull ViewElement element) {
-        addChild(element, defaultChildAlignment(), 0);
-    }
-
-    public abstract CSA defaultChildAlignment();
-
-    public void addChild(@Nonnull ViewElement element,
-                         @Nonnull CSA alignment,
-                         int childWeight) {
-        Objects.requireNonNull(element);
-        Objects.requireNonNull(alignment);
-        children.add(element);
-        childAlignment.add(alignment);
-        this.childWeight.add(childWeight);
-    }
-
-    @Override
-    public void replaceChild(@Nonnull ViewElement elementToReplace, @Nonnull ViewElement newElement) {
-        Objects.requireNonNull(elementToReplace);
-        Objects.requireNonNull(newElement);
-        children.set(getChildPos(elementToReplace), newElement);
-    }
-
-    private int getChildPos(ViewElement element) {
-        for (int i = 0; i < children.size(); i++) {
-            if (children.get(i) == element)
-                return i;
+    private fun getChildPos(element: ViewElement): Int {
+        for (i in 0 until children.size) {
+            if (children[i] === element) return i
         }
-        return -1;
+        return -1
     }
 
-    @Nonnull
-    public CSA getChildAlignment(@Nonnull ViewElement element) {
-        int pos = getChildPos(element);
-        return childAlignment.get(pos);
+    fun getChildAlignment(element: ViewElement): CSA {
+        val pos = getChildPos(element)
+        return childAlignment[pos]
     }
 
-    public int getChildWeight(@Nonnull ViewElement element) {
-        int pos = getChildPos(element);
-        return childWeight.get(pos);
+    fun getChildWeight(element: ViewElement): Int {
+        val pos = getChildPos(element)
+        return childWeight[pos]
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        LinearLayout<?> that = (LinearLayout<?>) o;
-        return getPadding() == that.getPadding() && getChildren().equals(that.getChildren()) && childAlignment.equals(that.childAlignment) && childWeight.equals(that.childWeight);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), getPadding(), getChildren(), childAlignment, childWeight);
-    }
 }

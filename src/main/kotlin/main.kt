@@ -1,13 +1,19 @@
 import androidx.compose.runtime.*
+import org.ergoplatform.mosaik.bulma.MosaikViewTree
 import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 
 fun main() {
+    val runtime = JsMosaikRuntime()
+
+    runtime.loadMosaikApp("")
+    val viewTree = runtime.viewTree
+
     require("./custom.scss")
     renderComposable(rootElementId = "root") {
-        Body()
+        MosaikViewTree(viewTree)
     }
 }
 
