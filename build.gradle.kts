@@ -23,15 +23,15 @@ kotlin {
         val jsMain by getting {
             kotlin.srcDir("src/main/kotlin")
             resources.srcDir("src/main/resources")
-            val cssLoader = "^6.5.1"
-            val extractLoader = "^5.1.0"
-            val fileLoader = "^6.2.0"
-            val sass = "^1.47.0"
-            val sassLoader = "^12.4.0"
 
             dependencies {
                 implementation(compose.web.core)
                 implementation(compose.runtime)
+                implementation(npm("bulma", "0.9.4"))
+                implementation(devNpm("sass-loader", "^13.0.0"))
+                implementation(devNpm("sass", "^1.52.1"))
+                implementation(devNpm("css-loader", "^6.5.1"))
+                implementation(devNpm("style-loader", "^3.3.0"))
             }
         }
     }
