@@ -9,17 +9,11 @@ import org.ergoplatform.mosaik.TreeElement
 import org.ergoplatform.mosaik.ViewTree
 import org.ergoplatform.mosaik.javaClass
 import org.ergoplatform.mosaik.model.ui.ForegroundColor
-import org.ergoplatform.mosaik.model.ui.layout.Column
-import org.ergoplatform.mosaik.model.ui.layout.HAlignment
-import org.ergoplatform.mosaik.model.ui.layout.Row
-import org.ergoplatform.mosaik.model.ui.layout.VAlignment
+import org.ergoplatform.mosaik.model.ui.layout.*
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
 import org.ergoplatform.mosaik.model.ui.text.StyleableTextLabel
 import org.jetbrains.compose.web.attributes.AttrsScope
-import org.jetbrains.compose.web.css.flex
-import org.jetbrains.compose.web.css.flexGrow
-import org.jetbrains.compose.web.css.percent
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
@@ -82,10 +76,10 @@ fun MosaikTreeElement(
 //        is Card -> {
 //            MosaikCard(newModifier, treeElement)
 //        }
-//        is Box -> {
-//            // this also deals with LazyLoadBox
-//            MosaikBox(newModifier, treeElement)
-//        }
+        is Box -> {
+            // this also deals with LazyLoadBox
+            MosaikBox(treeElement, classes, attribs)
+        }
         is StyleableTextLabel<*> -> {
             MosaikLabel(treeElement, classes, attribs)
         }
@@ -134,7 +128,72 @@ fun MosaikTreeElement(
     }
 }
 
-// TODO: Box: Container relative, first child drin, alles andere position absolute mit top/left/right/bottom: padding
+@Composable
+private fun MosaikBox(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as Box
+
+    // Box: It is a container with relative set.
+    // the first child is placed inside the container so that it wraps this child.
+    // All other children are positioned absolute (outside the flow) with top/left/right/bottom
+
+    BulmaContainer(classes.toMutableList().apply {
+        addAll(listOf("is-flex", "is-flex-direction-column", "is-flex-wrap-nowrap"))
+    }, attribs = {
+        attribs?.invoke(it)
+    }) {
+        treeElement.children.forEachIndexed { idx, childElement ->
+            key(childElement.idOrUuid) {
+
+                val childHAlignment = element.getChildHAlignment(childElement.element)
+
+                val childClasses = if (idx == 0)
+                    listOf(
+                        when (childHAlignment) {
+                            HAlignment.START -> "is-align-self-flex-start"
+                            HAlignment.CENTER -> "is-align-self-center"
+                            HAlignment.END -> "is-align-self-flex-end"
+                            HAlignment.JUSTIFY -> "is-align-self-stretch"
+                        }
+                    )
+                else emptyList()
+
+                val newStyles: ((AttrsScope<out HTMLElement>) -> Unit) = {
+                    it.style {
+                        if (idx > 0) {
+                            position(Position.Absolute)
+
+                            if (childHAlignment == HAlignment.START)
+                                left(0.px)
+                            else if (childHAlignment == HAlignment.END)
+                                right(0.px)
+                            else if (childHAlignment == HAlignment.JUSTIFY) {
+                                width(100.percent)
+                                boxSizing("border-box")
+                            }
+
+                            when (element.getChildVAlignment(childElement.element)) {
+                                VAlignment.TOP -> top(0.px)
+                                VAlignment.CENTER -> {} // nothing to do
+                                VAlignment.BOTTOM -> bottom(0.px)
+                            }
+                        }
+                    }
+                }
+
+                MosaikTreeElement(
+                    childElement,
+                    childClasses,
+                    newStyles
+                )
+
+            }
+        }
+    }
+}
 
 @Composable
 private fun MosaikRow(
@@ -151,16 +210,30 @@ private fun MosaikRow(
     }, attribs = {
         attribs?.invoke(it)
         if (!element.isPacked) {
-            it.style { width(100.percent) }
+            it.style {
+                width(100.percent) // TODO check could mess up when row is child of a row
+                boxSizing("border-box")
+            }
         }
     }) {
-        treeElement.children.forEach { childElement ->
+        val childrenWithWeightAndAlignment: List<Triple<TreeElement, Int, VAlignment>> =
+            treeElement.children.map { childElement ->
+                Triple(
+                    childElement,
+                    element.getChildWeight(childElement.element),
+                    element.getChildAlignment(childElement.element)
+                )
+            }
+
+        val weightSum = childrenWithWeightAndAlignment.sumOf { it.second }
+        val everythingWithWeight = childrenWithWeightAndAlignment.all { it.second > 0 }
+
+        childrenWithWeightAndAlignment.forEach { (childElement, weight, vAlignment) ->
             key(childElement.idOrUuid) {
-                val weight = element.getChildWeight(childElement.element)
                 MosaikTreeElement(
                     childElement,
                     classes = listOf(
-                        when (element.getChildAlignment(childElement.element)) {
+                        when (vAlignment) {
                             VAlignment.TOP -> "is-align-self-flex-start"
                             VAlignment.CENTER -> "is-align-self-center"
                             VAlignment.BOTTOM -> "is-align-self-flex-end"
@@ -168,7 +241,10 @@ private fun MosaikRow(
                     ),
                     attribs = {
                         it.style {
-                            if (weight > 0) {
+                            if (everythingWithWeight) {
+                                width((weight * 100 / weightSum).percent)
+                                boxSizing("border-box")
+                            } else if (weight > 0) {
                                 flexGrow(weight)
                             } else {
                                 flex("initial")
