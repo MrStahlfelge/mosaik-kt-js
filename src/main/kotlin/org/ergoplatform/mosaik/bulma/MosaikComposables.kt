@@ -59,12 +59,15 @@ fun MosaikTreeElement(
 ) {
     val element = treeElement.element
 
-//    val newModifier = if (element is LayoutElement) {
-//        modifier.padding(element.padding.toCompose()) TODO
-//    } else {
-//        modifier
-//    }.alpha(if (element.isVisible) 1.0f else 0.0f) TODO
-//        .then(
+    val moreClasses = classes.toMutableList()
+
+    if (element is LayoutElement) {
+        moreClasses.add(element.padding.toCssClass())
+    }
+    if (!element.isVisible) {
+        moreClasses.add("is-invisible") // TODO check
+    }
+
 //            if (treeElement.respondsToClick) TODO
 //                Modifier.combinedClickable(
 //                    onClick = treeElement::clicked,
@@ -78,16 +81,16 @@ fun MosaikTreeElement(
 //        }
         is Box -> {
             // this also deals with LazyLoadBox
-            MosaikBox(treeElement, classes, attribs)
+            MosaikBox(treeElement, moreClasses, attribs)
         }
         is StyleableTextLabel<*> -> {
-            MosaikLabel(treeElement, classes, attribs)
+            MosaikLabel(treeElement, moreClasses, attribs)
         }
         is Column -> {
-            MosaikColumn(treeElement, classes, attribs)
+            MosaikColumn(treeElement, moreClasses, attribs)
         }
         is Row -> {
-            MosaikRow(treeElement, classes, attribs)
+            MosaikRow(treeElement, moreClasses, attribs)
         }
 //        is Button -> {
 //            MosaikButton(treeElement, newModifier)
@@ -121,7 +124,7 @@ fun MosaikTreeElement(
 //        }
         else -> {
             Div(attrs = {
-                classes(*classes.toTypedArray())
+                classes(*moreClasses.toTypedArray())
                 attribs?.invoke(this)
             }) { Text("Unsupported view element: ${element.javaClass.simpleName}") }
         }
@@ -356,3 +359,13 @@ private fun MosaikLabel(
         }
     }
 }
+
+fun Padding.toCssClass(): String =
+    when (this) {
+        Padding.NONE -> "p-0"
+        Padding.QUARTER_DEFAULT -> "p-1"
+        Padding.HALF_DEFAULT -> "p-2"
+        Padding.DEFAULT -> "p-4"
+        Padding.ONE_AND_A_HALF_DEFAULT -> "p-5"
+        Padding.TWICE -> "p-6"
+    }
