@@ -9,12 +9,14 @@ import org.ergoplatform.mosaik.TreeElement
 import org.ergoplatform.mosaik.ViewTree
 import org.ergoplatform.mosaik.javaClass
 import org.ergoplatform.mosaik.model.ui.ForegroundColor
+import org.ergoplatform.mosaik.model.ui.Image
 import org.ergoplatform.mosaik.model.ui.layout.*
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
 import org.ergoplatform.mosaik.model.ui.text.StyleableTextLabel
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Img
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.HTMLElement
@@ -110,9 +112,9 @@ fun MosaikTreeElement(
 //        is Icon -> {
 //            MosaikIcon(treeElement, newModifier)
 //        }
-//        is Image -> {
-//            MosaikImage(treeElement, newModifier)
-//        }
+        is Image -> {
+            MosaikImage(treeElement, moreClasses, attribs)
+        }
 //        is ErgoAddressChooseButton -> {
 //            MosaikValueChooseButton(treeElement, newModifier)
 //        }
@@ -129,6 +131,31 @@ fun MosaikTreeElement(
             }) { Text("Unsupported view element: ${element.javaClass.simpleName}") }
         }
     }
+}
+
+@Composable
+fun MosaikImage(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+
+    val element = treeElement.element as Image
+
+    Img(element.url, attrs = {
+        style {
+            classes(*classes.toTypedArray())
+            val cssSizeValue = when (element.size) {
+                Image.Size.SMALL -> 64.px
+                Image.Size.MEDIUM -> 128.px
+                Image.Size.LARGE -> 256.px
+            }
+            width(cssSizeValue)
+            height(cssSizeValue)
+            property("object-fit", "contain")
+        }
+        attribs?.invoke(this)
+    })
 }
 
 @Composable

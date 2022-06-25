@@ -279,18 +279,6 @@ abstract class MosaikRuntime(
     }
 
     /**
-     * Downloads an image, blocking. In case of an error an empty byte array is returned
-     */
-    fun downloadImage(url: String): ByteArray {
-        return try {
-            backendConnector.fetchImage(url, appUrl, appUrl)
-        } catch (t: Throwable) {
-            MosaikLogger.logWarning("Could not download image $url", t)
-            ByteArray(0)
-        }
-    }
-
-    /**
      * Downloads content of LazyLoadBox, blocking. In case of an error null is returned
      */
     fun fetchLazyContents(url: String): ViewContent? {

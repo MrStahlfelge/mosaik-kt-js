@@ -120,8 +120,4 @@ class JsBackendConnector: MosaikBackendConnector {
         TODO("Not yet implemented")
     }
 
-    override fun fetchImage(url: String, baseUrl: String?, referrer: String?): ByteArray {
-        TODO("Not yet implemented")
-    }
-
 }

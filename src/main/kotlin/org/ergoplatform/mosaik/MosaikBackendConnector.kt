@@ -34,14 +34,5 @@ interface MosaikBackendConnector {
         referrer: String
     ): ViewContent
 
-    /**
-     * loads an Image. Blocking, call on a background thread
-     */
-    fun fetchImage(
-        url: String,
-        baseUrl: String?,
-        referrer: String?
-    ): ByteArray
-
     data class AppLoaded(val mosaikApp: MosaikApp, val appUrl: String)
 }

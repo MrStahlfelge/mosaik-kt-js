@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.ergoplatform.mosaik.model.ViewContent
 import org.ergoplatform.mosaik.model.actions.Action
-import org.ergoplatform.mosaik.model.ui.Image
 import org.ergoplatform.mosaik.model.ui.LazyLoadBox
 import org.ergoplatform.mosaik.model.ui.ViewElement
 import org.ergoplatform.mosaik.model.ui.input.InputElement
@@ -24,7 +23,6 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
     private val valueMap = HashMap<String, CheckedValue>()
     private val jobMap = HashMap<String, Job>()
     private val actionMap = HashMap<String, Action>()
-    private val resourceMap = HashMap<String, ByteArray>()
 
     /**
      * set to true while view tree is altered, to prevent notifying consumers in this state
@@ -149,7 +147,6 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
                 MosaikLogger.logWarning("Input element without id found: ${treeElement.element.javaClass.simpleName}")
             }
             when (treeElement.element) {
-                is Image -> startImageDownload(treeElement)
                 is LazyLoadBox -> startFetchLazyContent(treeElement)
             }
         }
@@ -180,20 +177,6 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
         }
     }
 
-    private fun startImageDownload(treeElement: TreeElement) {
-        registerJobFor(treeElement) { scope ->
-            MosaikLogger.logDebug("Start downloading image for ${treeElement.idOrUuid}...")
-            withContext(Dispatchers.Default) {
-                val bytes = mosaikRuntime.downloadImage((treeElement.element as Image).url)
-                if (scope.isActive) {
-                    MosaikLogger.logDebug("Downloading image for ${treeElement.idOrUuid} done.")
-                    resourceMap[treeElement.idOrUuid] = bytes
-                    notifyViewTreeChanged()
-                }
-            }
-        }
-    }
-
     private fun removeIdsJobsAndValues(element: TreeElement) {
         val size = valueMap.size
         element.visitAllElements { treeElement ->
@@ -202,7 +185,6 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
                 idMap.remove(treeElement.id!!)
                 valueMap.remove(treeElement.id!!)
             }
-            resourceMap.remove(treeElement.idOrUuid)
         }
         if (valueMap.size != size) {
             notifyValuesChanged()
@@ -314,9 +296,6 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
      */
     fun getCurrentValue(treeElement: TreeElement): CheckedValue? =
         valueMap[treeElement.id]
-
-    fun getResourceBytes(treeElement: TreeElement): ByteArray? =
-        resourceMap[treeElement.idOrUuid]
 
     /**
      * throws [InvalidValuesException] if invalid values are entered by user
