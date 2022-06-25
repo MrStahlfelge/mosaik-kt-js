@@ -5,7 +5,7 @@ package org.ergoplatform.mosaik.model.ui.layout
  * By default, Row will fill all available horizontal space. If that is not wanted, set it's
  * `packed` property to `true`
  */
-class Row : LinearLayout<VAlignment?>() {
+class Row : LinearLayout<VAlignment>() {
     var isPacked = false
 
     override fun defaultChildAlignment(): VAlignment {
