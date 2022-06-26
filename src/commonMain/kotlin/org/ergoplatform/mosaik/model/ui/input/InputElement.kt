@@ -4,5 +4,5 @@ interface InputElement<T : Any> {
     var value: T?
 
     var onValueChangedAction: String?
-    var isEnabled: Boolean
+    var enabled: Boolean
 }

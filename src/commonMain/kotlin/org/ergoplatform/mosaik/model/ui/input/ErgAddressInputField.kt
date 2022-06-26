@@ -4,5 +4,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@SerialName("PasswordInputField")
-class PasswordInputField : StringTextField()
+@SerialName("ErgAddressInputField")
+class ErgAddressInputField : StringTextField() {
+}

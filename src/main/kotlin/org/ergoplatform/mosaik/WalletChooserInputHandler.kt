@@ -22,6 +22,6 @@ class WalletChooserInputHandler(
 
     override fun isValueValid(value: Any?): Boolean {
         val firstAddress = getFirstAddress(value)
-        return !element.isMandatory || firstAddress != null && mosaikRuntime.isErgoAddressValid(firstAddress)
+        return !element.mandatory || firstAddress != null && mosaikRuntime.isErgoAddressValid(firstAddress)
     }
 }

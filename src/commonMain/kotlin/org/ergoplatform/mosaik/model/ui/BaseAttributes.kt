@@ -1,7 +1,7 @@
 package org.ergoplatform.mosaik.model.ui
 
 interface BaseAttributes {
-    var isVisible: Boolean
+    var visible: Boolean
 
     val id: String?
 

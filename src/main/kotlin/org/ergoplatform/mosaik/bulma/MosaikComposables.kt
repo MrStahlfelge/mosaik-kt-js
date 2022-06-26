@@ -66,7 +66,7 @@ fun MosaikTreeElement(
     if (element is LayoutElement) {
         moreClasses.add(element.padding.toCssClass())
     }
-    if (!element.isVisible) {
+    if (!element.visible) {
         moreClasses.add("is-invisible") // TODO check
     }
 
@@ -239,7 +239,7 @@ private fun MosaikRow(
         addAll(listOf("is-flex", "is-flex-direction-row", "is-flex-wrap-nowrap"))
     }, attribs = {
         attribs?.invoke(it)
-        if (!element.isPacked) {
+        if (!element.packed) {
             it.style {
                 width(100.percent) // TODO check could mess up when row is child of a row
                 boxSizing("border-box")

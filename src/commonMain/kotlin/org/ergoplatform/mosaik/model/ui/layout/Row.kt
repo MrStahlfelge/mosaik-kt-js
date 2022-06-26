@@ -11,7 +11,7 @@ class Row : LinearLayout() {
     private val childAlignment: MutableList<VAlignment> = ArrayList()
     private val childWeight: MutableList<Int> = ArrayList()
 
-    var isPacked = false
+    var packed = false
 
     fun defaultChildAlignment(): VAlignment {
         return VAlignment.CENTER

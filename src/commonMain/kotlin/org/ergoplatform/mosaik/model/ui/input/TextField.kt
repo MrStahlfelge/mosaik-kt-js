@@ -21,8 +21,8 @@ abstract class TextField<T : Any> : ViewElement(), InputElement<T> {
     @SerialName("onValueChanged")
     override var onValueChangedAction: String? = null
     var imeActionType = ImeActionType.NEXT
-    override var isEnabled = true
-    var isReadOnly = false
+    override var enabled = true
+    var readOnly = false
     var endIcon: IconType? = null
 
     enum class ImeActionType {

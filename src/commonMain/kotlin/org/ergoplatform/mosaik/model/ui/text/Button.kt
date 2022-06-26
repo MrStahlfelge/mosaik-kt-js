@@ -13,7 +13,7 @@ class Button : ViewElement(), TextLabel<String?> {
     override var truncationType = TruncationType.END
     override var textAlignment = HAlignment.CENTER
     var style = ButtonStyle.PRIMARY
-    var isEnabled = true
+    var enabled = true
 
     enum class ButtonStyle {
         PRIMARY, SECONDARY, TEXT

@@ -1,169 +1,228 @@
 {
   "manifest": {
-    "appName": "Demo App (without backend)",
+    "appName": "appname",
     "appVersion": 0,
     "targetMosaikVersion": 0,
     "cacheLifetime": 0
   },
   "actions": [
     {
-      "type": "BrowserAction",
-      "id": "openRepo",
-      "url": "https://github.com/MrStahlfelge/mosaik"
+      "type": "ErgoPayAction",
+      "id": "action_0",
+      "url": "url"
     },
     {
-      "type": "NavigateAction",
-      "id": "openLocalhost",
-      "url": "http://localhost:8080"
+      "type": "DialogAction",
+      "id": "action_1",
+      "message": "message"
     },
     {
       "type": "ChangeSiteAction",
-      "id": "replaceButton",
+      "id": "action_2",
       "newContent": {
+        "actions": [
+          {
+            "type": "ErgoPayAction",
+            "id": "action_0",
+            "url": "url"
+          },
+          {
+            "type": "DialogAction",
+            "id": "action_1",
+            "message": "message"
+          }
+        ],
         "view": {
-          "id": "clickButton",
-          "type": "Button",
-          "enabled": false,
-          "text": "ChangeSiteAction replaced the button"
+          "type": "Box"
         }
       }
     },
     {
       "type": "CopyClipboardAction",
-      "id": "copyText",
-      "text": "Copied by Mosaik demo"
+      "id": "action_3",
+      "text": "text"
     },
     {
-      "type": "DialogAction",
-      "id": "showDialog",
-      "message": "Do you really want to proceed?",
-      "positiveButtonText": "Yes",
-      "negativeButtonText": "Copy",
-      "onPositiveButtonClicked": "replaceButton",
-      "onNegativeButtonClicked": "copyText"
+      "type": "BrowserAction",
+      "id": "action_4",
+      "url": "url"
     },
     {
-      "type": "ChangeSiteAction",
-      "id": "replaceLabel",
+      "type": "QrCodeAction",
+      "id": "action_5",
       "newContent": {
+        "actions": [
+          {
+            "type": "ErgoPayAction",
+            "id": "action_0",
+            "url": "url"
+          },
+          {
+            "type": "DialogAction",
+            "id": "action_1",
+            "message": "message"
+          },
+          {
+            "type": "ChangeSiteAction",
+            "id": "action_2",
+            "newContent": {
+              "actions": [
+                {
+                  "type": "ErgoPayAction",
+                  "id": "action_0",
+                  "url": "url"
+                },
+                {
+                  "type": "DialogAction",
+                  "id": "action_1",
+                  "message": "message"
+                }
+              ],
+              "view": {
+                "type": "Box"
+              }
+            }
+          },
+          {
+            "type": "CopyClipboardAction",
+            "id": "action_3",
+            "text": "text"
+          },
+          {
+            "type": "BrowserAction",
+            "id": "action_4",
+            "url": "url"
+          }
+        ],
         "view": {
-          "id": "clickLabel",
-          "type": "Label",
-          "text": "Label (alignment end, already clicked)",
-          "align": "END",
-          "style": "BODY1BOLD",
-          "textColor": "PRIMARY"
+          "type": "Box"
         }
       }
     },
     {
-      "type": "DialogAction",
-      "id": "showInfo",
-      "message": "Show some more information to the user",
-      "positiveButtonText": "OK"
+      "type": "BackendRequestAction",
+      "id": "action_6",
+      "postValues": "ALL",
+      "url": "url"
+    },
+    {
+      "type": "NavigateAction",
+      "id": "action_7",
+      "url": "url"
+    },
+    {
+      "type": "ReloadAction",
+      "id": "action_8"
+    },
+    {
+      "type": "ErgoAuthAction",
+      "id": "action_9",
+      "url": "url"
     }
   ],
   "view": {
     "type": "Column",
     "children": [
       {
-        "type": "Label",
-        "text": "Welcome to Mosaik demo app",
-        "style": "HEADLINE2"
-      },
-      {
-        "type": "Label",
-        "style": "BODY1",
-        "text": "This is the demo app showing a built in placeholder view.\nIt demonstrates some offline capabilities, however, it is mainly intended to load a Mosaik app from a backend and help you debug it or tweak its interface. ",
-        "textAlignment": "CENTER"
-      },
-      {
-        "type": "Button",
-        "id": "backendButton",
-        "onClick": "openLocalhost",
-        "text": "Clicking to load app from http://localhost:8080"
-      },
-      {
-        "type": "Box",
-        "padding": "DEFAULT"
-      },
-      {
-        "id": "clickButton",
-        "type": "Button",
-        "text": "Clicking this button will run a ChangeSiteAction",
-        "onClick": "showDialog"
-      },
-      {
         "type": "Row",
-        "children": [
-          {
-            "type": "Icon",
-            "icon": "WALLET",
-            "tintColor": "SECONDARY",
-            "size": "MEDIUM"
-          },
-          {
-            "type": "Box",
-            "padding": "DEFAULT",
-            "weight": 2,
-            "children": [
-              {
-                "type": "Label",
-                "text": "This label is surrounded by a padding and\ntakes 2 times the space than the label on the right",
-                "textAlignment": "START",
-                "style": "BODY1"
-              }
-            ]
-          },
-          {
-            "type": "Label",
-            "text": "Label (alignment top, truncated)",
-            "align": "TOP",
-            "weight": 1,
-            "maxLines": 1,
-            "style": "BODY1"
-          }
-        ]
+        "onClick": "action_0"
       },
       {
-        "id": "clickLabel",
-        "type": "Label",
-        "text": "Label (alignment end, click it)",
-        "align": "END",
-        "style": "BODY1BOLD",
-        "onClick": "replaceLabel"
+        "type": "WalletChooseButton"
       },
       {
-        "type": "Box",
-        "padding": "DEFAULT",
-        "children": [
-          {
-            "id": "inputText",
-            "type": "TextInputField",
-            "value": "initial text",
-            "minValue": 3,
-            "maxValue": 20,
-            "placeholder": "An input text field",
-            "endIcon": "INFO",
-            "onEndIconClicked": "showInfo"
-          }
-        ]
+        "type": "HorizontalRule",
+        "onClick": "action_1"
       },
       {
-        "type": "LoadingIndicator",
-        "size": "MEDIUM"
+        "type": "TextInputField",
+        "onClick": "action_2"
+      },
+      {
+        "type": "FiatOrErgAmountInputField",
+        "onClick": "action_3"
       },
       {
         "type": "Image",
-        "size": "LARGE",
-        "url": "https://picsum.photos/300"
+        "onClick": "action_4",
+        "size": "MEDIUM",
+        "url": "url"
+      },
+      {
+        "type": "DropDownList",
+        "entries": {
+          "id": "text"
+        },
+        "onClick": "action_5"
+      },
+      {
+        "type": "ErgAmountInputField",
+        "onClick": "action_6"
+      },
+      {
+        "type": "PasswordInputField",
+        "onClick": "action_7"
+      },
+      {
+        "type": "Column",
+        "onClick": "action_8"
+      },
+      {
+        "type": "FiatAmountLabel",
+        "fallbackToErg": false,
+        "onClick": "action_9",
+        "style": "BODY1"
+      },
+      {
+        "type": "IntegerInputField"
+      },
+      {
+        "type": "ErgAmountLabel",
+        "style": "BODY1"
+      },
+      {
+        "type": "LazyLoadBox",
+        "errorView": {
+          "type": "Box"
+        },
+        "url": "..."
       },
       {
         "type": "Label",
-        "text": "Open on GitHub",
-        "style": "BODY1LINK",
-        "textColor": "PRIMARY",
-        "onClick": "openRepo"
+        "style": "BODY1"
+      },
+      {
+        "type": "Button"
+      },
+      {
+        "type": "Box"
+      },
+      {
+        "type": "Card"
+      },
+      {
+        "type": "DecimalInputField",
+        "scale": 9
+      },
+      {
+        "type": "ErgoAddressChooseButton"
+      },
+      {
+        "type": "LoadingIndicator",
+        "size": "SMALL"
+      },
+      {
+        "type": "ErgAddressInputField"
+      },
+      {
+        "type": "Icon",
+        "size": "SMALL",
+        "icon": "INFO"
+      },
+      {
+        "type": "Box",
+        "weight": 2,
+        "align": "END"
       }
     ]
   }

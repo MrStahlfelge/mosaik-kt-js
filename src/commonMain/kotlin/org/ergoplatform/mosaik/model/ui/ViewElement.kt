@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 abstract class ViewElement : BaseAttributes {
-    override var isVisible = true
+    override var visible = true
     override var id: String? = null
     @SerialName("onLongPress")
     override var onLongPressAction: String? = null

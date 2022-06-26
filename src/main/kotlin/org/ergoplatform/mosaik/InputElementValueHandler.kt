@@ -53,7 +53,7 @@ class StringInputHandler(private val element: StringTextField) :
 open class OtherInputHandler(private val element: InputElement<*>) :
     InputElementValueHandler<Any>() {
     override fun isValueValid(value: Any?): Boolean {
-        return if (element is OptionalInputElement<*>) !element.isMandatory || value != null else true
+        return if (element is OptionalInputElement<*>) !element.mandatory || value != null else true
     }
 
     override fun valueFromStringInput(value: String?): Any? {
