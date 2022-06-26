@@ -9,6 +9,7 @@ import org.ergoplatform.mosaik.MosaikBackendConnector
 import org.ergoplatform.mosaik.MosaikDialog
 import org.ergoplatform.mosaik.MosaikRuntime
 import org.ergoplatform.mosaik.StringConstant
+import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.model.FetchActionResponse
 import org.ergoplatform.mosaik.model.ViewContent
 import org.ergoplatform.mosaik.model.actions.ErgoAuthAction
@@ -16,13 +17,13 @@ import org.ergoplatform.mosaik.model.actions.ErgoPayAction
 import org.ergoplatform.mosaik.model.actions.TokenInformationAction
 import org.ergoplatform.serialization.MosaikSerializers
 
-class JsMosaikRuntime: MosaikRuntime(JsBackendConnector()) {
+class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler): MosaikRuntime(JsBackendConnector()) {
     override val coroutineScope: CoroutineScope
         get() = MainScope()
 
     override fun showDialog(dialog: MosaikDialog) {
         println("show dialog: ${dialog.message}")
-        // TODO
+        dialogHandler.showDialog(dialog)
     }
 
     override fun pasteToClipboard(text: String) {

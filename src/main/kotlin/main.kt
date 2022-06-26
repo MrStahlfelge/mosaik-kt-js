@@ -1,11 +1,14 @@
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.browser.document
+import org.ergoplatform.mosaik.bulma.MosaikComposeDialog
+import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.bulma.MosaikViewTree
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.jetbrains.compose.web.renderComposable
 
 fun main() {
-    val runtime = JsMosaikRuntime()
+    val dialogHandler = MosaikComposeDialogHandler()
+    val runtime = JsMosaikRuntime(dialogHandler)
 
     runtime.loadMosaikApp("http://localhost:8080/appselect")
     val viewTree = runtime.viewTree
@@ -18,6 +21,7 @@ fun main() {
     require("./custom.scss")
     renderComposable(rootElementId = "root") {
         MosaikViewTree(viewTree)
+        MosaikComposeDialog(dialogHandler)
     }
 }
 

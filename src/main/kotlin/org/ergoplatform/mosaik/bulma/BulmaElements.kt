@@ -2,8 +2,10 @@ package org.ergoplatform.mosaik.bulma
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.attributes.AttrsScope
+import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Progress
+import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.HTMLElement
 
 @Composable
@@ -19,6 +21,24 @@ fun BulmaModal(content: @Composable () -> Unit) {
         }) {
             content()
         }
+    }
+}
+
+@Composable
+fun BulmaBox(content: @Composable () -> Unit) {
+    Div(attrs = {
+        classes("box")
+    }) {
+        content()
+    }
+}
+
+@Composable
+fun BulmaButton(onClick: () -> Unit, text: String) {
+    Button(attrs = { onClick { onClick() }
+        classes("button", "is-primary")
+    }) {
+        Text(text)
     }
 }
 
