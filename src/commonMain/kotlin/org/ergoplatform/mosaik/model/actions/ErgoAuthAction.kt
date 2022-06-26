@@ -1,9 +1,10 @@
 package org.ergoplatform.mosaik.model.actions
 
-/**
- * Action containing an ErgoAuth URL that will make the wallet app switch to ErgoAuth.
- * When user navigates back, they will come back to the current view.
- */
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+@SerialName("ErgoAuthAction")
 class ErgoAuthAction : UrlAction() {
     var onFinished: String? = null
 

@@ -1,10 +1,11 @@
-package org.ergoplatform.mosaik.model.ui.input;
+package org.ergoplatform.mosaik.model.ui.input
 
-import org.ergoplatform.mosaik.model.Since;
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * Text field to enter general text
  */
-@Since(0)
-public class TextInputField extends StringTextField {
-}
+@Serializable
+@SerialName("TextInputField")
+class TextInputField : StringTextField()

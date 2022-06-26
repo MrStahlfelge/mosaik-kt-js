@@ -1,8 +1,10 @@
 package org.ergoplatform.mosaik.model.actions
 
-/**
- * Copies text into the system clipboard
- */
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+@SerialName("CopyClipboardAction")
 class CopyClipboardAction : Action {
     lateinit var text: String
 

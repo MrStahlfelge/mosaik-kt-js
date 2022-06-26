@@ -1,8 +1,10 @@
 package org.ergoplatform.mosaik.model.ui
 
-/**
- * Shows an image
- */
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+@SerialName("Image")
 class Image : ViewElement() {
     lateinit var url: String
     var size = Size.MEDIUM

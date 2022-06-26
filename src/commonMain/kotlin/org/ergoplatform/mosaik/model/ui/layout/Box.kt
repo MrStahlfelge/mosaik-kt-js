@@ -1,10 +1,14 @@
 package org.ergoplatform.mosaik.model.ui.layout
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import org.ergoplatform.mosaik.model.ui.ViewElement
 
 /**
  * Use Box to put elements on top of another
  */
+@Serializable
+@SerialName("Box")
 open class Box : ViewElement(), LayoutElement {
     override var padding = Padding.NONE
     override val children: MutableList<ViewElement> = ArrayList()

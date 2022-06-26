@@ -1,8 +1,10 @@
 package org.ergoplatform.mosaik.model.actions
 
-/**
- * Reloads the app when called
- */
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+@SerialName("ReloadAction")
 class ReloadAction : Action {
     override lateinit var id: String
 }
