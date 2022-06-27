@@ -1,8 +1,6 @@
 package org.ergoplatform.serialization
 
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
@@ -64,12 +62,57 @@ object MosaikSerializers {
     fun parseMosaikAppFromJson(json: String): MosaikApp {
         val jsonObject = jsonSerializer.parseToJsonElement(json).jsonObject
 
-        // TODO parse view content and actions
-        val view: ViewElement = jsonSerializer.decodeFromJsonElement(jsonObject["view"]!!)
+        val viewObject = jsonObject["view"]!!
+        val view: ViewElement =
+            jsonSerializer.decodeFromJsonElement(preprocessViewElements(viewObject.jsonObject))
 
         return MosaikApp(view).apply {
             manifest = jsonSerializer.decodeFromJsonElement(jsonObject["manifest"]!!)
             actions = jsonSerializer.decodeFromJsonElement(jsonObject["actions"]!!)
         }
+    }
+
+    private fun preprocessViewElements(jsonObject: JsonObject): JsonObject {
+        // check for "children", "weights" and "alignment"
+        val childrenKey = "children"
+        val weightKey = "weight"
+        val alignKey = "align"
+        val hAlignKey = "hAlign"
+        val vAlignKey = "vAlign"
+
+        return if (jsonObject.containsKey(childrenKey)) {
+            val weightArray = mutableListOf<JsonElement>()
+            val objectIsBox = listOf("Box", "LazyLoadBox", "Card").contains(jsonObject["type"]!!.jsonPrimitive.content)
+            val alignment1 = mutableListOf<JsonElement>()
+            val alignment2 = mutableListOf<JsonElement>()
+
+            JsonObject(jsonObject.toMutableMap().apply {
+                put(
+                    childrenKey,
+                    JsonArray(jsonObject[childrenKey]!!.jsonArray.map {
+                        val child = it.jsonObject
+
+                        weightArray.add(JsonPrimitive(child[weightKey]?.jsonPrimitive?.int ?: 0))
+                        if (objectIsBox) {
+                            alignment1.add(JsonPrimitive(child[hAlignKey]?.jsonPrimitive?.content ?: "CENTER"))
+                            alignment2.add(JsonPrimitive(child[vAlignKey]?.jsonPrimitive?.content ?: "CENTER"))
+                        } else {
+                            alignment1.add(JsonPrimitive(child[alignKey]?.jsonPrimitive?.content ?: "CENTER"))
+                        }
+
+                        // check next level
+                        preprocessViewElements(child)
+                    })
+                )
+
+                put("childWeight", JsonArray(weightArray))
+                if (objectIsBox) {
+                    put("childHAlignment", JsonArray(alignment1))
+                    put("childVAlignment", JsonArray(alignment2))
+                } else {
+                    put("childAlignment", JsonArray(alignment1))
+                }
+            })
+        } else jsonObject
     }
 }

@@ -120,7 +120,7 @@ class JsBackendConnector: MosaikBackendConnector {
         }
 
         val mosaikApp = MosaikSerializers.parseMosaikAppFromJson(response.readText())
-        return MosaikBackendConnector.AppLoaded(selectorApp(mosaikApp.manifest.appName), url)
+        return MosaikBackendConnector.AppLoaded(mosaikApp, url)
     }
 
     override fun fetchAction(

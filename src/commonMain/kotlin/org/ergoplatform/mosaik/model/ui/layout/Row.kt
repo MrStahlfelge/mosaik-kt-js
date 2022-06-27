@@ -13,24 +13,6 @@ class Row : LinearLayout() {
 
     var packed = false
 
-    fun defaultChildAlignment(): VAlignment {
-        return VAlignment.CENTER
-    }
-
-    override fun addChild(element: ViewElement) {
-        addChild(element, defaultChildAlignment(), 0)
-    }
-
-    fun addChild(
-        element: ViewElement,
-        alignment: VAlignment,
-        childWeight: Int
-    ) {
-        children.add(element)
-        childAlignment.add(alignment)
-        this.childWeight.add(childWeight)
-    }
-
     override fun replaceChild(
         elementToReplace: ViewElement,
         newElement: ViewElement

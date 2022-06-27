@@ -11,24 +11,6 @@ class Column : LinearLayout() {
     private val childAlignment: MutableList<HAlignment> = ArrayList()
     private val childWeight: MutableList<Int> = ArrayList()
 
-    fun defaultChildAlignment(): HAlignment {
-        return HAlignment.CENTER
-    }
-
-    override fun addChild(element: ViewElement) {
-        addChild(element, defaultChildAlignment(), 0)
-    }
-
-    fun addChild(
-        element: ViewElement,
-        alignment: HAlignment,
-        childWeight: Int
-    ) {
-        children.add(element)
-        childAlignment.add(alignment)
-        this.childWeight.add(childWeight)
-    }
-
     override fun replaceChild(
         elementToReplace: ViewElement,
         newElement: ViewElement

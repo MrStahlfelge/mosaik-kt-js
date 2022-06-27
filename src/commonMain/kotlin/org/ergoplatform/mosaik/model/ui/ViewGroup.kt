@@ -9,7 +9,5 @@ interface ViewGroup {
      */
     val children: List<ViewElement>
 
-    fun addChild(element: ViewElement)
-
     fun replaceChild(elementToReplace: ViewElement, newElement: ViewElement)
 }

@@ -15,20 +15,6 @@ open class Box : ViewElement(), LayoutElement {
     private val childHAlignment: MutableList<HAlignment> = ArrayList()
     private val childVAlignment: MutableList<VAlignment> = ArrayList()
 
-    override fun addChild(element: ViewElement) {
-        addChild(element, HAlignment.CENTER, VAlignment.CENTER)
-    }
-
-    fun addChild(
-        element: ViewElement,
-        hAlignment: HAlignment,
-        vAlignment: VAlignment
-    ) {
-        children.add(element)
-        childHAlignment.add(hAlignment)
-        childVAlignment.add(vAlignment)
-    }
-
     override fun replaceChild(
         elementToReplace: ViewElement,
         newElement: ViewElement
