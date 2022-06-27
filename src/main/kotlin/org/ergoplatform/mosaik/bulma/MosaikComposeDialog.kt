@@ -22,9 +22,9 @@ fun MosaikComposeDialog(dialog: MosaikComposeDialogHandler) {
         BulmaModal {
             BulmaBox {
                 P { Text(mosaikDialog.message) }
-
-                BulmaButton({ dialog.dismiss() }, "OK")
-            }
+                    BulmaButton({ dialog.dismiss() }, "OK")
+                // TODO buttons, actions, make button better aligned
+                }
         }
     }
 }

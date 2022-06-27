@@ -1,24 +1,19 @@
 package org.ergoplatform.mosaik.bulma
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import org.ergoplatform.mosaik.LabelFormatter
-import org.ergoplatform.mosaik.TreeElement
-import org.ergoplatform.mosaik.ViewTree
-import org.ergoplatform.mosaik.javaClass
+import androidx.compose.runtime.*
+import org.ergoplatform.mosaik.*
+import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.ForegroundColor
 import org.ergoplatform.mosaik.model.ui.Image
 import org.ergoplatform.mosaik.model.ui.layout.*
+import org.ergoplatform.mosaik.model.ui.text.Button
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
 import org.ergoplatform.mosaik.model.ui.text.StyleableTextLabel
+import org.ergoplatform.mosaik.model.ui.text.TruncationType
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Img
-import org.jetbrains.compose.web.dom.P
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
 
 @Composable
@@ -31,20 +26,48 @@ fun MosaikViewTree(viewTree: ViewTree) {
 
         // the view root should be scrollable if it is a column, otherwise it will fill
         // the max height
-        // TODO
+        val scrollable = viewTreeRoot.element is Column
 
-        MosaikTreeElement(
-            viewTreeRoot,
-//            Modifier.alpha(if (locked) .3f else 1f).padding(Padding.DEFAULT.toCompose())
-//                .align(Alignment.Center).widthIn(
-//                    max = when (viewTree.targetCanvasDimension) {
-//                        // https://developer.android.com/guide/topics/large-screens/support-different-screen-sizes
-//                        MosaikManifest.CanvasDimension.COMPACT_WIDTH -> 600.dp
-//                        MosaikManifest.CanvasDimension.MEDIUM_WIDTH -> 840.dp
-//                        else -> Dp.Unspecified
-//                    }
-//                )
-        )
+        val content: @Composable (subStyle: ((StyleScope) -> Unit)?) -> Unit = { subStyle ->
+            MosaikTreeElement(
+                viewTreeRoot,
+                attribs = { atts ->
+                    val maxWidth: CSSNumeric? = when (viewTree.targetCanvasDimension) {
+                        MosaikManifest.CanvasDimension.COMPACT_WIDTH -> 500.px
+                        MosaikManifest.CanvasDimension.MEDIUM_WIDTH -> 840.px
+                        else -> null
+                    }
+
+                    atts.style {
+                        maxWidth?.let {
+                            maxWidth(maxWidth)
+                        }
+                        subStyle?.invoke(this)
+                    }
+                }
+            )
+        }
+
+        if (!scrollable) {
+            DivWrapper(emptyList(), attribs = {
+                it.style {
+                    position(Position.Absolute)
+                    display(DisplayStyle.Flex)
+                    bottom(0.px)
+                    top(0.px)
+                    left(0.px)
+                    right(0.px)
+                    justifyContent(JustifyContent.Center)
+                    flexDirection(FlexDirection.Column)
+                }
+            }) {
+                content {
+                    it.flex("none")
+                }
+            }
+        } else {
+            content(null)
+        }
     }
     if (locked) {
         BulmaModal {
@@ -70,33 +93,35 @@ fun MosaikTreeElement(
         moreClasses.add("is-invisible") // TODO check
     }
 
-//            if (treeElement.respondsToClick) TODO
-//                Modifier.combinedClickable(
-//                    onClick = treeElement::clicked,
-//                    onLongClick = treeElement::longPressed,
-//                ) else Modifier
-//        )
-//
+    val newAttribs: ((AttrsScope<out HTMLElement>) -> Unit)? =
+        if (treeElement.respondsToClick && treeElement.element !is Button) {
+            {
+                it.onClick { treeElement.clicked() }
+                attribs?.invoke(it)
+                // TODO add a hover effect
+            }
+        } else attribs
+
     when (element) {
-//        is Card -> {
-//            MosaikCard(newModifier, treeElement)
-//        }
+        is Card -> {
+            MosaikCard(treeElement, moreClasses, newAttribs)
+        }
         is Box -> {
             // this also deals with LazyLoadBox
-            MosaikBox(treeElement, moreClasses, attribs)
+            MosaikBox(treeElement, moreClasses, newAttribs)
         }
         is StyleableTextLabel<*> -> {
-            MosaikLabel(treeElement, moreClasses, attribs)
+            MosaikLabel(treeElement, moreClasses, newAttribs)
         }
         is Column -> {
-            MosaikColumn(treeElement, moreClasses, attribs)
+            MosaikColumn(treeElement, moreClasses, newAttribs)
         }
         is Row -> {
-            MosaikRow(treeElement, moreClasses, attribs)
+            MosaikRow(treeElement, moreClasses, newAttribs)
         }
-//        is Button -> {
-//            MosaikButton(treeElement, newModifier)
-//        }
+        is Button -> {
+            MosaikButton(treeElement, moreClasses, newAttribs)
+        }
 //        is ErgAmountInputField -> {
 //            MosaikErgAmountInputLayout(treeElement, newModifier)
 //        }
@@ -113,7 +138,7 @@ fun MosaikTreeElement(
 //            MosaikIcon(treeElement, newModifier)
 //        }
         is Image -> {
-            MosaikImage(treeElement, moreClasses, attribs)
+            MosaikImage(treeElement, moreClasses, newAttribs)
         }
 //        is ErgoAddressChooseButton -> {
 //            MosaikValueChooseButton(treeElement, newModifier)
@@ -127,7 +152,7 @@ fun MosaikTreeElement(
         else -> {
             Div(attrs = {
                 classes(*moreClasses.toTypedArray())
-                attribs?.invoke(this)
+                newAttribs?.invoke(this)
             }) { Text("Unsupported view element: ${element.javaClass.simpleName}") }
         }
     }
@@ -159,6 +184,45 @@ fun MosaikImage(
 }
 
 @Composable
+fun MosaikCard(
+    treeElement: TreeElement,
+    moreClasses: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?
+) {
+    val shrink = !moreClasses.contains(justifyCssClassName)
+
+    if (shrink) {
+        // need to make one more Div because the padding needs to be outside the box
+        DivWrapper(moreClasses.toMutableList().apply { add("is-flex") }, attribs) {
+            MosaikBox(treeElement, listOf("box"), attribs = {
+                it.style {
+                    flex("none")
+                }
+            })
+        }
+    } else {
+        DivWrapper(moreClasses, attribs) {
+            MosaikBox(treeElement, listOf("box"), null)
+        }
+    }
+}
+
+@Composable
+fun DivWrapper(
+    moreClasses: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+    content: ContentBuilder<HTMLDivElement>
+) {
+    // need to make one more Div because the padding needs to be outside the box
+    Div(attrs = {
+        classes(*moreClasses.toTypedArray())
+        attribs?.invoke(this)
+    }) {
+        content()
+    }
+}
+
+@Composable
 private fun MosaikBox(
     treeElement: TreeElement,
     classes: List<String>,
@@ -186,7 +250,7 @@ private fun MosaikBox(
                             HAlignment.START -> "is-align-self-flex-start"
                             HAlignment.CENTER -> "is-align-self-center"
                             HAlignment.END -> "is-align-self-flex-end"
-                            HAlignment.JUSTIFY -> "is-align-self-stretch"
+                            HAlignment.JUSTIFY -> justifyCssClassName
                         }
                     )
                 else emptyList()
@@ -315,7 +379,7 @@ fun MosaikColumn(
                             HAlignment.START -> "is-align-self-flex-start"
                             HAlignment.CENTER -> "is-align-self-center"
                             HAlignment.END -> "is-align-self-flex-end"
-                            HAlignment.JUSTIFY -> "is-align-self-stretch"
+                            HAlignment.JUSTIFY -> justifyCssClassName
                         }
                     ),
                     attribs = {
@@ -331,6 +395,47 @@ fun MosaikColumn(
             }
         }
     }
+}
+
+@Composable
+private fun MosaikButton(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as Button
+
+    remember(element.truncationType) {
+        if (element.truncationType != TruncationType.END)
+            MosaikLogger.logWarning("TruncationType ignored for button, not supported by this implementation")
+    }
+
+    DivWrapper(classes, attribs) {
+        BulmaButton(
+            treeElement::clicked,
+            element.text ?: "",
+            color = when (element.style) {
+                Button.ButtonStyle.PRIMARY -> BulmaColor.PRIMARY
+                Button.ButtonStyle.SECONDARY -> BulmaColor.DARK
+                Button.ButtonStyle.TEXT -> BulmaColor.TEXT
+            },
+            enabled = element.enabled,
+            attrs = {
+                style { minWidth(128.px) }
+            }
+        )
+    }
+    // TODO
+//                maxLines = if (element.maxLines <= 0) Int.MAX_VALUE else element.maxLines,
+//                textAlign = (when (element.textAlignment) {
+//                    HAlignment.START -> TextAlign.Start
+//                    HAlignment.CENTER -> TextAlign.Center
+//                    HAlignment.END -> TextAlign.End
+//                    HAlignment.JUSTIFY -> TextAlign.Justify
+//                }),
+//                overflow = TextOverflow.Ellipsis,
+//            )
+
 }
 
 @Composable
@@ -396,3 +501,5 @@ fun Padding.toCssClass(): String =
         Padding.ONE_AND_A_HALF_DEFAULT -> "p-5"
         Padding.TWICE -> "p-6"
     }
+
+val justifyCssClassName = "is-align-self-stretch"

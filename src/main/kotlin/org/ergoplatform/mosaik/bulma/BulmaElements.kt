@@ -2,10 +2,9 @@ package org.ergoplatform.mosaik.bulma
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.attributes.AttrsScope
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Progress
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.attributes.disabled
+import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLElement
 
 @Composable
@@ -17,7 +16,7 @@ fun BulmaModal(content: @Composable () -> Unit) {
             classes("modal-background")
         })
         Div(attrs = {
-            classes("modal-content")
+            classes("modal-content", "p-4")
         }) {
             content()
         }
@@ -34,9 +33,20 @@ fun BulmaBox(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun BulmaButton(onClick: () -> Unit, text: String) {
-    Button(attrs = { onClick { onClick() }
-        classes("button", "is-primary")
+fun BulmaButton(
+    onClick: () -> Unit,
+    text: String,
+    color: BulmaColor = BulmaColor.PRIMARY,
+    enabled: Boolean = true,
+    attrs: AttrBuilderContext<HTMLButtonElement>? = null,
+) {
+    Button(attrs = {
+        onClick { onClick() }
+        classes("button", color.toCssClassName())
+        if (!enabled) {
+            disabled()
+        }
+        attrs?.invoke(this)
     }) {
         Text(text)
     }
