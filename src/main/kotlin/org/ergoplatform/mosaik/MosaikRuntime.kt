@@ -1,10 +1,13 @@
 package org.ergoplatform.mosaik
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ViewContent
 import org.ergoplatform.mosaik.model.actions.*
-import org.ergoplatform.mosaik.model.ui.input.InputElement
+import org.ergoplatform.mosaik.model.ui.input.StringTextField
 
 abstract class MosaikRuntime(
     val backendConnector: MosaikBackendConnector,
@@ -29,8 +32,8 @@ abstract class MosaikRuntime(
 
         action?.let {
             val newParent = action.newContent.view
-            if (newParent is InputElement<*>) {
-                // TODO newParent.value = scannedValue
+            if (newParent is StringTextField) {
+                newParent.value = scannedValue
             }
             runChangeSiteAction(action)
 
