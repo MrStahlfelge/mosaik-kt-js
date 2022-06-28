@@ -44,7 +44,8 @@ fun MosaikViewTree(viewTree: ViewTree) {
                         }
                         subStyle?.invoke(this)
                     }
-                }
+                },
+                sizeToParent = false
             )
         }
 
@@ -80,7 +81,8 @@ fun MosaikViewTree(viewTree: ViewTree) {
 fun MosaikTreeElement(
     treeElement: TreeElement,
     classes: List<String> = emptyList(),
-    attribs: ((AttrsScope<out HTMLElement>) -> Unit)? = null
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)? = null,
+    sizeToParent: Boolean,
 ) {
     val element = treeElement.element
 
@@ -104,7 +106,7 @@ fun MosaikTreeElement(
 
     when (element) {
         is Card -> {
-            MosaikCard(treeElement, moreClasses, newAttribs)
+            MosaikCard(treeElement, moreClasses, newAttribs, sizeToParent)
         }
         is Box -> {
             // this also deals with LazyLoadBox
@@ -120,7 +122,7 @@ fun MosaikTreeElement(
             MosaikRow(treeElement, moreClasses, newAttribs)
         }
         is Button -> {
-            MosaikButton(treeElement, moreClasses, newAttribs)
+            MosaikButton(treeElement, moreClasses, newAttribs, sizeToParent)
         }
 //        is ErgAmountInputField -> {
 //            MosaikErgAmountInputLayout(treeElement, newModifier)
@@ -187,11 +189,10 @@ fun MosaikImage(
 fun MosaikCard(
     treeElement: TreeElement,
     moreClasses: List<String>,
-    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+    sizeToParent: Boolean,
 ) {
-    val shrink = !moreClasses.contains(justifyCssClassName)
-
-    if (shrink) {
+    if (!sizeToParent) {
         // need to make one more Div because the padding needs to be outside the box
         DivWrapper(moreClasses.toMutableList().apply { add("is-flex") }, attribs) {
             MosaikBox(treeElement, listOf("box"), attribs = {
@@ -281,7 +282,8 @@ private fun MosaikBox(
                 MosaikTreeElement(
                     childElement,
                     childClasses,
-                    newStyles
+                    newStyles,
+                    sizeToParent = childHAlignment == HAlignment.JUSTIFY,
                 )
 
             }
@@ -344,7 +346,8 @@ private fun MosaikRow(
                                 flex("initial")
                             }
                         }
-                    }
+                    },
+                    sizeToParent = (weight > 0),
                 )
             }
         }
@@ -390,7 +393,8 @@ fun MosaikColumn(
                                 flex("none")
                             }
                         }
-                    }
+                    },
+                    sizeToParent = hAlignment == HAlignment.JUSTIFY,
                 )
             }
         }
@@ -402,6 +406,7 @@ private fun MosaikButton(
     treeElement: TreeElement,
     classes: List<String>,
     attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+    sizeToParent: Boolean,
 ) {
     val element = treeElement.element as Button
 
@@ -410,7 +415,11 @@ private fun MosaikButton(
             MosaikLogger.logWarning("TruncationType ignored for button, not supported by this implementation")
     }
 
-    DivWrapper(classes, attribs) {
+    // we add a little padding to the buttons to match the style on Compose Desktop/Android
+    DivWrapper(
+        classes.toMutableList().apply { add(Padding.QUARTER_DEFAULT.toCssClass()) },
+        attribs
+    ) {
         BulmaButton(
             treeElement::clicked,
             element.text ?: "",
@@ -421,7 +430,13 @@ private fun MosaikButton(
             },
             enabled = element.enabled,
             attrs = {
-                style { minWidth(128.px) }
+                style {
+                    minWidth(128.px)
+                    if (sizeToParent) {
+                        width(100.percent)
+                        boxSizing("border-box")
+                    }
+                }
             }
         )
     }

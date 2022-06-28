@@ -10,6 +10,7 @@ class Column : LinearLayout() {
     override val children: MutableList<ViewElement> = ArrayList()
     private val childAlignment: MutableList<HAlignment> = ArrayList()
     private val childWeight: MutableList<Int> = ArrayList()
+    override var padding = Padding.NONE
 
     override fun replaceChild(
         elementToReplace: ViewElement,

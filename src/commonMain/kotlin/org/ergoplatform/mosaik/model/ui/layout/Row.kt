@@ -10,6 +10,7 @@ class Row : LinearLayout() {
     override val children: MutableList<ViewElement> = ArrayList()
     private val childAlignment: MutableList<VAlignment> = ArrayList()
     private val childWeight: MutableList<Int> = ArrayList()
+    override var padding = Padding.NONE
 
     var packed = false
 
