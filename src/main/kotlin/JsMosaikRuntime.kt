@@ -148,18 +148,26 @@ object JsBackendConnector : MosaikBackendConnector {
         values: Map<String, Any?>,
         referrer: String?
     ): FetchActionResponse {
-        val response: HttpResponse = client.request(url) {
+        val response: HttpResponse = client.request(makeAbsoluteUrl(baseUrl, url)) {
             method = HttpMethod.Post
             mosaikContextHeaders.forEach {
                 header(it.key, it.value)
+                contentType(ContentType.Application.Json)
             }
             body = MosaikSerializers.valuesMapToJson(values)
         }
 
-        return MosaikSerializers.fetchActionResponseFromJson(response.readText())    }
+        return MosaikSerializers.fetchActionResponseFromJson(response.readText())
+    }
+
+    private fun makeAbsoluteUrl(baseUrl: String?, url: String): String {
+        val loadUrl = if (baseUrl == null || url.contains("://")) url
+        else baseUrl.trimEnd('/') + "/" + url.trimStart('/')
+        return loadUrl
+    }
 
     override fun fetchLazyContent(url: String, baseUrl: String?, referrer: String): ViewContent {
-        TODO("Not yet implemented")
+        TODO("Not yet implemented - use makeAbsoluteUrl")
     }
 
     private lateinit var mosaikContextHeaders: Map<String, String?>

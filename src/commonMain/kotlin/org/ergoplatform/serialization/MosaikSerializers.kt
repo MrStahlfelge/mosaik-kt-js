@@ -90,7 +90,7 @@ object MosaikSerializers {
         val hAlignKey = "hAlign"
         val vAlignKey = "vAlign"
 
-        return if (jsonObject.containsKey(childrenKey)) {
+        return if (jsonObject.containsKey(childrenKey) && jsonObject.containsKey("type")) {
             val weightArray = mutableListOf<JsonElement>()
             val objectIsBox = listOf(
                 "Box",
@@ -142,11 +142,28 @@ object MosaikSerializers {
         } else jsonObject
     }
 
-    fun valuesMapToJson(values: Map<String, Any?>): String =
-        jsonSerializer.encodeToString(values)
+    fun valuesMapToJson(values: Map<String, Any?>): String {
+        val newMap: Map<String, JsonElement> = values.filterValues { it != null }
+            .mapValues {
+                val value = it.value!!
+
+                if (value is Number)
+                    JsonPrimitive(value)
+                else if (value is String)
+                    JsonPrimitive(value)
+                else if (value is Boolean)
+                    JsonPrimitive(value)
+                else if (value is List<*>)
+                    throw UnsupportedOperationException("List not yet serialized") // TODO
+                else
+                    throw UnsupportedOperationException("Can't serialize type")
+            }
+        return jsonSerializer.encodeToString(JsonObject(newMap))
+    }
 
     const val HTTP_HEADER_PREFIX = "Mosaik-"
 
     fun contextHeadersMap(context: MosaikContext): Map<String, String?> =
-        jsonSerializer.encodeToJsonElement(context).jsonObject.mapValues { it.value.jsonPrimitive.content }.mapKeys { HTTP_HEADER_PREFIX + it.key }
+        jsonSerializer.encodeToJsonElement(context).jsonObject.mapValues { it.value.jsonPrimitive.content }
+            .mapKeys { HTTP_HEADER_PREFIX + it.key }
 }
