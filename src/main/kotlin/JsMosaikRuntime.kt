@@ -5,6 +5,9 @@ import io.ktor.http.*
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import org.ergoplatform.mosaik.MosaikBackendConnector
 import org.ergoplatform.mosaik.MosaikDialog
 import org.ergoplatform.mosaik.MosaikRuntime
@@ -17,7 +20,8 @@ import org.ergoplatform.mosaik.model.actions.ErgoPayAction
 import org.ergoplatform.mosaik.model.actions.TokenInformationAction
 import org.ergoplatform.serialization.MosaikSerializers
 
-class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler): MosaikRuntime(JsBackendConnector()) {
+class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
+    MosaikRuntime(JsBackendConnector) {
     override val coroutineScope: CoroutineScope
         get() = MainScope()
 
@@ -111,16 +115,27 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler): Mo
 }
 
 
-class JsBackendConnector: MosaikBackendConnector {
+object JsBackendConnector : MosaikBackendConnector {
     private val client = HttpClient()
 
-    override suspend fun loadMosaikApp(url: String, referrer: String?): MosaikBackendConnector.AppLoaded {
+    override suspend fun loadMosaikApp(
+        url: String,
+        referrer: String?
+    ): MosaikBackendConnector.AppLoaded {
         val response: HttpResponse = client.request(url) {
             method = HttpMethod.Get
         }
 
         val mosaikApp = MosaikSerializers.parseMosaikAppFromJson(response.readText())
         return MosaikBackendConnector.AppLoaded(mosaikApp, url)
+    }
+
+    suspend fun getMosaikConfig(url: String): MosaikConfiguration {
+        val response: HttpResponse = client.request(url) {
+            method = HttpMethod.Get
+        }
+
+        return Json.decodeFromString<MosaikConfiguration>(response.readText())
     }
 
     override fun fetchAction(
@@ -137,3 +152,6 @@ class JsBackendConnector: MosaikBackendConnector {
     }
 
 }
+
+@Serializable
+data class MosaikConfiguration(var starturl: String)

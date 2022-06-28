@@ -1,5 +1,7 @@
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.browser.document
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialog
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.bulma.MosaikViewTree
@@ -10,7 +12,13 @@ fun main() {
     val dialogHandler = MosaikComposeDialogHandler()
     val runtime = JsMosaikRuntime(dialogHandler)
 
-    runtime.loadMosaikApp("http://localhost:8080/appselect")
+    MainScope().launch {
+        val config = JsBackendConnector.getMosaikConfig("mosaik.config")
+        document.getElementById("loadingScreen")?.remove()
+        runtime.loadMosaikApp(config.starturl)
+    }
+
+
     val viewTree = runtime.viewTree
     val manifestState = mutableStateOf<MosaikManifest?>(null)
     runtime.appLoaded = {
