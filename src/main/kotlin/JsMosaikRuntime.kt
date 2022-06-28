@@ -14,6 +14,7 @@ import org.ergoplatform.mosaik.MosaikRuntime
 import org.ergoplatform.mosaik.StringConstant
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.model.FetchActionResponse
+import org.ergoplatform.mosaik.model.MosaikContext
 import org.ergoplatform.mosaik.model.ViewContent
 import org.ergoplatform.mosaik.model.actions.ErgoAuthAction
 import org.ergoplatform.mosaik.model.actions.ErgoPayAction
@@ -124,6 +125,9 @@ object JsBackendConnector : MosaikBackendConnector {
     ): MosaikBackendConnector.AppLoaded {
         val response: HttpResponse = client.request(url) {
             method = HttpMethod.Get
+            mosaikContextHeaders.forEach {
+                header(it.key, it.value)
+            }
         }
 
         val mosaikApp = MosaikSerializers.parseMosaikAppFromJson(response.readText())
@@ -138,19 +142,31 @@ object JsBackendConnector : MosaikBackendConnector {
         return Json.decodeFromString<MosaikConfiguration>(response.readText())
     }
 
-    override fun fetchAction(
+    override suspend fun fetchAction(
         url: String,
         baseUrl: String?,
         values: Map<String, Any?>,
         referrer: String?
     ): FetchActionResponse {
-        TODO("Not yet implemented")
-    }
+        val response: HttpResponse = client.request(url) {
+            method = HttpMethod.Post
+            mosaikContextHeaders.forEach {
+                header(it.key, it.value)
+            }
+            body = MosaikSerializers.valuesMapToJson(values)
+        }
+
+        return MosaikSerializers.fetchActionResponseFromJson(response.readText())    }
 
     override fun fetchLazyContent(url: String, baseUrl: String?, referrer: String): ViewContent {
         TODO("Not yet implemented")
     }
 
+    private lateinit var mosaikContextHeaders: Map<String, String?>
+
+    fun setContextHeaders(context: MosaikContext) {
+        mosaikContextHeaders = MosaikSerializers.contextHeadersMap(context)
+    }
 }
 
 @Serializable

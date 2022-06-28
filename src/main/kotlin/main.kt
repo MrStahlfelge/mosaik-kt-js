@@ -1,19 +1,60 @@
 import androidx.compose.runtime.mutableStateOf
+import io.ktor.client.features.*
 import kotlinx.browser.document
+import kotlinx.browser.localStorage
+import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialog
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.bulma.MosaikViewTree
+import org.ergoplatform.mosaik.model.MosaikContext
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.jetbrains.compose.web.renderComposable
+import kotlin.js.RegExp
+import kotlin.math.max
 
 fun main() {
     val dialogHandler = MosaikComposeDialogHandler()
     val runtime = JsMosaikRuntime(dialogHandler)
 
     MainScope().launch {
+        // TODO rooting, and utilisation of back button when a new app is loaded
         val config = JsBackendConnector.getMosaikConfig("mosaik.config")
+
+        // RegEx pattern from detectmobilebrowsers.com (public domain)
+        val pattern =
+            "(android|bb\\d+|meego).+mobile|avantgo|bada\\/|blackberry|blazer|compal|elaine|fennec" +
+                    "|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)" +
+                    "i|palm( os)?|phone|p(ixi|re)\\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\\.(browser|link)" +
+                    "|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk"
+
+        val isMobile = RegExp(pattern).test(window.navigator.userAgent.lowercase())
+
+        val guidKey = "mosaikguid"
+        val guid = localStorage.getItem(guidKey) ?: run {
+            val newguid = Uuid.uuid()
+            localStorage.setItem(guidKey, newguid)
+            newguid
+        }
+
+        JsBackendConnector.setContextHeaders(
+            MosaikContext(
+                MosaikContext.LIBRARY_MOSAIK_VERSION,
+                guid,
+                window.navigator.language,
+                "Kotlin/JS Executor",
+                MosaikContext.EXECUTOR_VERSION,
+                if (!isMobile) MosaikContext.Platform.DESKTOP
+                else if (max(
+                        window.outerHeight,
+                        window.outerWidth
+                    ) > 600
+                ) MosaikContext.Platform.TABLET
+                else MosaikContext.Platform.PHONE
+            )
+        )
+
         document.getElementById("loadingScreen")?.remove()
         runtime.loadMosaikApp(config.starturl)
     }

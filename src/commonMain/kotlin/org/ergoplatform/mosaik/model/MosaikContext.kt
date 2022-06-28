@@ -8,7 +8,9 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 class MosaikContext(
-    val mosaikVersion: Int, val guid: String, val language: String,
+    val mosaikVersion: Int,
+    val guid: String,
+    val language: String,
     val walletAppName: String,
     val walletAppVersion: String,
     val walletAppPlatform: Platform
@@ -19,6 +21,7 @@ class MosaikContext(
 
     companion object {
         const val LIBRARY_MOSAIK_VERSION = 0
+        const val EXECUTOR_VERSION = "0.5.0"
     }
 
 }

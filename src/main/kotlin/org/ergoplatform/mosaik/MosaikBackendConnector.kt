@@ -19,7 +19,7 @@ interface MosaikBackendConnector {
     /**
      * loads an action from Mosaik app. Blocking, call on a background thread
      */
-    fun fetchAction(
+    suspend fun fetchAction(
         url: String, baseUrl: String?,
         values: Map<String, Any?>,
         referrer: String?,

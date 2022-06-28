@@ -1,10 +1,13 @@
 package org.ergoplatform.serialization
 
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import org.ergoplatform.mosaik.model.FetchActionResponse
 import org.ergoplatform.mosaik.model.MosaikApp
+import org.ergoplatform.mosaik.model.MosaikContext
 import org.ergoplatform.mosaik.model.actions.*
 import org.ergoplatform.mosaik.model.ui.*
 import org.ergoplatform.mosaik.model.ui.input.*
@@ -68,8 +71,15 @@ object MosaikSerializers {
 
         return MosaikApp(view).apply {
             manifest = jsonSerializer.decodeFromJsonElement(jsonObject["manifest"]!!)
-            actions = jsonSerializer.decodeFromJsonElement(jsonObject["actions"]!!)
+            jsonObject["actions"]?.let { actions = jsonSerializer.decodeFromJsonElement(it) }
+            // TODO actions with view elements need to get preprocessed
         }
+    }
+
+    fun fetchActionResponseFromJson(json: String): FetchActionResponse {
+        val jsonObject = jsonSerializer.parseToJsonElement(json).jsonObject
+        // TODO actions with view elements need to get preprocessed
+        return jsonSerializer.decodeFromJsonElement(jsonObject)
     }
 
     private fun preprocessViewElements(jsonObject: JsonObject): JsonObject {
@@ -82,7 +92,11 @@ object MosaikSerializers {
 
         return if (jsonObject.containsKey(childrenKey)) {
             val weightArray = mutableListOf<JsonElement>()
-            val objectIsBox = listOf("Box", "LazyLoadBox", "Card").contains(jsonObject["type"]!!.jsonPrimitive.content)
+            val objectIsBox = listOf(
+                "Box",
+                "LazyLoadBox",
+                "Card"
+            ).contains(jsonObject["type"]!!.jsonPrimitive.content)
             val alignment1 = mutableListOf<JsonElement>()
             val alignment2 = mutableListOf<JsonElement>()
 
@@ -94,10 +108,22 @@ object MosaikSerializers {
 
                         weightArray.add(JsonPrimitive(child[weightKey]?.jsonPrimitive?.int ?: 0))
                         if (objectIsBox) {
-                            alignment1.add(JsonPrimitive(child[hAlignKey]?.jsonPrimitive?.content ?: "CENTER"))
-                            alignment2.add(JsonPrimitive(child[vAlignKey]?.jsonPrimitive?.content ?: "CENTER"))
+                            alignment1.add(
+                                JsonPrimitive(
+                                    child[hAlignKey]?.jsonPrimitive?.content ?: "CENTER"
+                                )
+                            )
+                            alignment2.add(
+                                JsonPrimitive(
+                                    child[vAlignKey]?.jsonPrimitive?.content ?: "CENTER"
+                                )
+                            )
                         } else {
-                            alignment1.add(JsonPrimitive(child[alignKey]?.jsonPrimitive?.content ?: "CENTER"))
+                            alignment1.add(
+                                JsonPrimitive(
+                                    child[alignKey]?.jsonPrimitive?.content ?: "CENTER"
+                                )
+                            )
                         }
 
                         // check next level
@@ -115,4 +141,12 @@ object MosaikSerializers {
             })
         } else jsonObject
     }
+
+    fun valuesMapToJson(values: Map<String, Any?>): String =
+        jsonSerializer.encodeToString(values)
+
+    const val HTTP_HEADER_PREFIX = "Mosaik-"
+
+    fun contextHeadersMap(context: MosaikContext): Map<String, String?> =
+        jsonSerializer.encodeToJsonElement(context).jsonObject.mapValues { it.value.jsonPrimitive.content }.mapKeys { HTTP_HEADER_PREFIX + it.key }
 }
