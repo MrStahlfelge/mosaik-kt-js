@@ -4,6 +4,8 @@ import androidx.compose.runtime.*
 import org.ergoplatform.mosaik.*
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.ForegroundColor
+import org.ergoplatform.mosaik.model.ui.Icon
+import org.ergoplatform.mosaik.model.ui.IconType
 import org.ergoplatform.mosaik.model.ui.Image
 import org.ergoplatform.mosaik.model.ui.input.PasswordInputField
 import org.ergoplatform.mosaik.model.ui.input.TextField
@@ -142,9 +144,9 @@ fun MosaikTreeElement(
 //        is LoadingIndicator -> {
 //            MosaikLoadingIndicator(treeElement, newModifier)
 //        }
-//        is Icon -> {
-//            MosaikIcon(treeElement, newModifier)
-//        }
+        is Icon -> {
+            MosaikIcon(treeElement, moreClasses, newAttribs)
+        }
         is Image -> {
             MosaikImage(treeElement, moreClasses, newAttribs)
         }
@@ -154,9 +156,9 @@ fun MosaikTreeElement(
 //        is WalletChooseButton -> {
 //            MosaikValueChooseButton(treeElement, newModifier)
 //        }
-//        is HorizontalRule -> {
-//            MosaikHorizontalRule(treeElement, newModifier)
-//        }
+        is HorizontalRule -> {
+            MosaikHorizontalRule(treeElement, moreClasses, newAttribs)
+        }
         else -> {
             Div(attrs = {
                 classes(*moreClasses.toTypedArray())
@@ -164,6 +166,29 @@ fun MosaikTreeElement(
             }) { Text("Unsupported view element: ${element.javaClass.simpleName}") }
         }
     }
+}
+
+@Composable
+fun MosaikHorizontalRule(
+    treeElement: TreeElement, classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as HorizontalRule
+
+    Hr(attrs = {
+        classes(
+            when (element.vPadding) {
+                Padding.NONE -> "my-0"
+                Padding.QUARTER_DEFAULT -> "my-1"
+                Padding.HALF_DEFAULT -> "my-2"
+                Padding.DEFAULT -> "my-4"
+                Padding.ONE_AND_A_HALF_DEFAULT -> "my-5"
+                Padding.TWICE -> "my-5"
+            }, *classes.toTypedArray()
+        )
+        attribs?.invoke(this)
+        style { fillMaxWidth() }
+    })
 }
 
 @Composable
@@ -190,6 +215,65 @@ fun MosaikImage(
         attribs?.invoke(this)
     })
 }
+
+@Composable
+fun MosaikIcon(
+    treeElement: TreeElement,
+    moreClasses: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as Icon
+
+    DivWrapper(moreClasses, attribs) {
+        Span(attrs = {
+            classes(
+                "icon",
+                when (element.iconSize) {
+                    Icon.Size.SMALL -> "is-small"
+                    Icon.Size.MEDIUM -> "is-medium"
+                    Icon.Size.LARGE -> "is-large"
+                },
+                element.tintColor.toCssClass(),
+            )
+        }) {
+            I(attrs = {
+                val classesList = mutableListOf("mdi", element.iconType.getCssName())
+                when (element.iconSize) {
+                    Icon.Size.SMALL -> null
+                    Icon.Size.MEDIUM -> "mdi-36px"
+                    Icon.Size.LARGE -> "mdi-48px"
+                }?.let { classesList.add(it) }
+                classes(*classesList.toTypedArray())
+            })
+        }
+    }
+}
+
+private fun IconType.getCssName(): String =
+    when (this) {
+        IconType.INFO -> "mdi-information"
+        IconType.WARN -> "mdi-alert"
+        IconType.ERROR -> "mdi-alert-circle"
+        IconType.CONFIG -> "mdi-cog"
+        IconType.ADD -> "mdi-plus"
+        IconType.EDIT -> "mdi-pencil"
+        IconType.REFRESH -> "mdi-refresh"
+        IconType.DELETE -> "mdi-delete"
+        IconType.CROSS -> "mdi-close"
+        IconType.WALLET -> "mdi-wallet"
+        IconType.SEND -> "mdi-send"
+        IconType.RECEIVE -> "mdi-call-received"
+        IconType.MORE -> "mdi-dots-vertical"
+        IconType.OPENLIST -> "mdi-menu-down"
+        IconType.CHEVRON_UP -> "mdi-chevron-up"
+        IconType.CHEVRON_DOWN -> "mdi-chevron-down"
+        IconType.COPY -> "mdi-content-copy"
+        IconType.BACK -> "mdi-arrow-left"
+        IconType.FORWARD -> "mdi-arrow-right"
+        IconType.SWITCH -> "mdi-repeat"
+        IconType.QR_CODE -> "mdi-qrcode"
+        IconType.QR_SCAN -> "mdi-qrcode-scan"
+    }
 
 @Composable
 fun MosaikCard(
@@ -597,11 +681,7 @@ private fun MosaikLabel(
                     LabelStyle.HEADLINE1 -> "has-text-weight-bold"
                     LabelStyle.HEADLINE2 -> "has-text-weight-bold"
                 },
-                when (element.textColor) {
-                    ForegroundColor.PRIMARY -> "has-text-primary"
-                    ForegroundColor.DEFAULT -> "has-text-dark"
-                    ForegroundColor.SECONDARY -> "has-text-grey"
-                },
+                element.textColor.toCssClass(),
                 *classes.toTypedArray()
             )
             style {
@@ -618,6 +698,13 @@ private fun MosaikLabel(
     }
 }
 
+private fun ForegroundColor.toCssClass() =
+    when (this) {
+        ForegroundColor.PRIMARY -> "has-text-primary"
+        ForegroundColor.DEFAULT -> "has-text-dark"
+        ForegroundColor.SECONDARY -> "has-text-grey"
+    }
+
 fun Padding.toCssClass(): String =
     when (this) {
         Padding.NONE -> "p-0"
@@ -625,7 +712,7 @@ fun Padding.toCssClass(): String =
         Padding.HALF_DEFAULT -> "p-2"
         Padding.DEFAULT -> "p-4"
         Padding.ONE_AND_A_HALF_DEFAULT -> "p-5"
-        Padding.TWICE -> "p-6"
+        Padding.TWICE -> "p-5" // p-6 is too much
     }
 
 val justifyCssClassName = "is-align-self-stretch"
