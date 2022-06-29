@@ -21,6 +21,8 @@ kotlin {
     }
     jvm() // needed to make unit tests executable on jvm
 
+    // TODO: separate Bulma and kotlinx-serialization to own repos
+
     sourceSets {
         val serializationVersion = "1.3.2"
 

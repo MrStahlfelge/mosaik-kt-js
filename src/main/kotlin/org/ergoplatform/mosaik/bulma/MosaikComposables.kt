@@ -5,12 +5,15 @@ import org.ergoplatform.mosaik.*
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.ForegroundColor
 import org.ergoplatform.mosaik.model.ui.Image
+import org.ergoplatform.mosaik.model.ui.input.PasswordInputField
+import org.ergoplatform.mosaik.model.ui.input.TextField
 import org.ergoplatform.mosaik.model.ui.layout.*
 import org.ergoplatform.mosaik.model.ui.text.Button
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
 import org.ergoplatform.mosaik.model.ui.text.StyleableTextLabel
 import org.ergoplatform.mosaik.model.ui.text.TruncationType
 import org.jetbrains.compose.web.attributes.AttrsScope
+import org.jetbrains.compose.web.attributes.InputMode
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLDivElement
@@ -95,13 +98,15 @@ fun MosaikTreeElement(
     if (!element.visible) {
         moreClasses.add("is-invisible") // TODO check
     }
+    if (treeElement.respondsToClick) {
+        moreClasses.add("is-clickable")
+    }
 
     val newAttribs: ((AttrsScope<out HTMLElement>) -> Unit)? =
         if (treeElement.respondsToClick && treeElement.element !is Button) {
             {
                 it.onClick { treeElement.clicked() }
                 attribs?.invoke(it)
-                // TODO add a hover effect
             }
         } else attribs
 
@@ -128,9 +133,9 @@ fun MosaikTreeElement(
 //        is ErgAmountInputField -> {
 //            MosaikErgAmountInputLayout(treeElement, newModifier)
 //        }
-//        is TextField<*> -> {
-//            MosaikTextField(treeElement, newModifier)
-//        }
+        is TextField -> {
+            MosaikTextField(treeElement, moreClasses, newAttribs)
+        }
 //        is DropDownList -> {
 //            MosaikDropDownList(treeElement, newModifier)
 //        }
@@ -272,8 +277,7 @@ private fun MosaikBox(
                             else if (childHAlignment == HAlignment.END)
                                 right(0.px)
                             else if (childHAlignment == HAlignment.JUSTIFY) {
-                                width(100.percent)
-                                boxSizing("border-box")
+                                fillMaxWidth()
                             }
 
                             when (element.getChildVAlignment(childElement.element)) {
@@ -297,6 +301,11 @@ private fun MosaikBox(
     }
 }
 
+private fun StyleScope.fillMaxWidth() {
+    width(100.percent)
+    boxSizing("border-box")
+}
+
 @Composable
 private fun MosaikRow(
     treeElement: TreeElement,
@@ -313,8 +322,7 @@ private fun MosaikRow(
         attribs?.invoke(it)
         if (!element.packed) {
             it.style {
-                width(100.percent) // TODO check could mess up when row is child of a row
-                boxSizing("border-box")
+                fillMaxWidth()  // TODO check could mess up when row is child of a row
             }
         }
     }) {
@@ -399,8 +407,7 @@ fun MosaikColumn(
                                 flex("0 1 auto")
                             }
                             if (hAlignment == HAlignment.JUSTIFY) {
-                                width(100.percent)
-                                boxSizing("border-box")
+                                fillMaxWidth()
                             }
                         }
                     },
@@ -410,6 +417,97 @@ fun MosaikColumn(
         }
     }
 }
+
+@Composable
+fun MosaikTextField(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+    textFieldState: MutableState<String> = getTextFieldStateForElement(treeElement),
+    valueChangeCallback: ((Any?) -> Unit)? = null
+) {
+    val element = treeElement.element as TextField
+
+    val errorState = remember(treeElement.createdAtContentVersion) { mutableStateOf(false) }
+    BulmaField(
+        element.placeholder,
+        element.errorMessage,
+        BulmaColor.DANGER,
+        classes = classes,
+        outerAttrs = {
+            style {
+                fillMaxWidth()
+                marginBottom(0.2.em)
+                marginTop(0.2.em)
+            }
+            attribs?.invoke(this)
+        },
+        labelAttrs = {
+            style {
+                marginBottom(0.em) // overwrite Bulma interferences
+            }
+        },
+    ) {
+
+        BulmaInput(
+            if (element is PasswordInputField) BulmaInputType.Password else BulmaInputType.Text,
+            textFieldState.value,
+            onValueChanged = {
+                if (textFieldState.value != it) {
+                    errorState.value =
+                        !treeElement.changeValueFromInput(it.ifEmpty { null })
+                    valueChangeCallback?.invoke(treeElement.currentValue)
+                }
+                textFieldState.value = it
+            },
+            if (errorState.value) BulmaColor.DANGER else null,
+            element.enabled,
+            element.readOnly,
+            attribs = {
+                when (treeElement.keyboardType) {
+                    KeyboardType.Text -> {}
+                    KeyboardType.Number -> it.inputMode(InputMode.Numeric)
+                    KeyboardType.NumberDecimal -> it.inputMode(InputMode.Numeric)
+                    KeyboardType.Email -> it.inputMode(InputMode.Email)
+                    KeyboardType.Password -> {}
+                }
+            }
+        )
+
+//        if (element.onImeAction != null) TODO
+//        Modifier.onKeyEvent {
+//            if (it.type == KeyEventType.KeyUp && (it.key == Key.Enter || it.key == Key.NumPadEnter)) {
+//                treeElement.runActionFromUserInteraction(element.onImeAction)
+//                true
+//            } else false
+//        }
+    }
+//        trailingIcon = { TODO
+//            element.endIcon?.getImageVector()?.let { iv ->
+//                val icon = @Composable { Icon(iv, null) }
+//
+//                if (element.onEndIconClicked != null)
+//                    IconButton(onClick = {
+//                        treeElement.runActionFromUserInteraction(element.onEndIconClicked)
+//                    }) {
+//                        icon()
+//                    }
+//                else
+//                    icon()
+//            }
+//        },
+
+}
+
+@Composable
+private fun getTextFieldStateForElement(treeElement: TreeElement) =
+    // keep everything the user entered, as long as the [ViewTree] is not changed
+    remember(treeElement.createdAtContentVersion) {
+        val currentValue = treeElement.currentValueAsString
+        mutableStateOf(
+            currentValue,
+        )
+    }
 
 @Composable
 private fun MosaikButton(
@@ -443,8 +541,7 @@ private fun MosaikButton(
                 style {
                     minWidth(128.px)
                     if (sizeToParent) {
-                        width(100.percent)
-                        boxSizing("border-box")
+                        fillMaxWidth()
                     }
                     whiteSpace("pre-line")
                 }

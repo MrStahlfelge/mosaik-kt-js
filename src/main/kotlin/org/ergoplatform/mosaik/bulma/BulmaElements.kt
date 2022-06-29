@@ -2,10 +2,15 @@ package org.ergoplatform.mosaik.bulma
 
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.web.attributes.AttrsScope
+import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.builders.InputAttrsScope
 import org.jetbrains.compose.web.attributes.disabled
+import org.jetbrains.compose.web.attributes.readOnly
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLButtonElement
+import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLElement
+import org.w3c.dom.HTMLLabelElement
 
 @Composable
 fun BulmaModal(content: @Composable () -> Unit) {
@@ -51,6 +56,92 @@ fun BulmaButton(
         Text(text)
     }
 }
+
+@Composable
+fun BulmaField(
+    label: String?,
+    helpText: String? = null,
+    helpColor: BulmaColor = BulmaColor.PRIMARY,
+    classes: List<String> = emptyList(),
+    outerAttrs: AttrBuilderContext<HTMLDivElement>? = null,
+    labelAttrs: AttrBuilderContext<HTMLLabelElement>? = null,
+    content: @Composable () -> Unit
+) {
+    Div(attrs = {
+        classes("field", *classes.toTypedArray())
+        outerAttrs?.invoke(this)
+    }
+    ) {
+        label?.let {
+            Label(attrs = {
+                classes("label")
+                labelAttrs?.invoke(this)
+            }) {
+                Text(label)
+            }
+        }
+
+        content()
+
+        helpText?.let {
+            P(attrs = {
+                classes("help", helpColor.toCssClassName())
+            }) {
+
+            }
+        }
+    }
+}
+
+@Composable
+fun BulmaInput(
+    type: BulmaInputType,
+    initialValue: String,
+    onValueChanged: ((String) -> Unit),
+    outlineColor: BulmaColor? = null,
+    enabled: Boolean = true,
+    readOnly: Boolean = false,
+    attribs: ((InputAttrsScope<String>) -> Unit)? = null,
+) {
+    Div(attrs = {
+        classes("control")
+        // TODO Icons
+    }) {
+        Input(type.toInputType(), attrs = {
+            val classes = listOf("input").toMutableList()
+
+            outlineColor?.let {
+                classes.add(outlineColor.toCssClassName())
+            }
+
+            classes(*classes.toTypedArray())
+
+            if (!enabled) {
+                disabled()
+            }
+            if (readOnly) {
+                readOnly()
+            }
+
+            value(initialValue)
+            onInput { event -> onValueChanged(event.value) }
+
+            attribs?.invoke(this)
+        })
+    }
+}
+
+enum class BulmaInputType {
+    Text, Password, Email, Tel
+}
+
+private fun BulmaInputType.toInputType(): InputType<String> =
+    when (this) {
+        BulmaInputType.Text -> InputType.Text
+        BulmaInputType.Password -> InputType.Password
+        BulmaInputType.Email -> InputType.Email
+        BulmaInputType.Tel -> InputType.Tel
+    }
 
 @Composable
 fun BulmaProgressbar(size: BulmaSize, color: BulmaColor) {
