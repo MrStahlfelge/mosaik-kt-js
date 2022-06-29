@@ -18,22 +18,431 @@
     },
     {
       "type": "ChangeSiteAction",
-      "id": "action_2",
+      "id": "907b63be-d127-415b-8d3f-7e9b0400cbd2",
       "newContent": {
         "actions": [
           {
-            "type": "ErgoPayAction",
-            "id": "action_0",
-            "url": "url"
+            "type": "BrowserAction",
+            "id": "4daa7dc6-b05e-43a9-9e18-8c5b65219bce",
+            "url": "https://github.com/MrStahlfelge/mosaik/blob/develop/backend-demo-kotlin/src/main/kotlin/org/ergoplatform/mosaik/BackendDemoKotlin/ViewElementsDemoLayoutView.kt"
           },
           {
-            "type": "DialogAction",
-            "id": "action_1",
-            "message": "message"
+            "type": "ChangeSiteAction",
+            "id": "1140f723-0ac0-4dc4-abf1-f3ae416601ea",
+            "newContent": {
+              "view": {
+                "type": "Card",
+                "children": [
+                  {
+                    "type": "Button",
+                    "onClick": "layoutviewrequest",
+                    "text": "Single button, centered\nClick to go back"
+                  }
+                ]
+              }
+            }
           }
         ],
         "view": {
-          "type": "Box"
+          "type": "Column",
+          "children": [
+            {
+              "type": "Box",
+              "children": [
+                {
+                  "type": "Label",
+                  "style": "HEADLINE1",
+                  "text": "Layout elements"
+                },
+                {
+                  "type": "Button",
+                  "onClick": "RELOAD_APP",
+                  "text": "Back",
+                  "hAlign": "START"
+                }
+              ],
+              "align": "JUSTIFY"
+            },
+            {
+              "type": "Label",
+              "onClick": "4daa7dc6-b05e-43a9-9e18-8c5b65219bce",
+              "style": "BODY1LINK",
+              "text": "View source on GitHub",
+              "textColor": "PRIMARY"
+            },
+            {
+              "type": "Label",
+              "style": "BODY1",
+              "text": "Layout elements can have a padding and serve as a container for other elements, or can be nested."
+            },
+            {
+              "type": "Card",
+              "children": [
+                {
+                  "type": "Column",
+                  "children": [
+                    {
+                      "type": "Label",
+                      "style": "HEADLINE2",
+                      "text": "Box"
+                    },
+                    {
+                      "type": "Label",
+                      "style": "BODY1",
+                      "text": "The box is typically used to stack multiple elements on top of eachother, or to define a padding around a single element. For example, the small space between the two headlines of this page is an empty box with padding.\nThe following box shows two elements stacked with different alignment."
+                    },
+                    {
+                      "type": "Box",
+                      "children": [
+                        {
+                          "type": "Box",
+                          "children": [
+                            {
+                              "type": "Image",
+                              "size": "LARGE",
+                              "url": "https://picsum.photos/400"
+                            }
+                          ],
+                          "padding": "DEFAULT"
+                        },
+                        {
+                          "type": "Icon",
+                          "size": "MEDIUM",
+                          "icon": "INFO",
+                          "tintColor": "PRIMARY",
+                          "hAlign": "END",
+                          "vAlign": "BOTTOM"
+                        }
+                      ]
+                    }
+                  ],
+                  "padding": "DEFAULT"
+                }
+              ],
+              "padding": "DEFAULT"
+            },
+            {
+              "type": "Card",
+              "children": [
+                {
+                  "type": "Column",
+                  "children": [
+                    {
+                      "type": "Label",
+                      "style": "HEADLINE2",
+                      "text": "Card"
+                    },
+                    {
+                      "type": "Label",
+                      "style": "BODY1",
+                      "text": "The card can organize your views by grouping elements graphically. You'll see cards in this demo used to group information for each element demonstrated."
+                    },
+                    {
+                      "type": "Box",
+                      "padding": "HALF_DEFAULT"
+                    },
+                    {
+                      "type": "Card",
+                      "children": [
+                        {
+                          "type": "Image",
+                          "size": "LARGE",
+                          "url": "https://picsum.photos/400"
+                        }
+                      ]
+                    }
+                  ],
+                  "padding": "DEFAULT"
+                }
+              ],
+              "padding": "DEFAULT"
+            },
+            {
+              "type": "Card",
+              "children": [
+                {
+                  "type": "Column",
+                  "children": [
+                    {
+                      "type": "Label",
+                      "style": "HEADLINE2",
+                      "text": "Row"
+                    },
+                    {
+                      "type": "Label",
+                      "style": "BODY1",
+                      "text": "Row aligns multiple elements in a row. Elements can have different vertical alignments and weights. Elements with same weight take the same horizontal space, demonstrated by the two information icons below."
+                    },
+                    {
+                      "type": "Box",
+                      "padding": "HALF_DEFAULT"
+                    },
+                    {
+                      "type": "Row",
+                      "children": [
+                        {
+                          "type": "Card",
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "size": "SMALL",
+                              "icon": "WARN"
+                            }
+                          ],
+                          "align": "BOTTOM"
+                        },
+                        {
+                          "type": "Card",
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "size": "SMALL",
+                              "icon": "INFO"
+                            }
+                          ],
+                          "weight": 1,
+                          "align": "TOP"
+                        },
+                        {
+                          "type": "Card",
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "size": "LARGE",
+                              "icon": "INFO"
+                            }
+                          ],
+                          "weight": 1
+                        }
+                      ],
+                      "packed": true
+                    },
+                    {
+                      "type": "Box",
+                      "padding": "DEFAULT"
+                    },
+                    {
+                      "type": "Label",
+                      "style": "BODY1",
+                      "text": "Use rows with weights to layout tables:"
+                    },
+                    {
+                      "type": "Box",
+                      "padding": "HALF_DEFAULT"
+                    },
+                    {
+                      "type": "Row",
+                      "children": [
+                        {
+                          "type": "Label",
+                          "style": "BODY1",
+                          "text": "Column 1",
+                          "textAlignment": "END",
+                          "weight": 1
+                        },
+                        {
+                          "type": "Box",
+                          "padding": "HALF_DEFAULT"
+                        },
+                        {
+                          "type": "Label",
+                          "style": "BODY1BOLD",
+                          "text": "Column 2",
+                          "weight": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Row",
+                      "children": [
+                        {
+                          "type": "Label",
+                          "style": "BODY1",
+                          "text": "A1",
+                          "textAlignment": "END",
+                          "weight": 1
+                        },
+                        {
+                          "type": "Box",
+                          "padding": "HALF_DEFAULT"
+                        },
+                        {
+                          "type": "Label",
+                          "style": "BODY1BOLD",
+                          "text": "A2",
+                          "weight": 1
+                        }
+                      ]
+                    }
+                  ],
+                  "padding": "DEFAULT"
+                }
+              ],
+              "padding": "DEFAULT"
+            },
+            {
+              "type": "Card",
+              "children": [
+                {
+                  "type": "Column",
+                  "children": [
+                    {
+                      "type": "Label",
+                      "style": "HEADLINE2",
+                      "text": "Column"
+                    },
+                    {
+                      "type": "Label",
+                      "style": "BODY1",
+                      "text": "Column aligns multiple elements in a column. Same properties as Row. The following examples show the use of weight and the use of alignments"
+                    },
+                    {
+                      "type": "Box",
+                      "padding": "HALF_DEFAULT"
+                    },
+                    {
+                      "type": "Column",
+                      "children": [
+                        {
+                          "type": "Card",
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "size": "SMALL",
+                              "icon": "WARN"
+                            }
+                          ],
+                          "align": "START"
+                        },
+                        {
+                          "type": "Card",
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "size": "SMALL",
+                              "icon": "INFO"
+                            }
+                          ],
+                          "weight": 1,
+                          "align": "END"
+                        },
+                        {
+                          "type": "Card",
+                          "children": [
+                            {
+                              "type": "Icon",
+                              "size": "LARGE",
+                              "icon": "INFO"
+                            }
+                          ],
+                          "weight": 1
+                        }
+                      ]
+                    },
+                    {
+                      "type": "Box",
+                      "padding": "HALF_DEFAULT"
+                    },
+                    {
+                      "type": "Column",
+                      "children": [
+                        {
+                          "type": "Button",
+                          "text": "Alignment START",
+                          "align": "START"
+                        },
+                        {
+                          "type": "Button",
+                          "text": "Alignment CENTER"
+                        },
+                        {
+                          "type": "Button",
+                          "text": "Alignment END",
+                          "align": "END"
+                        },
+                        {
+                          "type": "Button",
+                          "text": "Alignment JUSTIFY",
+                          "align": "JUSTIFY"
+                        }
+                      ]
+                    }
+                  ],
+                  "padding": "DEFAULT"
+                }
+              ],
+              "padding": "DEFAULT"
+            },
+            {
+              "type": "Card",
+              "children": [
+                {
+                  "type": "Column",
+                  "children": [
+                    {
+                      "type": "Label",
+                      "style": "HEADLINE2",
+                      "text": "Tree root"
+                    },
+                    {
+                      "type": "Label",
+                      "style": "BODY1",
+                      "text": "Layout elements can be used as the root of the view tree. There is a slightly different rendering behaviour based on the type of the tree root: If it is a Column, this root Column is vertically packed, aligned at the top and scrollable. This is demonstrated by the whole screen you see here. Other elements (box, card, etc.) will be sized to the full screen size and are not scrollable."
+                    },
+                    {
+                      "type": "Button",
+                      "onClick": "1140f723-0ac0-4dc4-abf1-f3ae416601ea",
+                      "text": "Show a Card as tree root"
+                    }
+                  ],
+                  "padding": "DEFAULT"
+                }
+              ],
+              "padding": "DEFAULT"
+            },
+            {
+              "type": "Card",
+              "children": [
+                {
+                  "type": "Column",
+                  "children": [
+                    {
+                      "type": "Column",
+                      "children": [
+                        {
+                          "type": "Label",
+                          "style": "HEADLINE2",
+                          "text": "Horizontal rule"
+                        },
+                        {
+                          "type": "Label",
+                          "style": "BODY1",
+                          "text": "Use the horizontal rule as a separator when needed."
+                        }
+                      ],
+                      "padding": "DEFAULT"
+                    },
+                    {
+                      "type": "HorizontalRule",
+                      "vPadding": "TWICE"
+                    },
+                    {
+                      "type": "Column",
+                      "children": [
+                        {
+                          "type": "Label",
+                          "style": "BODY1",
+                          "text": "This is another section."
+                        }
+                      ],
+                      "padding": "DEFAULT"
+                    }
+                  ]
+                }
+              ],
+              "padding": "DEFAULT"
+            }
+          ]
         }
       }
     },

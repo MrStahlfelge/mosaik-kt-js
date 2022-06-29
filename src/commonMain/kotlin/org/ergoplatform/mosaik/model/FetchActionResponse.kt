@@ -7,7 +7,6 @@ import org.ergoplatform.mosaik.model.actions.Action
  * Response to subsequent backend requests triggered by a
  * [org.ergoplatform.mosaik.model.actions.BackendRequestAction]
  */
-@Serializable
 class FetchActionResponse {
     var appVersion = 0
     lateinit var action: Action

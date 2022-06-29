@@ -157,7 +157,7 @@ object JsBackendConnector : MosaikBackendConnector {
             body = MosaikSerializers.valuesMapToJson(values)
         }
 
-        return MosaikSerializers.fetchActionResponseFromJson(response.readText())
+        return MosaikSerializers.parseFetchActionResponseFromJson(response.readText())
     }
 
     private fun makeAbsoluteUrl(baseUrl: String?, url: String): String {

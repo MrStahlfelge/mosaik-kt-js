@@ -63,40 +63,73 @@ object MosaikSerializers {
     }
 
     fun parseMosaikAppFromJson(json: String): MosaikApp {
-        val jsonObject = jsonSerializer.parseToJsonElement(json).jsonObject
-
+        val jsonObject = preprocessViewContent(jsonSerializer.parseToJsonElement(json).jsonObject)
         val viewObject = jsonObject["view"]!!
-        val view: ViewElement =
-            jsonSerializer.decodeFromJsonElement(preprocessViewElements(viewObject.jsonObject))
+        val view: ViewElement = jsonSerializer.decodeFromJsonElement(viewObject.jsonObject)
 
         return MosaikApp(view).apply {
             manifest = jsonSerializer.decodeFromJsonElement(jsonObject["manifest"]!!)
             jsonObject["actions"]?.let { actions = jsonSerializer.decodeFromJsonElement(it) }
-            // TODO actions with view elements need to get preprocessed
         }
     }
 
-    fun fetchActionResponseFromJson(json: String): FetchActionResponse {
+    private fun preprocessViewContent(jsonObject: JsonObject): JsonObject =
+        JsonObject(jsonObject.toMutableMap().apply {
+            val viewRootKey = "view"
+            val actionsArrayKey = "actions"
+
+            val viewObject = jsonObject[viewRootKey]!!
+            put(viewRootKey, preprocessViewElements(viewObject.jsonObject))
+
+            jsonObject[actionsArrayKey]?.let {
+                put(actionsArrayKey, JsonArray(it.jsonArray.map {
+                    preprocessActions(it.jsonObject)
+                }))
+            }
+        })
+
+    fun parseFetchActionResponseFromJson(json: String): FetchActionResponse {
         val jsonObject = jsonSerializer.parseToJsonElement(json).jsonObject
-        // TODO actions with view elements need to get preprocessed
-        return jsonSerializer.decodeFromJsonElement(jsonObject)
+
+        val fetchActionResponse = FetchActionResponse()
+        fetchActionResponse.appVersion = jsonObject["appVersion"]!!.jsonPrimitive.int
+        fetchActionResponse.action =
+            jsonSerializer.decodeFromJsonElement(preprocessActions(jsonObject["action"]!!.jsonObject))
+
+        return fetchActionResponse
     }
+
+    private fun preprocessActions(jsonObject: JsonObject): JsonObject {
+        // if the action contains view elements, we have to preprocess
+        val viewContentKey = "newContent"
+        return if (jsonObject.containsKey(viewContentKey)) {
+            JsonObject(jsonObject.toMutableMap().apply {
+                put(
+                    viewContentKey,
+                    preprocessViewContent(jsonObject[viewContentKey]!!.jsonObject)
+                )
+
+            })
+        } else jsonObject
+    }
+
+    val childrenKey = "children"
+    val typeKey = "type"
 
     private fun preprocessViewElements(jsonObject: JsonObject): JsonObject {
         // check for "children", "weights" and "alignment"
-        val childrenKey = "children"
         val weightKey = "weight"
         val alignKey = "align"
         val hAlignKey = "hAlign"
         val vAlignKey = "vAlign"
 
-        return if (jsonObject.containsKey(childrenKey) && jsonObject.containsKey("type")) {
+        return if (isViewGroup(jsonObject)) {
             val weightArray = mutableListOf<JsonElement>()
             val objectIsBox = listOf(
                 "Box",
                 "LazyLoadBox",
                 "Card"
-            ).contains(jsonObject["type"]!!.jsonPrimitive.content)
+            ).contains(jsonObject[typeKey]!!.jsonPrimitive.content)
             val alignment1 = mutableListOf<JsonElement>()
             val alignment2 = mutableListOf<JsonElement>()
 
@@ -141,6 +174,9 @@ object MosaikSerializers {
             })
         } else jsonObject
     }
+
+    private fun isViewGroup(jsonObject: JsonObject) =
+        jsonObject.containsKey(childrenKey) && jsonObject.containsKey(typeKey)
 
     fun valuesMapToJson(values: Map<String, Any?>): String {
         val newMap: Map<String, JsonElement> = values.filterValues { it != null }
