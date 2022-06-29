@@ -5,6 +5,7 @@ import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.ergoplatform.mosaik.MosaikDialog
+import org.jetbrains.compose.web.css.whiteSpace
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
 
@@ -21,10 +22,14 @@ fun MosaikComposeDialog(dialog: MosaikComposeDialogHandler) {
     dialogState.value?.let { mosaikDialog ->
         BulmaModal {
             BulmaBox {
-                P { Text(mosaikDialog.message) }
-                    BulmaButton({ dialog.dismiss() }, "OK")
-                // TODO buttons, actions, make button better aligned
+                P(attrs = {
+                    style { whiteSpace("pre-line") }
+                }) {
+                    Text(mosaikDialog.message)
                 }
+                BulmaButton({ dialog.dismiss() }, "OK")
+                // TODO buttons, actions, make button better aligned
+            }
         }
     }
 }

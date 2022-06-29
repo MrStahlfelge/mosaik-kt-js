@@ -32,7 +32,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     }
 
     override fun pasteToClipboard(text: String) {
-        // TODO
+        window.navigator.clipboard.writeText(text)
     }
 
     override fun runErgoPayAction(action: ErgoPayAction) {
@@ -60,7 +60,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     }
 
     override fun openBrowser(url: String) {
-        window.document.open(url, "_blank")
+        window.open(url, "_blank")
     }
 
     override val fiatRate = 2.5

@@ -41,6 +41,7 @@ fun MosaikViewTree(viewTree: ViewTree) {
                     atts.style {
                         maxWidth?.let {
                             maxWidth(maxWidth)
+                            property("margin", "0 auto") // center horizontally
                         }
                         subStyle?.invoke(this)
                     }
@@ -63,7 +64,7 @@ fun MosaikViewTree(viewTree: ViewTree) {
                 }
             }) {
                 content {
-                    it.flex("none")
+                    it.flex("0 1 auto")
                 }
             }
         } else {
@@ -197,13 +198,18 @@ fun MosaikCard(
         DivWrapper(moreClasses.toMutableList().apply { add("is-flex") }, attribs) {
             MosaikBox(treeElement, listOf("box"), attribs = {
                 it.style {
-                    flex("none")
+                    flex("0 1 auto")
+                    padding(0.px) // "box" has padding, overwrite it
                 }
             })
         }
     } else {
         DivWrapper(moreClasses, attribs) {
-            MosaikBox(treeElement, listOf("box"), null)
+            MosaikBox(treeElement, listOf("box"), attribs = {
+                it.style {
+                    padding(0.px) // "box" has padding, overwrite it
+                }
+            })
         }
     }
 }
@@ -390,7 +396,11 @@ fun MosaikColumn(
                             if (weight > 0) {
                                 flexGrow(weight)
                             } else {
-                                flex("none")
+                                flex("0 1 auto")
+                            }
+                            if (hAlignment == HAlignment.JUSTIFY) {
+                                width(100.percent)
+                                boxSizing("border-box")
                             }
                         }
                     },
@@ -436,6 +446,7 @@ private fun MosaikButton(
                         width(100.percent)
                         boxSizing("border-box")
                     }
+                    whiteSpace("pre-line")
                 }
             }
         )
@@ -496,6 +507,9 @@ private fun MosaikLabel(
                 },
                 *classes.toTypedArray()
             )
+            style {
+                whiteSpace("pre-line")
+            }
             attribs?.invoke(this)
         }) {
             Text(
