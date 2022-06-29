@@ -6,8 +6,8 @@ import org.ergoplatform.mosaik.model.ui.ViewElement
 
 @Serializable
 @SerialName("WalletChooseButton")
-class WalletChooseButton : ViewElement(), OptionalInputElement<List<String>> {
-    override var value: List<String>? = null
+class WalletChooseButton : ViewElement(), OptionalInputElement {
+    var value: List<String>? = null
 
     @SerialName("onValueChanged")
     override var onValueChangedAction: String? = null

@@ -1,3 +1,8 @@
 package org.ergoplatform.mosaik.model.ui.input
 
-abstract class LongTextField : TextField<Long>()
+import kotlinx.serialization.Serializable
+
+@Serializable
+abstract class LongTextField : TextField() {
+    var value: Long? = null
+}

@@ -3,7 +3,7 @@ package org.ergoplatform.mosaik
 import org.ergoplatform.mosaik.model.ui.input.InputElement
 
 class ErgoAddressChooserInputHandler(
-    element: InputElement<*>,
+    element: InputElement,
     private val mosaikRuntime: MosaikRuntime
 ) : OtherInputHandler(element) {
 

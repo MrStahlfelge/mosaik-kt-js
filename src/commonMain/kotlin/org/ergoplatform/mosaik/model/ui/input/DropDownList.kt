@@ -6,8 +6,8 @@ import org.ergoplatform.mosaik.model.ui.ViewElement
 
 @Serializable
 @SerialName("DropDownList")
-class DropDownList : ViewElement(), OptionalInputElement<String> {
-    override var value: String? = null
+class DropDownList : ViewElement(), OptionalInputElement {
+    var value: String? = null
     @SerialName("onValueChanged")
     override var onValueChangedAction: String? = null
     override var enabled = true

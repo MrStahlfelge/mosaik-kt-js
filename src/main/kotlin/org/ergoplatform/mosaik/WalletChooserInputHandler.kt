@@ -3,7 +3,7 @@ package org.ergoplatform.mosaik
 import org.ergoplatform.mosaik.model.ui.input.OptionalInputElement
 
 class WalletChooserInputHandler(
-    private val element: OptionalInputElement<*>,
+    private val element: OptionalInputElement,
     private val mosaikRuntime: MosaikRuntime
 ) : OtherInputHandler(element) {
 

@@ -143,7 +143,7 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
                             }
                     valuesChanged = true
                 }
-            } else if (treeElement.element is InputElement<*>) {
+            } else if (treeElement.element is InputElement) {
                 MosaikLogger.logWarning("Input element without id found: ${treeElement.element.javaClass.simpleName}")
             }
             when (treeElement.element) {
@@ -274,8 +274,8 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
                 valueMap[id] = CheckedValue(newValue, isValid)
                 notifyValuesChanged()
                 MosaikLogger.logInfo("Value $id changed to $newValue")
-                getAction((treeElement.element as? InputElement<*>)?.onValueChangedAction)?.let { action ->
-                    if (treeElement.element is TextField<*> && mosaikRuntime.textFieldOnValueChangedActionDelay > 0) {
+                getAction((treeElement.element as? InputElement)?.onValueChangedAction)?.let { action ->
+                    if (treeElement.element is TextField && mosaikRuntime.textFieldOnValueChangedActionDelay > 0) {
                         // delay value change so that not every key stroke fires the event
                         registerJobFor(treeElement) { coroutine ->
                             delay(mosaikRuntime.textFieldOnValueChangedActionDelay)

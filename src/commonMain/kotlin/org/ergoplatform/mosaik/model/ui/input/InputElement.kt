@@ -1,7 +1,7 @@
 package org.ergoplatform.mosaik.model.ui.input
 
-interface InputElement<T : Any> {
-    var value: T?
+interface InputElement {
+    // var value: Any?
 
     var onValueChangedAction: String?
     var enabled: Boolean

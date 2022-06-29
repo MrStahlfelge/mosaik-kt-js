@@ -1,5 +1,5 @@
 package org.ergoplatform.mosaik.model.ui.input
 
-interface OptionalInputElement<T : Any> : InputElement<T> {
+interface OptionalInputElement : InputElement {
     var mandatory: Boolean
 }

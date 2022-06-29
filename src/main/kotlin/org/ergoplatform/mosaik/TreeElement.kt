@@ -27,7 +27,7 @@ class TreeElement(
 
     val idOrUuid by lazy { element.id ?: Random.nextLong(999999999).toString() }
 
-    val hasValue get() = hasId && element is InputElement<*>
+    val hasValue get() = hasId && element is InputElement
 
     val currentValue
         get() = if (hasValue) {
@@ -40,7 +40,7 @@ class TreeElement(
     /**
      * returns the initial value as set by the viewtree
      */
-    val initialValue: Any? get() = if (hasValue) (element as InputElement<*>).value else null
+    val initialValue: Any? get() = null // TODO if (hasValue) (element as InputElement).value else null
 
     /**
      * see [ViewTree.contentVersion]
@@ -125,7 +125,7 @@ class TreeElement(
 
     fun getInvalidValueError(): String {
         return when (element) {
-            is TextField<*> -> {
+            is TextField -> {
                 element.errorMessage ?: element.placeholder ?: element.id!!
             }
             else -> {

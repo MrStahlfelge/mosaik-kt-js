@@ -26,7 +26,7 @@ abstract class InputElementValueHandler<T> {
                 // TODO is ErgoAddressChooseButton -> ErgoAddressChooserInputHandler(element, mosaikRuntime)
                 // TODO is WalletChooseButton -> WalletChooserInputHandler(element, mosaikRuntime)
                 // TODO is DropDownList -> DropDownListInputHandler(element, mosaikRuntime)
-                is InputElement<*> -> OtherInputHandler(element)
+                is InputElement -> OtherInputHandler(element)
                 else -> null
             }
     }
@@ -50,10 +50,10 @@ class StringInputHandler(private val element: StringTextField) :
         }
 }
 
-open class OtherInputHandler(private val element: InputElement<*>) :
+open class OtherInputHandler(private val element: InputElement) :
     InputElementValueHandler<Any>() {
     override fun isValueValid(value: Any?): Boolean {
-        return if (element is OptionalInputElement<*>) !element.mandatory || value != null else true
+        return if (element is OptionalInputElement) !element.mandatory || value != null else true
     }
 
     override fun valueFromStringInput(value: String?): Any? {

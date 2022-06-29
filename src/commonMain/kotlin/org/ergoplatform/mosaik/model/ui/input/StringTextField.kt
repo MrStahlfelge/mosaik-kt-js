@@ -1,3 +1,8 @@
 package org.ergoplatform.mosaik.model.ui.input
 
-abstract class StringTextField : TextField<String>()
+import kotlinx.serialization.Serializable
+
+@Serializable
+abstract class StringTextField : TextField() {
+    var value: String? = null
+}

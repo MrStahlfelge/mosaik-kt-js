@@ -31,6 +31,7 @@
             "id": "1140f723-0ac0-4dc4-abf1-f3ae416601ea",
             "newContent": {
               "view": {
+                "id": "testId",
                 "type": "Card",
                 "children": [
                   {
@@ -39,6 +40,31 @@
                     "text": "Single button, centered\nClick to go back"
                   }
                 ]
+              }
+            }
+          },
+          {
+            "type": "ChangeSiteAction",
+            "id": "bb8890a1-98ed-4ea5-9516-01eee5fdbf2c",
+            "newContent": {
+              "view": {
+                "type": "Column",
+                "children": [
+                  {
+                    "type": "Icon",
+                    "size": "LARGE",
+                    "icon": "WALLET",
+                    "tintColor": "PRIMARY"
+                  },
+                  {
+                    "type": "Button",
+                    "enabled": false,
+                    "text": "Click to replace the icon above"
+                  }
+                ],
+                "id": "iconId",
+                "padding": "DEFAULT",
+                "onClick": "test"
               }
             }
           }
@@ -531,6 +557,7 @@
   ],
   "view": {
     "type": "Column",
+    "id": "testid",
     "children": [
       {
         "type": "Row",
