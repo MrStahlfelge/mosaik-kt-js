@@ -5,6 +5,9 @@ import androidx.compose.runtime.collectAsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.ergoplatform.mosaik.MosaikDialog
+import org.ergoplatform.mosaik.model.ui.text.Button
+import org.jetbrains.compose.web.css.em
+import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.whiteSpace
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
@@ -21,14 +24,48 @@ fun MosaikComposeDialog(dialog: MosaikComposeDialogHandler) {
 
     dialogState.value?.let { mosaikDialog ->
         BulmaModal {
-            BulmaBox {
+            BulmaBox(attrs = {
+                style { padding(0.5.em) }
+            }) {
                 P(attrs = {
-                    style { whiteSpace("pre-line") }
+                    style {
+                        whiteSpace("pre-line")
+                        padding(1.em)
+                    }
                 }) {
                     Text(mosaikDialog.message)
                 }
-                BulmaButton({ dialog.dismiss() }, "OK")
-                // TODO buttons, actions, make button better aligned
+
+                BulmaContainer(
+                    listOf(
+                        "is-flex",
+                        "is-flex-direction-row",
+                        "is-flex-wrap-nowrap",
+                        "is-justify-content-end"
+                    ), attribs = {
+                        it.style { }
+                    }) {
+                    mosaikDialog.negativeButtonText?.let { negativeButtonText ->
+                        BulmaButton(
+                            {
+                                dialog.dismiss()
+                                mosaikDialog.negativeButtonClicked?.invoke()
+                            },
+                            negativeButtonText,
+                            Button.ButtonStyle.SECONDARY.toBulmaColor(),
+                            classes = listOf("m-2")
+                        )
+                    }
+
+                    BulmaButton(
+                        {
+                            dialog.dismiss()
+                            mosaikDialog.positiveButtonClicked?.invoke()
+                        }, mosaikDialog.positiveButtonText,
+                        classes = listOf("m-2")
+                    )
+
+                }
             }
         }
     }

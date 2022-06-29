@@ -29,9 +29,10 @@ fun BulmaModal(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun BulmaBox(content: @Composable () -> Unit) {
+fun BulmaBox(attrs: AttrBuilderContext<HTMLDivElement>? = null, content: @Composable () -> Unit) {
     Div(attrs = {
         classes("box")
+        attrs?.invoke(this)
     }) {
         content()
     }
@@ -43,11 +44,12 @@ fun BulmaButton(
     text: String,
     color: BulmaColor = BulmaColor.PRIMARY,
     enabled: Boolean = true,
+    classes: List<String> = emptyList(),
     attrs: AttrBuilderContext<HTMLButtonElement>? = null,
 ) {
     Button(attrs = {
         onClick { onClick() }
-        classes("button", color.toCssClassName())
+        classes("button", color.toCssClassName(), *classes.toTypedArray())
         if (!enabled) {
             disabled()
         }

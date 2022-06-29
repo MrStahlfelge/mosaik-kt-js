@@ -615,11 +615,7 @@ private fun MosaikButton(
         BulmaButton(
             treeElement::clicked,
             element.text ?: "",
-            color = when (element.style) {
-                Button.ButtonStyle.PRIMARY -> BulmaColor.PRIMARY
-                Button.ButtonStyle.SECONDARY -> BulmaColor.DARK
-                Button.ButtonStyle.TEXT -> BulmaColor.TEXT
-            },
+            color = element.style.toBulmaColor(),
             enabled = element.enabled,
             attrs = {
                 style {
@@ -644,6 +640,13 @@ private fun MosaikButton(
 //            )
 
 }
+
+internal fun Button.ButtonStyle.toBulmaColor() =
+    when (this) {
+        Button.ButtonStyle.PRIMARY -> BulmaColor.PRIMARY
+        Button.ButtonStyle.SECONDARY -> BulmaColor.DARK
+        Button.ButtonStyle.TEXT -> BulmaColor.TEXT
+    }
 
 @Composable
 private fun MosaikLabel(
