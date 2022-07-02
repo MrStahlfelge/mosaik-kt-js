@@ -1,5 +1,7 @@
 package org.ergoplatform.mosaik
 
+import com.ionspin.kotlin.bignum.decimal.BigDecimal
+import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import org.ergoplatform.mosaik.model.ui.ViewElement
 import org.ergoplatform.mosaik.model.ui.input.*
 
@@ -18,11 +20,11 @@ abstract class InputElementValueHandler<T> {
             mosaikRuntime: MosaikRuntime
         ): InputElementValueHandler<*>? =
             when (element) {
-                // TODO is ErgAddressInputField -> ErgAddressTextInputHandler(element, mosaikRuntime)
+                is ErgAddressInputField -> ErgAddressTextInputHandler(element, mosaikRuntime)
                 is StringTextField -> StringInputHandler(element)
-                // TODO is ErgAmountInputField -> FiatOrErgTextInputHandler(element, mosaikRuntime)
-                // TODO is DecimalInputField -> DecimalInputHandler(element, element.scale)
-                // TODO is LongTextField -> IntegerInputHandler(element)
+                is ErgAmountInputField -> FiatOrErgTextInputHandler(element, mosaikRuntime)
+                is DecimalInputField -> DecimalInputHandler(element, element.scale)
+                is LongTextField -> IntegerInputHandler(element)
                 // TODO is ErgoAddressChooseButton -> ErgoAddressChooserInputHandler(element, mosaikRuntime)
                 // TODO is WalletChooseButton -> WalletChooserInputHandler(element, mosaikRuntime)
                 // TODO is DropDownList -> DropDownListInputHandler(element, mosaikRuntime)
@@ -48,6 +50,117 @@ class StringInputHandler(private val element: StringTextField) :
             is PasswordInputField -> KeyboardType.Password
             else -> KeyboardType.Text
         }
+}
+
+class ErgAddressTextInputHandler(
+    private val element: ErgAddressInputField,
+    private val runtime: MosaikRuntime
+) : InputElementValueHandler<String>() {
+    override fun isValueValid(value: Any?): Boolean {
+        val addressString = (value as? String)
+
+        return if (addressString == null) element.minValue <= 0
+        else runtime.isErgoAddressValid(addressString)
+    }
+
+    override fun valueFromStringInput(value: String?): String? {
+        return value?.let { if (runtime.isErgoAddressValid(value)) value else null }
+    }
+
+    override val keyboardType: KeyboardType get() = KeyboardType.Text
+}
+
+class IntegerInputHandler(private val element: LongTextField) : InputElementValueHandler<Long>() {
+    override fun isValueValid(value: Any?): Boolean {
+        return value is Long && value >= element.minValue && value <= element.maxValue
+    }
+
+    override fun valueFromStringInput(value: String?): Long? {
+        return value?.toLong()
+    }
+
+    override val keyboardType: KeyboardType
+        get() = KeyboardType.Number
+}
+
+open class DecimalInputHandler(private val element: LongTextField, private val scale: Int) :
+    InputElementValueHandler<Long>() {
+
+    override fun isValueValid(value: Any?): Boolean {
+        return value is Long && value >= element.minValue && value <= element.maxValue
+    }
+
+    override fun valueFromStringInput(value: String?): Long? {
+        return if (value.isNullOrBlank()) null
+        else {
+            // FIXME see BigNumberTest - some numbers fail without DecimalMode set
+            // but with DecimalMode set, too many decimals are not detected any more
+            // https://github.com/ionspin/kotlin-multiplatform-bignum/issues/237
+            value.toBigDecimal().moveDecimalPoint(scale).longValue(true)
+        }
+    }
+
+    override val keyboardType: KeyboardType
+        get() = KeyboardType.NumberDecimal
+
+    override fun getAsString(currentValue: Any?): String {
+        return (currentValue as Long?)?.toBigDecimal()?.moveDecimalPoint(-scale)?.toPlainString() ?: ""
+    }
+}
+
+class FiatOrErgTextInputHandler(
+    private val element: LongTextField,
+    private val mosaikRuntime: MosaikRuntime,
+) : DecimalInputHandler(element, scaleErg) {
+
+    var inputIsFiat = mosaikRuntime.preferFiatInput && canChangeInputMode()
+        private set
+
+    fun switchInputAmountMode() {
+        inputIsFiat = if (canChangeInputMode()) {
+            mosaikRuntime.preferFiatInput = !inputIsFiat
+            !inputIsFiat
+        } else
+            false
+    }
+
+    fun canChangeInputMode() =
+        element is FiatOrErgAmountInputField && mosaikRuntime.fiatRate != null
+
+    override fun valueFromStringInput(value: String?): Long? {
+        return if (inputIsFiat) {
+            val fiatRate = mosaikRuntime.fiatRate
+            if (value == null || fiatRate == null)
+                null
+            else
+                try {
+                    BigDecimal.parseString(value).divide(
+                        fiatRate.toBigDecimal(),
+                    ).moveDecimalPoint(scaleErg).longValue(true)
+                } catch (t: Throwable) {
+                    null
+                }
+        } else
+            super.valueFromStringInput(value)
+    }
+
+    override fun getAsString(currentValue: Any?): String {
+        return if (inputIsFiat) currentValue?.let {
+            mosaikRuntime.convertErgToFiat(
+                currentValue as Long,
+                formatted = false
+            )
+        } ?: "" else super.getAsString(currentValue)
+    }
+
+    fun getSecondLabelString(nanoErg: Long): String? {
+        return if (inputIsFiat)
+            (nanoErg.toBigDecimal().moveDecimalPoint(-scaleErg)
+                .scale(scaleformatShortErg.toLong()).toPlainString()) +
+                    " $ergoCurrencyText"
+        else
+            mosaikRuntime.convertErgToFiat(nanoErg)
+    }
 }
 
 open class OtherInputHandler(private val element: InputElement) :

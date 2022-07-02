@@ -30,6 +30,7 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
+                implementation("com.ionspin.kotlin:bignum:0.3.4")
             }
         }
 

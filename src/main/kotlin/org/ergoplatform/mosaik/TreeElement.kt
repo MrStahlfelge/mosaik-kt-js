@@ -40,7 +40,15 @@ class TreeElement(
     /**
      * returns the initial value as set by the viewtree
      */
-    val initialValue: Any? get() = null // TODO if (hasValue) (element as InputElement).value else null
+    val initialValue: Any?
+        get() = if (hasValue) (when (element) {
+            is WalletChooseButton -> element.value
+            is DropDownList -> element.value
+            is ErgoAddressChooseButton -> element.value
+            is LongTextField -> element.value
+            is StringTextField -> element.value
+            else -> null
+        }) else null
 
     /**
      * see [ViewTree.contentVersion]

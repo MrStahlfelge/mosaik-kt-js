@@ -63,7 +63,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
         window.open(url, "_blank")
     }
 
-    override val fiatRate = 2.5
+    override val fiatRate = null
 
     override fun convertErgToFiat(
         nanoErg: Long,
@@ -75,8 +75,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     override var preferFiatInput: Boolean = true
 
     override fun isErgoAddressValid(ergoAddress: String): Boolean {
-        // this is just for the desktop demo...
-        return ergoAddress.startsWith('9') || ergoAddress.startsWith('3')
+        return true // no more validation here
     }
 
     override fun getErgoAddressLabel(ergoAddress: String): String? {
