@@ -13,12 +13,16 @@ import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLLabelElement
 
 @Composable
-fun BulmaModal(content: @Composable () -> Unit) {
+fun BulmaModal(
+    backgroundAttrs: ((AttrsScope<HTMLDivElement>) -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
     Div(attrs = {
         classes("modal", "is-active")
     }) {
         Div(attrs = {
             classes("modal-background")
+            backgroundAttrs?.invoke(this)
         })
         Div(attrs = {
             classes("modal-content", "p-4")

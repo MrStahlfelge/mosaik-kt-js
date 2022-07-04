@@ -77,7 +77,9 @@ fun MosaikViewTree(viewTree: ViewTree) {
         }
     }
     if (locked) {
-        BulmaModal {
+        BulmaModal(backgroundAttrs = {
+            it.style { backgroundColor(Color("#f5f5f588")) }
+        }) {
             BulmaProgressbar(BulmaSize.SMALL, BulmaColor.PRIMARY)
         }
     }
