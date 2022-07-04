@@ -4,6 +4,7 @@ import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import org.ergoplatform.mosaik.model.ui.ViewElement
 import org.ergoplatform.mosaik.model.ui.input.*
+import org.ergoplatform.toLongValueWithScale
 
 const val scaleErg = 9
 const val scaleformatShortErg = 4
@@ -93,10 +94,7 @@ open class DecimalInputHandler(private val element: LongTextField, private val s
     override fun valueFromStringInput(value: String?): Long? {
         return if (value.isNullOrBlank()) null
         else {
-            // FIXME see BigNumberTest - some numbers fail without DecimalMode set
-            // but with DecimalMode set, too many decimals are not detected any more
-            // https://github.com/ionspin/kotlin-multiplatform-bignum/issues/237
-            value.toBigDecimal().moveDecimalPoint(scale).longValue(true)
+            value.toBigDecimal().toLongValueWithScale(scale)
         }
     }
 
@@ -136,7 +134,7 @@ class FiatOrErgTextInputHandler(
                 try {
                     BigDecimal.parseString(value).divide(
                         fiatRate.toBigDecimal(),
-                    ).moveDecimalPoint(scaleErg).longValue(true)
+                    ).toLongValueWithScale(scaleErg)
                 } catch (t: Throwable) {
                     null
                 }

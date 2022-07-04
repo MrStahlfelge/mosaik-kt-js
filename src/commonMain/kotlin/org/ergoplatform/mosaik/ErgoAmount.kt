@@ -2,13 +2,10 @@ package org.ergoplatform.mosaik
 
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.decimal.toBigDecimal
+import org.ergoplatform.toLongValueWithScale
 
-const val nanoPowerOfTen = 9L
+const val nanoPowerOfTen = 9
 const val ergoCurrencyText = "ERG"
-
-// FIXME see BigNumberTest - some numbers fail without DecimalMode set
-// but with DecimalMode set, too many decimals are not detected any more
-// https://github.com/ionspin/kotlin-multiplatform-bignum/issues/237
 
 class ErgoAmount(val nanoErgs: Long) {
 
@@ -18,13 +15,12 @@ class ErgoAmount(val nanoErgs: Long) {
 
     constructor(bigDecimal: BigDecimal) :
             this(
-                bigDecimal.scale(nanoPowerOfTen)
-                    .moveDecimalPoint(nanoPowerOfTen).longValue(true)
+                bigDecimal.toLongValueWithScale(nanoPowerOfTen)
             )
 
     constructor(ergString: String) : this(
         if (ergString.isBlank()) 0 else ergString.toBigDecimal()
-            .moveDecimalPoint(nanoPowerOfTen).longValue(true)
+            .toLongValueWithScale(nanoPowerOfTen)
     )
 
     override fun toString(): String {
