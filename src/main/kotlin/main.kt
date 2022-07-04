@@ -1,5 +1,4 @@
 import androidx.compose.runtime.mutableStateOf
-import io.ktor.client.features.*
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
@@ -8,6 +7,9 @@ import kotlinx.coroutines.launch
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialog
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.bulma.MosaikViewTree
+import org.ergoplatform.mosaik.js.HashRouter
+import org.ergoplatform.mosaik.js.JsBackendConnector
+import org.ergoplatform.mosaik.js.JsMosaikRuntime
 import org.ergoplatform.mosaik.model.MosaikContext
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.jetbrains.compose.web.renderComposable
@@ -17,10 +19,19 @@ import kotlin.math.max
 fun main() {
     val dialogHandler = MosaikComposeDialogHandler()
     val runtime = JsMosaikRuntime(dialogHandler)
+    val hashRouter = HashRouter(runtime)
 
     MainScope().launch {
-        // TODO rooting, and utilisation of back button when a new app is loaded
         val config = JsBackendConnector.getMosaikConfig("mosaik.config")
+        hashRouter.setConfig(config)
+
+        val currentHash = mutableStateOf(window.location.hash)
+
+        window.onhashchange = {
+            currentHash.value = window.location.hash
+            hashRouter.hashChanged(currentHash.value)
+            Unit
+        }
 
         // RegEx pattern from detectmobilebrowsers.com (public domain)
         val pattern =
@@ -56,7 +67,7 @@ fun main() {
         )
 
         document.getElementById("loadingScreen")?.remove()
-        runtime.loadMosaikApp(config.starturl)
+        hashRouter.hashChanged(currentHash.value)
     }
 
 
@@ -65,6 +76,7 @@ fun main() {
     runtime.appLoaded = {
         manifestState.value = it
         document.title = it.appName
+        runtime.appUrl?.let { hashRouter.appLoaded(it) }
     }
 
     require("./custom.scss")

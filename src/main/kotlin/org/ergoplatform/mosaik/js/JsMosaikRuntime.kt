@@ -1,3 +1,5 @@
+package org.ergoplatform.mosaik.js
+
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -177,4 +179,7 @@ object JsBackendConnector : MosaikBackendConnector {
 }
 
 @Serializable
-data class MosaikConfiguration(var starturl: String)
+data class MosaikConfiguration(
+    var starturl: String,
+    var routes: Map<String, String>? = null
+)
