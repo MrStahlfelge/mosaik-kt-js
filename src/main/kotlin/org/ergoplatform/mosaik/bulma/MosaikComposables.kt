@@ -90,7 +90,7 @@ fun MosaikTreeElement(
     treeElement: TreeElement,
     classes: List<String> = emptyList(),
     attribs: ((AttrsScope<out HTMLElement>) -> Unit)? = null,
-    sizeToParent: Boolean,
+    sizeToParent: Boolean, // width: 100% already included in attribs, but some elements need further treatment
 ) {
     val element = treeElement.element
 
@@ -362,15 +362,16 @@ private fun MosaikBox(
                                 left(0.px)
                             else if (childHAlignment == HAlignment.END)
                                 right(0.px)
-                            else if (childHAlignment == HAlignment.JUSTIFY) {
-                                fillMaxWidth()
-                            }
 
                             when (element.getChildVAlignment(childElement.element)) {
                                 VAlignment.TOP -> top(0.px)
                                 VAlignment.CENTER -> {} // nothing to do
                                 VAlignment.BOTTOM -> bottom(0.px)
                             }
+                        }
+
+                        if (childHAlignment == HAlignment.JUSTIFY) {
+                            fillMaxWidth()
                         }
                     }
                 }
