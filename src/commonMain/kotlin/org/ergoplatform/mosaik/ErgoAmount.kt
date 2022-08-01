@@ -3,6 +3,7 @@ package org.ergoplatform.mosaik
 import com.ionspin.kotlin.bignum.decimal.BigDecimal
 import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import org.ergoplatform.toLongValueWithScale
+import org.ergoplatform.toPlainStringFixed
 
 const val nanoPowerOfTen = 9
 const val ergoCurrencyText = "ERG"
@@ -24,7 +25,7 @@ class ErgoAmount(val nanoErgs: Long) {
     )
 
     override fun toString(): String {
-        return toBigDecimal().toPlainString()
+        return toBigDecimal().toPlainStringFixed(nanoPowerOfTen)
     }
 
     /**
@@ -33,7 +34,7 @@ class ErgoAmount(val nanoErgs: Long) {
     fun toStringRoundToDecimals(numDecimals: Long, trimTrailingZeros: Boolean): String {
         val numAsString = toBigDecimal()
             .scale(numDecimals)
-            .toPlainString()
+            .toPlainStringFixed(numDecimals.toInt())
 
         return if (trimTrailingZeros)
             numAsString.trimEnd('0').trimEnd('.')

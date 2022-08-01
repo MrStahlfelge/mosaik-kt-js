@@ -5,6 +5,7 @@ import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 import org.ergoplatform.mosaik.model.ui.ViewElement
 import org.ergoplatform.mosaik.model.ui.input.*
 import org.ergoplatform.toLongValueWithScale
+import org.ergoplatform.toPlainStringFixed
 
 const val scaleErg = 9
 const val scaleformatShortErg = 4
@@ -102,7 +103,7 @@ open class DecimalInputHandler(private val element: LongTextField, private val s
         get() = KeyboardType.NumberDecimal
 
     override fun getAsString(currentValue: Any?): String {
-        return (currentValue as Long?)?.toBigDecimal()?.moveDecimalPoint(-scale)?.toPlainString() ?: ""
+        return (currentValue as Long?)?.toBigDecimal()?.moveDecimalPoint(-scale)?.toPlainStringFixed(scale) ?: ""
     }
 }
 
@@ -154,7 +155,7 @@ class FiatOrErgTextInputHandler(
     fun getSecondLabelString(nanoErg: Long): String? {
         return if (inputIsFiat)
             (nanoErg.toBigDecimal().moveDecimalPoint(-scaleErg)
-                .scale(scaleformatShortErg.toLong()).toPlainString()) +
+                .scale(scaleformatShortErg.toLong()).toPlainStringFixed(scaleformatShortErg)) +
                     " $ergoCurrencyText"
         else
             mosaikRuntime.convertErgToFiat(nanoErg)

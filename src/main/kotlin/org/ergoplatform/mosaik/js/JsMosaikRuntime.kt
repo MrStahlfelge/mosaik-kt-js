@@ -65,13 +65,13 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
         window.open(url, "_blank")
     }
 
-    override val fiatRate = null
+    override val fiatRate: Double? = null
 
     override fun convertErgToFiat(
         nanoErg: Long,
-        withCurrency: Boolean
+        formatted: Boolean
     ): String? {
-        TODO()
+        return null // TODO support fiat value
     }
 
     override var preferFiatInput: Boolean = true

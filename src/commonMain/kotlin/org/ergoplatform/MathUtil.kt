@@ -21,3 +21,19 @@ fun BigDecimal.toLongValueWithScale(scale: Int): Long {
         .longValue(true)
 
 }
+
+fun BigDecimal.toPlainStringFixed(scale: Int): String {
+    // work around https://github.com/ergoplatform/ergo-wallet-app/issues/132
+    var string = toPlainString()
+
+    val numOfDecimals = string.substringAfter('.', "").length
+    if (numOfDecimals < scale && scale > 0) {
+        if (!string.contains('.')) {
+            string += '.'
+        }
+
+        string += "0".repeat(scale - numOfDecimals)
+    }
+
+    return string
+}
