@@ -18,7 +18,7 @@ object LabelFormatter {
 
             is ErgAmountLabel -> {
                 val ergAmountString = ErgoAmount(element.text ?: 0).toStringRoundToDecimals(
-                    element.maxDecimals.toLong(),
+                    element.maxDecimals,
                     element.trimTrailingZero
                 )
 

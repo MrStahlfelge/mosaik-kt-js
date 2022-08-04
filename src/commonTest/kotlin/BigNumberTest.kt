@@ -1,9 +1,6 @@
-import com.ionspin.kotlin.bignum.decimal.DecimalMode
-import com.ionspin.kotlin.bignum.decimal.RoundingMode
-import com.ionspin.kotlin.bignum.decimal.toBigDecimal
+import mikhaylutsyury.kigdecimal.toBigDecimal
 import org.ergoplatform.toLongValueWithScale
-import org.ergoplatform.toPlainStringFixed
-import org.junit.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BigNumberTest {
@@ -23,21 +20,22 @@ class BigNumberTest {
             }
         )
         assertEquals(0, "0".toBigDecimal().toLongValueWithScale(9))
+        assertEquals(500230, "5002.3".toBigDecimal().toLongValueWithScale(2))
+        assertEquals(500231, "5002.31".toBigDecimal().toLongValueWithScale(2))
+        assertEquals(100000, "100000".toBigDecimal().toLongValueWithScale(0))
+        assertEquals(Int.MAX_VALUE * 10L, Int.MAX_VALUE.toString().toBigDecimal().toLongValueWithScale(1))
     }
 
     @Test
     fun printNumberTest() {
-        assertEquals("1.000000", 1000000.toBigDecimal().moveDecimalPoint(-6).scale(6).toPlainStringFixed(6))
+        assertEquals("1.000000", 1000000.toBigDecimal().movePointLeft(6).setScale(6).toPlainString())
     }
 
 
-    // @Test 0.3.7 fixed these
+    @Test
     fun testIsWhole() {
-        val bigDecimalWhole = "1.1234567826".toBigDecimal(
-            decimalMode = DecimalMode(18, RoundingMode.ROUND_HALF_CEILING, 18)
-        ).moveDecimalPoint(9)
+        val bigDecimalWhole = "1.1234567826".toBigDecimal().movePointRight(9).setScale(18)
 
         assertEquals("1123456782.600000000000000000", bigDecimalWhole.toPlainString())
-        assertEquals(false, bigDecimalWhole.isWholeNumber())
     }
 }

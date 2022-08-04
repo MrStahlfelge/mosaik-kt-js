@@ -16,7 +16,13 @@ repositories {
 
 kotlin {
     js(IR) {
-        browser()
+        browser {
+            testTask {
+                useMocha {
+                    timeout = "30000"
+                }
+            }
+        }
         binaries.executable()
     }
     jvm() // needed to make unit tests executable on jvm
@@ -30,22 +36,17 @@ kotlin {
             dependencies {
                 implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
-                implementation("com.ionspin.kotlin:bignum:0.3.4")
+                implementation("com.github.MrStahlfelge.kig-decimal:KigDecimal:87932d8b8b")
             }
         }
 
         val commonTest by getting {
             dependencies {
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
+                implementation(kotlin("test"))
             }
         }
 
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit"))
-            }
-        }
+        val jvmTest by getting
 
         val jsMain by getting {
             kotlin.srcDir("src/main/kotlin")
@@ -62,6 +63,7 @@ kotlin {
                 implementation("io.ktor:ktor-client-js:$ktorVersion")
             }
         }
+        val jsTest by getting
     }
 }
 

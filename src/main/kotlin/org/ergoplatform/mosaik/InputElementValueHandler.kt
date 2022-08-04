@@ -1,11 +1,12 @@
 package org.ergoplatform.mosaik
 
-import com.ionspin.kotlin.bignum.decimal.BigDecimal
-import com.ionspin.kotlin.bignum.decimal.toBigDecimal
+import mikhaylutsyury.kigdecimal.HALF_UP
+import mikhaylutsyury.kigdecimal.RoundingModes
+import mikhaylutsyury.kigdecimal.makeBigDecimal
+import mikhaylutsyury.kigdecimal.toBigDecimal
 import org.ergoplatform.mosaik.model.ui.ViewElement
 import org.ergoplatform.mosaik.model.ui.input.*
 import org.ergoplatform.toLongValueWithScale
-import org.ergoplatform.toPlainStringFixed
 
 const val scaleErg = 9
 const val scaleformatShortErg = 4
@@ -94,16 +95,14 @@ open class DecimalInputHandler(private val element: LongTextField, private val s
 
     override fun valueFromStringInput(value: String?): Long? {
         return if (value.isNullOrBlank()) null
-        else {
-            value.toBigDecimal().toLongValueWithScale(scale)
-        }
+        else value.toBigDecimal().toLongValueWithScale(scale)
     }
 
     override val keyboardType: KeyboardType
         get() = KeyboardType.NumberDecimal
 
     override fun getAsString(currentValue: Any?): String {
-        return (currentValue as Long?)?.toBigDecimal()?.moveDecimalPoint(-scale)?.toPlainStringFixed(scale) ?: ""
+        return (currentValue as Long?)?.toBigDecimal()?.movePointLeft(scale)?.toPlainString() ?: ""
     }
 }
 
@@ -133,7 +132,7 @@ class FiatOrErgTextInputHandler(
                 null
             else
                 try {
-                    BigDecimal.parseString(value).divide(
+                    makeBigDecimal(value).divide(
                         fiatRate.toBigDecimal(),
                     ).toLongValueWithScale(scaleErg)
                 } catch (t: Throwable) {
@@ -154,8 +153,8 @@ class FiatOrErgTextInputHandler(
 
     fun getSecondLabelString(nanoErg: Long): String? {
         return if (inputIsFiat)
-            (nanoErg.toBigDecimal().moveDecimalPoint(-scaleErg)
-                .scale(scaleformatShortErg.toLong()).toPlainStringFixed(scaleformatShortErg)) +
+            (nanoErg.toBigDecimal().movePointLeft(scaleErg)
+                .setScale(scaleformatShortErg, RoundingModes.HALF_UP).toPlainString()) +
                     " $ergoCurrencyText"
         else
             mosaikRuntime.convertErgToFiat(nanoErg)
