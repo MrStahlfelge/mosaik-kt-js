@@ -736,10 +736,7 @@ fun MosaikDropDownList(
         list.map { it.second },
         classes,
         iconClasses = listOf("mdi", IconType.CHEVRON_DOWN.getCssName()),
-        attrs = {
-            attribs?.invoke(this)
-            style { fillMaxWidth() }
-        },
+        attrs = attribs,
         onItemClicked = { idx ->
             treeElement.changeValueFromInput(list[idx].first)
             label.value = treeElement.currentValueAsString
