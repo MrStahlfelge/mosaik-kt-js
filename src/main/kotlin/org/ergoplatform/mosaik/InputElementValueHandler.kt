@@ -29,7 +29,7 @@ abstract class InputElementValueHandler<T> {
                 is LongTextField -> IntegerInputHandler(element)
                 // TODO is ErgoAddressChooseButton -> ErgoAddressChooserInputHandler(element, mosaikRuntime)
                 // TODO is WalletChooseButton -> WalletChooserInputHandler(element, mosaikRuntime)
-                // TODO is DropDownList -> DropDownListInputHandler(element, mosaikRuntime)
+                is DropDownList -> DropDownListInputHandler(element, mosaikRuntime)
                 is InputElement -> OtherInputHandler(element)
                 else -> null
             }
@@ -170,6 +170,27 @@ open class OtherInputHandler(private val element: InputElement) :
 
     override fun valueFromStringInput(value: String?): Any? {
         return value
+    }
+
+    override val keyboardType: KeyboardType
+        get() = KeyboardType.Text
+}
+
+class DropDownListInputHandler(
+    private val element: DropDownList,
+    private val mosaikRuntime: MosaikRuntime
+) : InputElementValueHandler<String>() {
+    override fun isValueValid(value: Any?): Boolean {
+        return !element.mandatory || element.entries.containsKey(value)
+    }
+
+    override fun valueFromStringInput(value: String?): String? {
+        return value
+    }
+
+    override fun getAsString(currentValue: Any?): String {
+        return element.entries[currentValue]
+            ?: mosaikRuntime.formatString(StringConstant.PleaseChoose)
     }
 
     override val keyboardType: KeyboardType

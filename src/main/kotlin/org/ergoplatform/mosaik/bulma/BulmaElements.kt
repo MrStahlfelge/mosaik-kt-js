@@ -1,11 +1,15 @@
 package org.ergoplatform.mosaik.bulma
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.attributes.InputType
 import org.jetbrains.compose.web.attributes.builders.InputAttrsScope
 import org.jetbrains.compose.web.attributes.disabled
 import org.jetbrains.compose.web.attributes.readOnly
+import org.jetbrains.compose.web.css.percent
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLButtonElement
 import org.w3c.dom.HTMLDivElement
@@ -60,6 +64,85 @@ fun BulmaButton(
         attrs?.invoke(this)
     }) {
         Text(text)
+    }
+}
+
+@Composable
+fun BulmaDropDown(
+    label: String,
+    elements: List<String>,
+    classes: List<String> = emptyList(),
+    iconClasses: List<String>,
+    attrs: AttrBuilderContext<HTMLDivElement>? = null,
+    onItemClicked: (Int) -> Unit,
+) {
+    val activeState = remember { mutableStateOf(false) }
+
+    Div(attrs = {
+        classes("dropdown", *classes.toTypedArray())
+        if (activeState.value)
+            classes("is-active")
+
+        attrs?.invoke(this)
+    }
+    ) {
+
+        // the trigger element
+        Div(attrs = {
+            classes("dropdown-trigger")
+            style {
+                width(100.percent)
+            }
+        }) {
+            Button(attrs = {
+                onClick { activeState.value = !activeState.value }
+                classes("button")
+                attr("aria-haspopup", "true")
+                attr("aria-controls", "true")
+                style {
+                    width(100.percent)
+                }
+            }) {
+                Span {
+                    Text(label)
+                }
+                Span(attrs = {
+                    classes("icon", "is-small")
+                }) {
+                    I(attrs = {
+                        classes(*iconClasses.toTypedArray())
+                        attr("aria-hidden", "true")
+                    }) {
+
+                    }
+                }
+            }
+        }
+
+        // the menu
+        Div(attrs = {
+            classes("dropdown-menu")
+            attr("role", "menu")
+            style {
+                width(100.percent)
+            }
+        }) {
+            Div(attrs = {
+                classes("dropdown-content")
+            }) {
+                elements.forEachIndexed { idx, item ->
+                    A(attrs = {
+                        classes("dropdown-item")
+                        onClick {
+                            activeState.value = false
+                            onItemClicked(idx)
+                        }
+                    }) {
+                        Text(item)
+                    }
+                }
+            }
+        }
     }
 }
 

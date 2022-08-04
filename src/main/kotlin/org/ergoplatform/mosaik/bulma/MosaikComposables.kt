@@ -4,6 +4,7 @@ import androidx.compose.runtime.*
 import org.ergoplatform.mosaik.*
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.*
+import org.ergoplatform.mosaik.model.ui.input.DropDownList
 import org.ergoplatform.mosaik.model.ui.input.PasswordInputField
 import org.ergoplatform.mosaik.model.ui.input.TextField
 import org.ergoplatform.mosaik.model.ui.layout.*
@@ -137,9 +138,9 @@ fun MosaikTreeElement(
         is TextField -> {
             MosaikTextField(treeElement, moreClasses, newAttribs)
         }
-//        is DropDownList -> {
-//            MosaikDropDownList(treeElement, newModifier)
-//        }
+        is DropDownList -> {
+            MosaikDropDownList(treeElement, moreClasses, newAttribs)
+        }
         is LoadingIndicator -> {
             MosaikLoadingIndicator(treeElement, moreClasses, newAttribs)
         }
@@ -718,6 +719,32 @@ private fun MosaikLabel(
             )
         }
     }
+}
+
+@Composable
+fun MosaikDropDownList(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as DropDownList
+    val list = element.entries.toList()
+    val label = remember { mutableStateOf(treeElement.currentValueAsString) }
+
+    BulmaDropDown(
+        label.value,
+        list.map { it.second },
+        classes,
+        iconClasses = listOf("mdi", IconType.CHEVRON_DOWN.getCssName()),
+        attrs = {
+            attribs?.invoke(this)
+            style { fillMaxWidth() }
+        },
+        onItemClicked = { idx ->
+            treeElement.changeValueFromInput(list[idx].first)
+            label.value = treeElement.currentValueAsString
+        },
+    )
 }
 
 private fun ForegroundColor.toCssClass() =
