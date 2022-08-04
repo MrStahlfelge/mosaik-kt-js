@@ -150,9 +150,14 @@ private fun BulmaInputType.toInputType(): InputType<String> =
     }
 
 @Composable
-fun BulmaProgressbar(size: BulmaSize, color: BulmaColor) {
+fun BulmaProgressbar(
+    size: BulmaSize, color: BulmaColor,
+    classes: List<String> = emptyList(),
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)? = null,
+) {
     Progress(attrs = {
-        classes("progress", size.toCssClassName(), color.toCssClassName())
+        classes("progress", size.toCssClassName(), color.toCssClassName(), *classes.toTypedArray())
+        attribs?.invoke(this)
     }) {
 
     }

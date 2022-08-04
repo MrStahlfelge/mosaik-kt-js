@@ -3,10 +3,7 @@ package org.ergoplatform.mosaik.bulma
 import androidx.compose.runtime.*
 import org.ergoplatform.mosaik.*
 import org.ergoplatform.mosaik.model.MosaikManifest
-import org.ergoplatform.mosaik.model.ui.ForegroundColor
-import org.ergoplatform.mosaik.model.ui.Icon
-import org.ergoplatform.mosaik.model.ui.IconType
-import org.ergoplatform.mosaik.model.ui.Image
+import org.ergoplatform.mosaik.model.ui.*
 import org.ergoplatform.mosaik.model.ui.input.PasswordInputField
 import org.ergoplatform.mosaik.model.ui.input.TextField
 import org.ergoplatform.mosaik.model.ui.layout.*
@@ -143,9 +140,9 @@ fun MosaikTreeElement(
 //        is DropDownList -> {
 //            MosaikDropDownList(treeElement, newModifier)
 //        }
-//        is LoadingIndicator -> {
-//            MosaikLoadingIndicator(treeElement, newModifier)
-//        }
+        is LoadingIndicator -> {
+            MosaikLoadingIndicator(treeElement, moreClasses, newAttribs)
+        }
         is Icon -> {
             MosaikIcon(treeElement, moreClasses, newAttribs)
         }
@@ -276,6 +273,25 @@ private fun IconType.getCssName(): String =
         IconType.QR_CODE -> "mdi-qrcode"
         IconType.QR_SCAN -> "mdi-qrcode-scan"
     }
+
+@Composable
+fun MosaikLoadingIndicator(
+    treeElement: TreeElement,
+    moreClasses: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as LoadingIndicator
+
+    BulmaProgressbar(
+        when (element.size) {
+            LoadingIndicator.Size.SMALL -> BulmaSize.SMALL
+            LoadingIndicator.Size.MEDIUM -> BulmaSize.MEDIUM
+        },
+        BulmaColor.PRIMARY,
+        moreClasses,
+        attribs,
+    )
+}
 
 @Composable
 fun MosaikCard(

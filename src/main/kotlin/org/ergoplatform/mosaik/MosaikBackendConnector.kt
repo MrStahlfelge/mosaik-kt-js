@@ -28,7 +28,7 @@ interface MosaikBackendConnector {
     /**
      * loads contents of a LazyLoadBox. Blocking, call on a background thread
      */
-    fun fetchLazyContent(
+    suspend fun fetchLazyContent(
         url: String,
         baseUrl: String?,
         referrer: String

@@ -167,8 +167,14 @@ object JsBackendConnector : MosaikBackendConnector {
         return loadUrl
     }
 
-    override fun fetchLazyContent(url: String, baseUrl: String?, referrer: String): ViewContent {
-        TODO("Not yet implemented - use makeAbsoluteUrl")
+    override suspend fun fetchLazyContent(url: String, baseUrl: String?, referrer: String): ViewContent {
+        val response: HttpResponse = client.request(makeAbsoluteUrl(baseUrl, url)) {
+            method = HttpMethod.Get
+            mosaikContextHeaders.forEach {
+                header(it.key, it.value)
+            }
+        }
+        return MosaikSerializers.parseViewContentFromJson(response.readText())
     }
 
     private lateinit var mosaikContextHeaders: Map<String, String?>

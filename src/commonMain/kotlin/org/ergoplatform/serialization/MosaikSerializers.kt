@@ -5,9 +5,7 @@ import kotlinx.serialization.json.*
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
-import org.ergoplatform.mosaik.model.FetchActionResponse
-import org.ergoplatform.mosaik.model.MosaikApp
-import org.ergoplatform.mosaik.model.MosaikContext
+import org.ergoplatform.mosaik.model.*
 import org.ergoplatform.mosaik.model.actions.*
 import org.ergoplatform.mosaik.model.ui.*
 import org.ergoplatform.mosaik.model.ui.input.*
@@ -63,13 +61,25 @@ object MosaikSerializers {
     }
 
     fun parseMosaikAppFromJson(json: String): MosaikApp {
+        return parseViewContentFromJson(json) as MosaikApp
+    }
+
+    fun parseViewContentFromJson(json: String): ViewContent {
         val jsonObject = preprocessViewContent(jsonSerializer.parseToJsonElement(json).jsonObject)
         val viewObject = jsonObject["view"]!!
         val view: ViewElement = jsonSerializer.decodeFromJsonElement(viewObject.jsonObject)
 
-        return MosaikApp(view).apply {
-            manifest = jsonSerializer.decodeFromJsonElement(jsonObject["manifest"]!!)
-            jsonObject["actions"]?.let { actions = jsonSerializer.decodeFromJsonElement(it) }
+        val actions =
+            jsonObject["actions"]?.let { jsonSerializer.decodeFromJsonElement<List<Action>>(it) }
+        val manifest =
+            jsonObject["manifest"]?.let { jsonSerializer.decodeFromJsonElement<MosaikManifest>(it) }
+
+        val viewContent = manifest?.let {
+            MosaikApp(view).apply { this.manifest = manifest }
+        } ?: ViewContent(view)
+
+        return viewContent.apply {
+            actions?.let { this.actions = actions }
         }
     }
 

@@ -284,7 +284,7 @@ abstract class MosaikRuntime(
     /**
      * Downloads content of LazyLoadBox, blocking. In case of an error null is returned
      */
-    fun fetchLazyContents(url: String): ViewContent? {
+    suspend fun fetchLazyContents(url: String): ViewContent? {
         return try {
             backendConnector.fetchLazyContent(url, appUrl, appUrl!!)
         } catch (t: Throwable) {
