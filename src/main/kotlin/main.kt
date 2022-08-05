@@ -55,7 +55,7 @@ fun main() {
                 MosaikContext.LIBRARY_MOSAIK_VERSION,
                 guid,
                 window.navigator.language,
-                "Kotlin/JS Executor",
+                "Kotlin/JS Web Executor",
                 MosaikContext.EXECUTOR_VERSION,
                 if (!isMobile) MosaikContext.Platform.DESKTOP
                 else if (max(
