@@ -680,21 +680,8 @@ private fun MosaikLabel(
     if (text != null) {
         P(attrs = {
             classes(
-                when (element.style) {
-                    LabelStyle.BODY1 -> "is-size-5"
-                    LabelStyle.BODY1BOLD -> "is-size-5"
-                    LabelStyle.BODY1LINK -> "is-size-5" // TODO
-                    LabelStyle.BODY2 -> "is-size-6"
-                    LabelStyle.BODY2BOLD -> "is-size-6"
-                    LabelStyle.HEADLINE1 -> "is-size-2"
-                    LabelStyle.HEADLINE2 -> "is-size-3"
-                },
-                when (element.textAlignment) {
-                    HAlignment.START -> "has-text-left"
-                    HAlignment.CENTER -> "has-text-centered"
-                    HAlignment.END -> "has-text-right"
-                    HAlignment.JUSTIFY -> "has-text-justified"
-                },
+                element.style.toCssClass(),
+                element.textAlignment.toTextAlignmentCssClass(),
                 when (element.style) {
                     LabelStyle.BODY1 -> "has-text-weight-normal"
                     LabelStyle.BODY1BOLD -> "has-text-weight-bold"
@@ -759,6 +746,25 @@ fun Padding.toCssClass(): String =
         Padding.DEFAULT -> "p-4"
         Padding.ONE_AND_A_HALF_DEFAULT -> "p-5"
         Padding.TWICE -> "p-5" // p-6 is too much
+    }
+
+fun LabelStyle.toCssClass() =
+    when (this) {
+        LabelStyle.BODY1 -> "is-size-5"
+        LabelStyle.BODY1BOLD -> "is-size-5"
+        LabelStyle.BODY1LINK -> "is-size-5" // TODO
+        LabelStyle.BODY2 -> "is-size-6"
+        LabelStyle.BODY2BOLD -> "is-size-6"
+        LabelStyle.HEADLINE1 -> "is-size-2"
+        LabelStyle.HEADLINE2 -> "is-size-3"
+    }
+
+fun HAlignment.toTextAlignmentCssClass() =
+    when (this) {
+        HAlignment.START -> "has-text-left"
+        HAlignment.CENTER -> "has-text-centered"
+        HAlignment.END -> "has-text-right"
+        HAlignment.JUSTIFY -> "has-text-justified"
     }
 
 val justifyCssClassName = "is-align-self-stretch"

@@ -1,5 +1,6 @@
 package org.ergoplatform.mosaik.js
 
+import androidx.compose.runtime.mutableStateOf
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
@@ -25,6 +26,9 @@ import org.ergoplatform.serialization.MosaikSerializers
 
 class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     MosaikRuntime(JsBackendConnector) {
+
+    val ergoPayActionState = mutableStateOf<ErgoPayAction?>(null)
+
     override val coroutineScope: CoroutineScope
         get() = MainScope()
 
@@ -38,15 +42,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     }
 
     override fun runErgoPayAction(action: ErgoPayAction) {
-        showDialog(
-            MosaikDialog(
-                "An ErgoPay action should be run:\n${action.url}",
-                "Ok, was done!",
-                "Cancel",
-                { action.onFinished?.let { runAction(it) } },
-                null
-            )
-        )
+        ergoPayActionState.value = action
     }
 
     override fun runErgoAuthAction(action: ErgoAuthAction) {

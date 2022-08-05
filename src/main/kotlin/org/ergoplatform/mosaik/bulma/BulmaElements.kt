@@ -3,18 +3,13 @@ package org.ergoplatform.mosaik.bulma
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import org.jetbrains.compose.web.attributes.AttrsScope
-import org.jetbrains.compose.web.attributes.InputType
+import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.attributes.builders.InputAttrsScope
-import org.jetbrains.compose.web.attributes.disabled
-import org.jetbrains.compose.web.attributes.readOnly
 import org.jetbrains.compose.web.css.percent
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
-import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLDivElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLLabelElement
+import org.jetbrains.compose.web.dom.Text
+import org.w3c.dom.*
 
 @Composable
 fun BulmaModal(
@@ -33,6 +28,16 @@ fun BulmaModal(
         }) {
             content()
         }
+    }
+}
+
+@Composable
+fun BulmaBlock(attrs: AttrBuilderContext<HTMLDivElement>? = null, content: @Composable () -> Unit) {
+    Div(attrs = {
+        classes("block")
+        attrs?.invoke(this)
+    }) {
+        content()
     }
 }
 
@@ -60,6 +65,27 @@ fun BulmaButton(
         classes("button", color.toCssClassName(), *classes.toTypedArray())
         if (!enabled) {
             disabled()
+        }
+        attrs?.invoke(this)
+    }) {
+        Text(text)
+    }
+}
+
+@Composable
+fun BulmaLinkButton(
+    href: String,
+    text: String,
+    color: BulmaColor = BulmaColor.PRIMARY,
+    enabled: Boolean = true,
+    classes: List<String> = emptyList(),
+    attrs: AttrBuilderContext<HTMLAnchorElement>? = null,
+) {
+    A(attrs = {
+        href(href)
+        classes("button", color.toCssClassName(), *classes.toTypedArray())
+        if (!enabled) {
+            classes("is-static")
         }
         attrs?.invoke(this)
     }) {

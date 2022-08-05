@@ -4,6 +4,7 @@ import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import org.ergoplatform.mosaik.bulma.ErgoPayRequestDialog
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialog
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.bulma.MosaikViewTree
@@ -82,6 +83,7 @@ fun main() {
     require("./custom.scss")
     renderComposable(rootElementId = "root") {
         MosaikViewTree(viewTree)
+        ErgoPayRequestDialog(runtime)
         MosaikComposeDialog(dialogHandler)
     }
 }

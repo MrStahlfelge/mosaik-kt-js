@@ -56,6 +56,7 @@ kotlin {
             dependencies {
                 implementation(compose.web.core)
                 implementation(npm("bulma", "0.9.4"))
+                implementation(npm("qrcode", "1.5.1"))
                 implementation(devNpm("sass-loader", "^13.0.0"))
                 implementation(devNpm("sass", "^1.52.1"))
                 implementation(devNpm("css-loader", "^6.5.1"))
