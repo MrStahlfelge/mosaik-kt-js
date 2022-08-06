@@ -224,9 +224,6 @@ fun MosaikValueChooseButton(
             }
         )
     }
-    // TODO
-//                overflow = TextOverflow.Ellipsis,
-//            )
 }
 
 @Composable
@@ -686,16 +683,7 @@ private fun MosaikButton(
             }
         )
     }
-    // TODO
-//                maxLines = if (element.maxLines <= 0) Int.MAX_VALUE else element.maxLines,
-//                textAlign = (when (element.textAlignment) {
-//                    HAlignment.START -> TextAlign.Start
-//                    HAlignment.CENTER -> TextAlign.Center
-//                    HAlignment.END -> TextAlign.End
-//                    HAlignment.JUSTIFY -> TextAlign.Justify
-//                }),
-//                overflow = TextOverflow.Ellipsis,
-//            )
+    // TODO maxLines > 1 currently not supported, always truncating
 
 }
 

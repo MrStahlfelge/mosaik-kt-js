@@ -2,6 +2,7 @@
 
 $mainErgo: #ff3b30;
 $primary: $mainErgo;
-$link: $mainErgo;
+$tabs-link-active-border-bottom-color: $mainErgo;
+$tabs-link-active-color: $mainErgo;
 
 @import "bulma/bulma.sass"
