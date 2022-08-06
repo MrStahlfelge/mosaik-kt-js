@@ -5,6 +5,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import org.ergoplatform.mosaik.js.JsMosaikRuntime
+import org.ergoplatform.mosaik.js.MosaikConfiguration
 import org.ergoplatform.mosaik.model.ui.input.WalletChooseButton
 import org.jetbrains.compose.web.css.em
 import org.jetbrains.compose.web.css.marginBottom
@@ -42,13 +43,14 @@ fun ConnectWalletDialog(runtime: JsMosaikRuntime) {
                     }
                 }
 
-                BulmaTabs(
-                    ConnectionMode.values().toList().map { it.getCaption() },
-                    modeSelected.value,
-                    onClick = { modeSelected.value = it }
-                )
+                if (enabledConnectionModes.size > 1)
+                    BulmaTabs(
+                        enabledConnectionModes.map { it.getCaption() },
+                        modeSelected.value,
+                        onClick = { modeSelected.value = it }
+                    )
 
-                when (ConnectionMode.values()[modeSelected.value]) {
+                when (enabledConnectionModes[modeSelected.value]) {
                     ConnectionMode.Manually -> ConnectManuallySection(runtime, addressSelected)
                     ConnectionMode.ErgoPay -> {}
                     ConnectionMode.BrowserExtension -> {}
@@ -132,4 +134,18 @@ private fun ConnectionMode.getCaption() = when (this) {
     ConnectionMode.Manually -> "manually"
     ConnectionMode.ErgoPay -> "ErgoPay"
     ConnectionMode.BrowserExtension -> "Browser wallet"
+}
+
+private lateinit var enabledConnectionModes: List<ConnectionMode>
+private lateinit var sessionId: String
+
+object ConnectWalletDialog {
+    fun setConfig(config: MosaikConfiguration, guid: String) {
+        enabledConnectionModes = ConnectionMode.values().toList().filter {
+            (it != ConnectionMode.Manually || config.chooseWalletManually)
+                    && (it != ConnectionMode.BrowserExtension || config.chooseWalletWithExtension)
+                    && (it != ConnectionMode.ErgoPay || config.chooseWalletErgoPay != null)
+        }
+        sessionId = guid
+    }
 }

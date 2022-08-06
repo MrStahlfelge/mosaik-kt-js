@@ -160,7 +160,11 @@ object JsBackendConnector : MosaikBackendConnector {
         return loadUrl
     }
 
-    override suspend fun fetchLazyContent(url: String, baseUrl: String?, referrer: String): ViewContent {
+    override suspend fun fetchLazyContent(
+        url: String,
+        baseUrl: String?,
+        referrer: String
+    ): ViewContent {
         val response: HttpResponse = client.request(makeAbsoluteUrl(baseUrl, url)) {
             method = HttpMethod.Get
             mosaikContextHeaders.forEach {
@@ -176,9 +180,3 @@ object JsBackendConnector : MosaikBackendConnector {
         mosaikContextHeaders = MosaikSerializers.contextHeadersMap(context)
     }
 }
-
-@Serializable
-data class MosaikConfiguration(
-    var starturl: String,
-    var routes: Map<String, String>? = null
-)
