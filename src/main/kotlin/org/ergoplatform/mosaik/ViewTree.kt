@@ -7,8 +7,10 @@ import org.ergoplatform.mosaik.model.ViewContent
 import org.ergoplatform.mosaik.model.actions.Action
 import org.ergoplatform.mosaik.model.ui.LazyLoadBox
 import org.ergoplatform.mosaik.model.ui.ViewElement
+import org.ergoplatform.mosaik.model.ui.input.ErgoAddressChooseButton
 import org.ergoplatform.mosaik.model.ui.input.InputElement
 import org.ergoplatform.mosaik.model.ui.input.TextField
+import org.ergoplatform.mosaik.model.ui.input.WalletChooseButton
 import org.ergoplatform.mosaik.model.ui.layout.Box
 
 /**
@@ -244,12 +246,12 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
      */
     fun onItemClicked(element: TreeElement) {
         when (element.element) {
-//            is ErgoAddressChooseButton -> {
-//                element.id?.let { mosaikRuntime.showErgoAddressChooser(it) }
-//            }
-//            is WalletChooseButton -> {
-//                element.id?.let { mosaikRuntime.showErgoWalletChooser(it) }
-//            }
+            is ErgoAddressChooseButton -> {
+                element.id?.let { mosaikRuntime.showErgoAddressChooser(it) }
+            }
+            is WalletChooseButton -> {
+                element.id?.let { mosaikRuntime.showErgoWalletChooser(it) }
+            }
             else -> runActionFromUserInteraction(element.element.onClickAction)
         }
     }

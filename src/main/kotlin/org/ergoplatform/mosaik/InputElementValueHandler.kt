@@ -28,8 +28,8 @@ abstract class InputElementValueHandler<T> {
                 is ErgAmountInputField -> FiatOrErgTextInputHandler(element, mosaikRuntime)
                 is DecimalInputField -> DecimalInputHandler(element, element.scale)
                 is LongTextField -> IntegerInputHandler(element)
-                // TODO is ErgoAddressChooseButton -> ErgoAddressChooserInputHandler(element, mosaikRuntime)
-                // TODO is WalletChooseButton -> WalletChooserInputHandler(element, mosaikRuntime)
+                is ErgoAddressChooseButton -> ErgoAddressChooserInputHandler(element, mosaikRuntime)
+                is WalletChooseButton -> WalletChooserInputHandler(element, mosaikRuntime)
                 is DropDownList -> DropDownListInputHandler(element, mosaikRuntime)
                 is InputElement -> OtherInputHandler(element)
                 else -> null

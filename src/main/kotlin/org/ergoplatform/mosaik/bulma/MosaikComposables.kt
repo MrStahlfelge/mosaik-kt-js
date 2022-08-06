@@ -4,9 +4,7 @@ import androidx.compose.runtime.*
 import org.ergoplatform.mosaik.*
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.*
-import org.ergoplatform.mosaik.model.ui.input.DropDownList
-import org.ergoplatform.mosaik.model.ui.input.PasswordInputField
-import org.ergoplatform.mosaik.model.ui.input.TextField
+import org.ergoplatform.mosaik.model.ui.input.*
 import org.ergoplatform.mosaik.model.ui.layout.*
 import org.ergoplatform.mosaik.model.ui.text.Button
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
@@ -150,12 +148,12 @@ fun MosaikTreeElement(
         is Image -> {
             MosaikImage(treeElement, moreClasses, newAttribs)
         }
-//        is ErgoAddressChooseButton -> {
-//            MosaikValueChooseButton(treeElement, newModifier)
-//        }
-//        is WalletChooseButton -> {
-//            MosaikValueChooseButton(treeElement, newModifier)
-//        }
+        is ErgoAddressChooseButton -> {
+            MosaikValueChooseButton(treeElement, moreClasses, newAttribs, sizeToParent)
+        }
+        is WalletChooseButton -> {
+            MosaikValueChooseButton(treeElement, moreClasses, newAttribs, sizeToParent)
+        }
         is HorizontalRule -> {
             MosaikHorizontalRule(treeElement, moreClasses, newAttribs)
         }
@@ -189,6 +187,46 @@ fun MosaikHorizontalRule(
         attribs?.invoke(this)
         style { fillMaxWidth() }
     })
+}
+
+@Composable
+fun MosaikValueChooseButton(
+    treeElement: TreeElement, classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+    sizeToParent: Boolean,
+) {
+    val element = treeElement.element
+
+    val valueState = treeElement.viewTree.valueState.collectAsState()
+
+    // remember this to not fire up any logic (db access etc) to retrieve the label
+    val buttonLabel =
+        remember(valueState.value.second[element.id]?.inputValue) { treeElement.currentValueAsString }
+
+    // we add a little padding to the buttons to match the style on Compose Desktop/Android
+    DivWrapper(
+        classes.toMutableList().apply { add(Padding.QUARTER_DEFAULT.toCssClass()) },
+        attribs
+    ) {
+        BulmaButton(
+            treeElement::clicked,
+            buttonLabel,
+            color = Button.ButtonStyle.PRIMARY.toBulmaColor(),
+            enabled = (element as? InputElement)?.enabled ?: true,
+            attrs = {
+                style {
+                    if (sizeToParent) {
+                        fillMaxWidth()
+                    } else {
+                        width(96.px * 3)
+                    }
+                }
+            }
+        )
+    }
+    // TODO
+//                overflow = TextOverflow.Ellipsis,
+//            )
 }
 
 @Composable
