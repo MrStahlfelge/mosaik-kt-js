@@ -4,9 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import org.ergoplatform.BrowserWallet
+import org.ergoplatform.mosaik.MosaikDialog
 import org.ergoplatform.mosaik.js.JsMosaikRuntime
 import org.ergoplatform.mosaik.js.MosaikConfiguration
 import org.ergoplatform.mosaik.model.ui.input.WalletChooseButton
+import org.ergoplatform.mosaik.model.ui.text.Button
 import org.jetbrains.compose.web.css.em
 import org.jetbrains.compose.web.css.marginBottom
 import org.jetbrains.compose.web.css.padding
@@ -52,8 +57,11 @@ fun ConnectWalletDialog(runtime: JsMosaikRuntime) {
 
                 when (enabledConnectionModes[modeSelected.value]) {
                     ConnectionMode.Manually -> ConnectManuallySection(runtime, addressSelected)
-                    ConnectionMode.ErgoPay -> {}
-                    ConnectionMode.BrowserExtension -> {}
+                    ConnectionMode.ErgoPay -> {} // TODO
+                    ConnectionMode.BrowserExtension -> ConnectBrowserWalletSection(
+                        runtime,
+                        addressSelected
+                    )
                 }
 
                 Div(attrs = {
@@ -121,6 +129,48 @@ private fun ConnectManuallySection(
             },
             if (errorState.value) BulmaColor.DANGER else null,
         )
+    }
+}
+
+@Composable
+fun ConnectBrowserWalletSection(
+    runtime: JsMosaikRuntime,
+    addressSelected: MutableState<String?>,
+) {
+
+    BulmaBlock {
+        Text("Connect to a browser extension wallet to set your Ergo address.")
+    }
+
+    Div(attrs = {
+        classes("buttons", "is-centered")
+    }) {
+        BulmaButton(
+            {
+                MainScope().launch {
+                    try {
+                        addressSelected.value = BrowserWallet.getWalletAddress()
+                    } catch (t: Throwable) {
+                        runtime.showDialog(
+                            MosaikDialog(
+                                "An error occured: $t",
+                                "OK",
+                                null,
+                                null,
+                                null
+                            )
+                        )
+                    }
+                }
+            },
+            "Connect to browser wallet",
+            Button.ButtonStyle.SECONDARY.toBulmaColor(),
+            enabled = remember { BrowserWallet.isBrowserWalletInstalled() }
+        )
+    }
+
+    BulmaBlock {
+        Text(addressSelected.value?.let { "Selected address: $it" } ?: "No wallet connected")
     }
 }
 
