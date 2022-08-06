@@ -28,7 +28,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     MosaikRuntime(JsBackendConnector) {
 
     val ergoPayActionState = mutableStateOf<ErgoPayAction?>(null)
-    val chhoseAddressState = mutableStateOf<String?>(null)
+    val choseAddressState = mutableStateOf<String?>(null)
 
     override val coroutineScope: CoroutineScope
         get() = MainScope()
@@ -78,11 +78,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     }
 
     override fun getErgoAddressLabel(ergoAddress: String): String? {
-        return if (ergoAddress.startsWith('9'))
-            "Mainnet $ergoAddress"
-        else if (ergoAddress.startsWith('3'))
-            "Testnet $ergoAddress"
-        else null
+        return ergoAddress
     }
 
     override fun getErgoWalletLabel(firstAddress: String): String? =
@@ -97,11 +93,11 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     }
 
     override fun showErgoAddressChooser(valueId: String) {
-        chhoseAddressState.value = valueId
+        choseAddressState.value = valueId
     }
 
     override fun showErgoWalletChooser(valueId: String) {
-        chhoseAddressState.value = valueId
+        choseAddressState.value = valueId
     }
 
     override fun scanQrCode(actionId: String) {

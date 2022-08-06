@@ -200,7 +200,8 @@ object MosaikSerializers {
                 else if (value is Boolean)
                     JsonPrimitive(value)
                 else if (value is List<*>)
-                    throw UnsupportedOperationException("List not yet serialized") // TODO
+                    // we only have List<String> as value so far, so this is sufficient for now
+                    JsonArray(value.map { JsonPrimitive(it.toString()) })
                 else
                     throw UnsupportedOperationException("Can't serialize type")
             }
