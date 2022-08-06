@@ -289,6 +289,38 @@ fun BulmaContainer(
     }
 }
 
+/**
+ * https://bulma.io/documentation/components/tabs/
+ */
+@Composable
+fun BulmaTabs(
+    captions: List<String>,
+    selected: Int?,
+    onClick: (Int) -> Unit,
+    classes: List<String> = emptyList(),
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)? = null,
+) {
+    Div(attrs = {
+        classes("tabs", *classes.toTypedArray())
+        attribs?.invoke(this)
+    }) {
+        Ul {
+            captions.forEachIndexed { index, element ->
+                Li(attrs = {
+                    if (index == selected)
+                        classes("is-active")
+                }) {
+                    A(attrs = {
+                        onClick { onClick(index) }
+                    }) {
+                        Text(element)
+                    }
+                }
+            }
+        }
+    }
+}
+
 fun BulmaColor.toCssClassName(): String {
     return when (this) {
         BulmaColor.PRIMARY -> "is-primary"
