@@ -1,6 +1,7 @@
 package org.ergoplatform.mosaik.js
 
 import kotlinx.browser.window
+import org.ergoplatform.mosaik.MosaikLogger
 
 class HashRouter(
     private val runtime: JsMosaikRuntime,
@@ -17,14 +18,14 @@ class HashRouter(
         val routeUrl = urlMap.get(hash.lowercase().removePrefix("#")) ?: urlMap[""]
 
         routeUrl?.let {
-            println("Hash: $hash, current appUrl: ${runtime.appUrl}, new url: $routeUrl")
+            MosaikLogger.logDebug("Hash: $hash, current appUrl: ${runtime.appUrl}, new url: $routeUrl")
             if (runtime.appUrl != routeUrl)
                 runtime.loadMosaikApp(routeUrl)
         }
     }
 
     fun appLoaded(appUrl: String) {
-        println("appLoaded: $appUrl")
+        MosaikLogger.logDebug("appLoaded: $appUrl")
         val routeHash = urlMap.entries.firstOrNull { it.value == appUrl }?.key
         routeHash?.let {
             if (routeHash != window.location.hash)

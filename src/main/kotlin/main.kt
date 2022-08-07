@@ -19,6 +19,8 @@ fun main() {
     val runtime = JsMosaikRuntime(dialogHandler)
     val hashRouter = HashRouter(runtime)
 
+    // DEBUG logging MosaikLogger.logger = MosaikLogger.DefaultLogger
+
     MainScope().launch {
         val config = JsBackendConnector.getMosaikConfig("mosaik.config")
         hashRouter.setConfig(config)

@@ -34,7 +34,6 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
         get() = MainScope()
 
     override fun showDialog(dialog: MosaikDialog) {
-        println("show dialog: ${dialog.message}")
         dialogHandler.showDialog(dialog)
     }
 
