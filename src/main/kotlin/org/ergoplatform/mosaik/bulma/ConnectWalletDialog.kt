@@ -149,7 +149,7 @@ fun ConnectBrowserWalletSection(
             {
                 MainScope().launch {
                     try {
-                        addressSelected.value = BrowserWallet.getWalletAddress()
+                        addressSelected.value = BrowserWallet.getWalletAddress(true)
                     } catch (t: Throwable) {
                         runtime.showDialog(
                             MosaikDialog(
