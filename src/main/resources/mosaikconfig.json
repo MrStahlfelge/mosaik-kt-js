@@ -3,7 +3,7 @@
    "chooseWalletErgoPay": {
         "getAddressForSessionUrl": "https://api.tokenjay.app/getUserAddress/#RID#",
         "ergoPaySetAddressUrl": "ergopay://api.tokenjay.app/setAddress/#RID#/#P2PK_ADDRESS#"
-   }
+   },
    "routes": {
     "actions": "http://192.168.178.60:8081/actions",
     "viewelements": "http://192.168.178.60:8081/viewelements"

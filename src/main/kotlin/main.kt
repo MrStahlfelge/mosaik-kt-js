@@ -11,6 +11,7 @@ import org.ergoplatform.mosaik.js.JsMosaikRuntime
 import org.ergoplatform.mosaik.model.MosaikContext
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.jetbrains.compose.web.renderComposable
+import org.w3c.dom.url.URL
 import kotlin.js.RegExp
 import kotlin.math.max
 
@@ -22,7 +23,9 @@ fun main() {
     // DEBUG logging MosaikLogger.logger = MosaikLogger.DefaultLogger
 
     MainScope().launch {
-        val config = JsBackendConnector.getMosaikConfig("mosaik.config")
+        val config = JsBackendConnector.getMosaikConfig(
+            (URL("mosaikconfig.json", document.location.toString())).href
+        )
         hashRouter.setConfig(config)
 
         val currentHash = mutableStateOf(window.location.hash)
