@@ -12,9 +12,7 @@ import org.ergoplatform.mosaik.js.JsMosaikRuntime
 import org.ergoplatform.mosaik.js.MosaikConfiguration
 import org.ergoplatform.mosaik.model.ui.input.WalletChooseButton
 import org.ergoplatform.mosaik.model.ui.text.Button
-import org.jetbrains.compose.web.css.em
-import org.jetbrains.compose.web.css.marginBottom
-import org.jetbrains.compose.web.css.padding
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
@@ -55,13 +53,17 @@ fun ConnectWalletDialog(runtime: JsMosaikRuntime) {
                         onClick = { modeSelected.value = it }
                     )
 
-                when (enabledConnectionModes[modeSelected.value]) {
-                    ConnectionMode.Manually -> ConnectManuallySection(runtime, addressSelected)
-                    ConnectionMode.ErgoPay -> {} // TODO
-                    ConnectionMode.BrowserExtension -> ConnectBrowserWalletSection(
-                        runtime,
-                        addressSelected
-                    )
+                if (enabledConnectionModes.isEmpty()) {
+                    Text("No wallet connection mode set up in Mosaik configuration.")
+                } else {
+                    when (enabledConnectionModes[modeSelected.value]) {
+                        ConnectionMode.Manually -> ConnectManuallySection(runtime, addressSelected)
+                        ConnectionMode.ErgoPay -> {} // TODO
+                        ConnectionMode.BrowserExtension -> ConnectBrowserWalletSection(
+                            runtime,
+                            addressSelected
+                        )
+                    }
                 }
 
                 Div(attrs = {
@@ -138,7 +140,7 @@ fun ConnectBrowserWalletSection(
     addressSelected: MutableState<String?>,
 ) {
 
-    BulmaBlock {
+    BulmaBlock(attrs = { classes(org.ergoplatform.mosaik.model.ui.layout.HAlignment.CENTER.toTextAlignmentCssClass()) }) {
         Text("Connect to a browser extension wallet to set your Ergo address.")
     }
 
@@ -146,7 +148,7 @@ fun ConnectBrowserWalletSection(
         classes("buttons", "is-centered")
     }) {
         BulmaButton(
-            {
+            onClick = {
                 MainScope().launch {
                     try {
                         addressSelected.value = BrowserWallet.getWalletAddress(true)
@@ -163,15 +165,19 @@ fun ConnectBrowserWalletSection(
                     }
                 }
             },
-            "Connect to browser wallet",
+            addressSelected.value?.let { "Address $it" }?: "Select address",
             Button.ButtonStyle.SECONDARY.toBulmaColor(),
+            attrs = {
+                style { maxWidth(80.percent) }
+            },
             enabled = remember { BrowserWallet.isBrowserWalletInstalled() }
         )
     }
 
-    BulmaBlock {
-        Text(addressSelected.value?.let { "Selected address: $it" } ?: "No wallet connected")
-    }
+    // TODO hint to which wallet to use
+//    BulmaBlock {
+//
+//    }
 }
 
 private enum class ConnectionMode {
