@@ -12,12 +12,12 @@ To use it, use the precompiled mosaikweb.zip or build MosaikKtJs yourself. To ad
 Mosaik app, you will need to edit the index.html file and the mosaikconfig.json files:
 
 * index.html
-  ** Edit the title as wanted
-  ** Edit the loadingScreen section as wanted
+  * Edit the title as wanted
+  * Edit the loadingScreen section as wanted
 
 * mosaikconfig.json
-  ** Edit the starturl entry to the URL where your Mosaik app is served
-  ** All other configuration entries are not mandatory, see section below for more information
+  * Edit the starturl entry to the URL where your Mosaik app is served
+  * All other configuration entries are not mandatory, see section below for more information
 
 Test by opening index.html in a web browser. Note that this must be served from a web server in
 order to
