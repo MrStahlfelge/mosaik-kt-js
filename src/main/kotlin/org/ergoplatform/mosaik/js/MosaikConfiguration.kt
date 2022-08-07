@@ -34,14 +34,14 @@ data class ConnectWalletErgoPayConfig(
     /**
      * URL the Mosaik UI sends GET requests to in order to check if user connected his wallet
      * The requests are send every few seconds while the Connect wallet dialog is opened and no
-     * wallet address was connected yet. Placeholder %GUID% is needed.
+     * wallet address was connected yet. Placeholder #RID# is needed.
      *
-     * Expected response body is a String with the wallet address, or null.
+     * Expected response body is a String with the wallet address, or empty when none is set.
      */
     var getAddressForSessionUrl: String,
     /**
      * ErgoPay URL the wallet connects to in order for the user to connect his wallet
-     * Placeholder %GUID% and %P2PK_ADDRESS% are needed.
+     * Placeholder #RID# and #P2PK_ADDRESS# are needed.
      *
      * Expected response body is an ErgoPay response URL.
      */

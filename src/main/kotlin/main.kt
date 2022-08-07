@@ -66,7 +66,7 @@ fun main() {
             )
         )
 
-        ConnectWalletDialog.setConfig(config, guid)
+        ConnectWalletDialog.setConfig(config)
 
         document.getElementById("loadingScreen")?.remove()
         hashRouter.hashChanged(currentHash.value)
