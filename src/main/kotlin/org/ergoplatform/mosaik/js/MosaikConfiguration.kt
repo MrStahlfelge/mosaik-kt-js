@@ -27,6 +27,10 @@ data class MosaikConfiguration(
      * if set, users can use ErgoPay to connect their wallet
      */
     val chooseWalletErgoPay: ConnectWalletErgoPayConfig? = null,
+    /**
+     * if set to true, text size on mobile is smaller to better fit content on screen
+     */
+    val responsiveMobileTextSize: Boolean = true,
 )
 
 @Serializable

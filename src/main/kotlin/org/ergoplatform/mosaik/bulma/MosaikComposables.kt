@@ -706,17 +706,8 @@ private fun MosaikLabel(
     if (text != null) {
         P(attrs = {
             classes(
-                element.style.toCssClass(),
+                *element.style.toCssClasses().toTypedArray(),
                 element.textAlignment.toTextAlignmentCssClass(),
-                when (element.style) {
-                    LabelStyle.BODY1 -> "has-text-weight-normal"
-                    LabelStyle.BODY1BOLD -> "has-text-weight-bold"
-                    LabelStyle.BODY1LINK -> "has-text-weight-normal"
-                    LabelStyle.BODY2 -> "has-text-weight-normal"
-                    LabelStyle.BODY2BOLD -> "has-text-weight-bold"
-                    LabelStyle.HEADLINE1 -> "has-text-weight-bold"
-                    LabelStyle.HEADLINE2 -> "has-text-weight-bold"
-                },
                 element.textColor.toCssClass(),
                 *classes.toTypedArray()
             )
@@ -780,16 +771,34 @@ fun Padding.toCssClass(): String =
         Padding.TWICE -> "p-5" // p-6 is too much
     }
 
-fun LabelStyle.toCssClass() =
-    when (this) {
-        LabelStyle.BODY1 -> "is-size-5"
-        LabelStyle.BODY1BOLD -> "is-size-5"
-        LabelStyle.BODY1LINK -> "is-size-5" // TODO
-        LabelStyle.BODY2 -> "is-size-6"
-        LabelStyle.BODY2BOLD -> "is-size-6"
-        LabelStyle.HEADLINE1 -> "is-size-2"
-        LabelStyle.HEADLINE2 -> "is-size-3"
+fun LabelStyle.toCssClasses(): List<String> {
+    val classList = mutableListOf<String>()
+
+    val textSize = when (this) {
+        LabelStyle.BODY1 -> 5
+        LabelStyle.BODY1BOLD -> 5
+        LabelStyle.BODY1LINK -> 5
+        LabelStyle.BODY2 -> 6
+        LabelStyle.BODY2BOLD -> 6
+        LabelStyle.HEADLINE1 -> 3
+        LabelStyle.HEADLINE2 -> 4
     }
+    classList.add("is-size-$textSize")
+    if (MosaikStyleConfig.responsiveMobileTextSize)
+        classList.add("is-size-${textSize + 1}-mobile")
+
+    when (this) {
+        LabelStyle.BODY1BOLD -> classList.add("has-text-weight-bold")
+        LabelStyle.BODY1LINK -> classList.add("is-underlined")
+        LabelStyle.BODY2BOLD -> classList.add("has-text-weight-bold")
+        LabelStyle.HEADLINE1 -> classList.add("has-text-weight-bold")
+        LabelStyle.HEADLINE2 -> classList.add("has-text-weight-bold")
+        LabelStyle.BODY1 -> {}
+        LabelStyle.BODY2 -> {}
+    }
+
+    return classList
+}
 
 fun HAlignment.toTextAlignmentCssClass() =
     when (this) {

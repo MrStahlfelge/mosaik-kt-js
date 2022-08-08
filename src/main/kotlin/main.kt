@@ -70,6 +70,9 @@ fun main() {
         )
 
         ConnectWalletDialog.setConfig(config)
+        MosaikStyleConfig.apply {
+            responsiveMobileTextSize = config.responsiveMobileTextSize
+        }
 
         document.getElementById("loadingScreen")?.remove()
         hashRouter.hashChanged(currentHash.value)

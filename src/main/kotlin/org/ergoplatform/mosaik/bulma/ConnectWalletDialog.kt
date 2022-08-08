@@ -48,7 +48,7 @@ fun ConnectWalletDialog(runtime: JsMosaikRuntime) {
                 BulmaBlock {
                     P(attrs = {
                         classes(
-                            LabelStyle.HEADLINE2.toCssClass(),
+                            *LabelStyle.HEADLINE2.toCssClasses().toTypedArray(),
                             HAlignment.CENTER.toTextAlignmentCssClass(),
                         )
                     }) {
@@ -217,7 +217,6 @@ private fun ConnectErgoPayWaitingBlock(addressSelected: MutableState<String?>) {
     BulmaBlock {
         P(attrs = {
             classes(
-                LabelStyle.BODY1.toCssClass(),
                 HAlignment.CENTER.toTextAlignmentCssClass(),
                 "is-hidden-mobile"
             )
