@@ -5,10 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.attributes.builders.InputAttrsScope
-import org.jetbrains.compose.web.css.maxWidth
-import org.jetbrains.compose.web.css.overflow
-import org.jetbrains.compose.web.css.percent
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.*
@@ -71,15 +68,17 @@ fun BulmaButton(
         attrs?.invoke(this)
     }) {
         Span(attrs = {
-            style {
-                maxWidth(100.percent)
-                overflow("hidden")
-                property("text-overflow", "ellipsis")
-            }
+            style { styleTextEllipsis() }
         }) {
             Text(text)
         }
     }
+}
+
+private fun StyleScope.styleTextEllipsis() {
+    maxWidth(100.percent)
+    overflow("hidden")
+    property("text-overflow", "ellipsis")
 }
 
 @Composable
@@ -139,7 +138,9 @@ fun BulmaDropDown(
                     width(100.percent)
                 }
             }) {
-                Span {
+                Span(attrs = {
+                    style { styleTextEllipsis() }
+                }) {
                     Text(label)
                 }
                 Span(attrs = {
