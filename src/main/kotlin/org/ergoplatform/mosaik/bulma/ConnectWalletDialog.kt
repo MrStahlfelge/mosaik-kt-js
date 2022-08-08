@@ -6,6 +6,7 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -26,13 +27,25 @@ import org.jetbrains.compose.web.dom.Br
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
+import kotlin.math.max
 
 @Composable
 fun ConnectWalletDialog(runtime: JsMosaikRuntime) {
+    val lastModeSaveKey = "walletConnMode"
+
     runtime.choseAddressState.value?.let { addressValueId ->
 
         val modeSelected =
-            remember { mutableStateOf(0) } // TODO save selected and preselect next time
+            remember {
+                val lastConnMode = localStorage.getItem(lastModeSaveKey)?.let {
+                    try {
+                        ConnectionMode.valueOf(it)
+                    } catch (t: Throwable) {
+                        null
+                    }
+                }
+                mutableStateOf(max(enabledConnectionModes.indexOf(lastConnMode), 0))
+            }
         val treeElement =
             remember(addressValueId) { runtime.viewTree.findElementById(addressValueId) }
 
@@ -60,7 +73,13 @@ fun ConnectWalletDialog(runtime: JsMosaikRuntime) {
                     BulmaTabs(
                         enabledConnectionModes.map { it.getCaption() },
                         modeSelected.value,
-                        onClick = { modeSelected.value = it }
+                        onClick = { newConnMode ->
+                            modeSelected.value = newConnMode
+                            localStorage.setItem(
+                                lastModeSaveKey,
+                                enabledConnectionModes[modeSelected.value].toString()
+                            )
+                        }
                     )
 
                 if (enabledConnectionModes.isEmpty()) {
@@ -227,7 +246,13 @@ private fun ConnectErgoPayWaitingBlock(addressSelected: MutableState<String?>) {
         }
     }
 
-    BulmaBlock(attrs = { classes("is-flex", "is-flex-direction-column", "is-align-items-center") }) {
+    BulmaBlock(attrs = {
+        classes(
+            "is-flex",
+            "is-flex-direction-column",
+            "is-align-items-center"
+        )
+    }) {
         Text("Waiting for you to connect with ErgoPay...")
         BulmaProgressbar(BulmaSize.SMALL, BulmaColor.PRIMARY, attribs = {
             it.style { maxWidth(80.percent) }
