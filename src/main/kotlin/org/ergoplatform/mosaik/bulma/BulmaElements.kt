@@ -227,11 +227,14 @@ fun BulmaInput(
     outlineColor: BulmaColor? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
+    rightIconClasses: List<String> = emptyList(),
     attribs: ((InputAttrsScope<String>) -> Unit)? = null,
 ) {
     Div(attrs = {
         classes("control")
-        // TODO Icons
+        if (rightIconClasses.isNotEmpty()) {
+            classes("has-icons-right")
+        }
     }) {
         Input(type.toInputType(), attrs = {
             val classes = listOf("input").toMutableList()
@@ -254,6 +257,18 @@ fun BulmaInput(
 
             attribs?.invoke(this)
         })
+
+        if (rightIconClasses.isNotEmpty()) {
+            Span(attrs = {
+                classes("icon", "is-small", "is-right")
+            }) {
+                I(attrs = {
+                    classes(*rightIconClasses.toTypedArray())
+                }) {
+
+                }
+            }
+        }
     }
 }
 

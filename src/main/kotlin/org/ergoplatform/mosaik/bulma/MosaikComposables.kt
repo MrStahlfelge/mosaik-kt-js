@@ -272,43 +272,46 @@ fun MosaikIcon(
             )
         }) {
             I(attrs = {
-                val classesList = mutableListOf("mdi", element.iconType.getCssName())
+                val classesList = element.iconType.getCssClasses()
+                classes(*classesList.toTypedArray())
                 when (element.iconSize) {
                     Icon.Size.SMALL -> null
                     Icon.Size.MEDIUM -> "mdi-36px"
                     Icon.Size.LARGE -> "mdi-48px"
-                }?.let { classesList.add(it) }
-                classes(*classesList.toTypedArray())
+                }?.let { classes(it) }
             })
         }
     }
 }
 
-private fun IconType.getCssName(): String =
-    when (this) {
-        IconType.INFO -> "mdi-information"
-        IconType.WARN -> "mdi-alert"
-        IconType.ERROR -> "mdi-alert-circle"
-        IconType.CONFIG -> "mdi-cog"
-        IconType.ADD -> "mdi-plus"
-        IconType.EDIT -> "mdi-pencil"
-        IconType.REFRESH -> "mdi-refresh"
-        IconType.DELETE -> "mdi-delete"
-        IconType.CROSS -> "mdi-close"
-        IconType.WALLET -> "mdi-wallet"
-        IconType.SEND -> "mdi-send"
-        IconType.RECEIVE -> "mdi-call-received"
-        IconType.MORE -> "mdi-dots-vertical"
-        IconType.OPENLIST -> "mdi-menu-down"
-        IconType.CHEVRON_UP -> "mdi-chevron-up"
-        IconType.CHEVRON_DOWN -> "mdi-chevron-down"
-        IconType.COPY -> "mdi-content-copy"
-        IconType.BACK -> "mdi-arrow-left"
-        IconType.FORWARD -> "mdi-arrow-right"
-        IconType.SWITCH -> "mdi-repeat"
-        IconType.QR_CODE -> "mdi-qrcode"
-        IconType.QR_SCAN -> "mdi-qrcode-scan"
-    }
+private fun IconType.getCssClasses(): List<String> =
+    listOf(
+        "mdi",
+        when (this) {
+            IconType.INFO -> "mdi-information"
+            IconType.WARN -> "mdi-alert"
+            IconType.ERROR -> "mdi-alert-circle"
+            IconType.CONFIG -> "mdi-cog"
+            IconType.ADD -> "mdi-plus"
+            IconType.EDIT -> "mdi-pencil"
+            IconType.REFRESH -> "mdi-refresh"
+            IconType.DELETE -> "mdi-delete"
+            IconType.CROSS -> "mdi-close"
+            IconType.WALLET -> "mdi-wallet"
+            IconType.SEND -> "mdi-send"
+            IconType.RECEIVE -> "mdi-call-received"
+            IconType.MORE -> "mdi-dots-vertical"
+            IconType.OPENLIST -> "mdi-menu-down"
+            IconType.CHEVRON_UP -> "mdi-chevron-up"
+            IconType.CHEVRON_DOWN -> "mdi-chevron-down"
+            IconType.COPY -> "mdi-content-copy"
+            IconType.BACK -> "mdi-arrow-left"
+            IconType.FORWARD -> "mdi-arrow-right"
+            IconType.SWITCH -> "mdi-repeat"
+            IconType.QR_CODE -> "mdi-qrcode"
+            IconType.QR_SCAN -> "mdi-qrcode-scan"
+        }
+    )
 
 @Composable
 fun MosaikLoadingIndicator(
@@ -602,6 +605,8 @@ fun MosaikTextField(
             if (errorState.value) BulmaColor.DANGER else null,
             element.enabled,
             element.readOnly,
+            rightIconClasses = element.endIcon?.getCssClasses() ?: emptyList(),
+            // TODO element.onEndIconClicked
             attribs = {
                 when (treeElement.keyboardType) {
                     KeyboardType.Text -> {}
@@ -621,20 +626,6 @@ fun MosaikTextField(
 //            } else false
 //        }
     }
-//        trailingIcon = { TODO
-//            element.endIcon?.getImageVector()?.let { iv ->
-//                val icon = @Composable { Icon(iv, null) }
-//
-//                if (element.onEndIconClicked != null)
-//                    IconButton(onClick = {
-//                        treeElement.runActionFromUserInteraction(element.onEndIconClicked)
-//                    }) {
-//                        icon()
-//                    }
-//                else
-//                    icon()
-//            }
-//        },
 
 }
 
@@ -741,7 +732,7 @@ fun MosaikDropDownList(
         label.value,
         list.map { it.second },
         classes,
-        iconClasses = listOf("mdi", IconType.CHEVRON_DOWN.getCssName()),
+        iconClasses = IconType.CHEVRON_DOWN.getCssClasses(),
         attrs = {
             attribs?.invoke(this)
             style {
