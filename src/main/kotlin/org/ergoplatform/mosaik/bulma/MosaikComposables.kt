@@ -713,14 +713,16 @@ private fun MosaikLabel(
             )
             style {
                 whiteSpace("pre-line")
+                if (element.maxLines >= 1) {
+                    overflow("hidden")
+                    property("display", "-webkit-box")
+                    property("-webkit-line-clamp", element.maxLines.toString())
+                    property("-webkit-box-orient", "vertical")
+                }
             }
             attribs?.invoke(this)
         }) {
-            Text(
-                text,
-//            maxLines = if (element.maxLines <= 0) Int.MAX_VALUE else element.maxLines,
-//            overflow = TextOverflow.Ellipsis, TODO https://css-tricks.com/snippets/css/truncate-string-with-ellipsis/
-            )
+            Text(text)
         }
     }
 }
