@@ -8,13 +8,9 @@ import io.ktor.http.*
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import org.ergoplatform.mosaik.MosaikBackendConnector
-import org.ergoplatform.mosaik.MosaikDialog
-import org.ergoplatform.mosaik.MosaikRuntime
-import org.ergoplatform.mosaik.StringConstant
+import org.ergoplatform.mosaik.*
 import org.ergoplatform.mosaik.bulma.MosaikComposeDialogHandler
 import org.ergoplatform.mosaik.model.FetchActionResponse
 import org.ergoplatform.mosaik.model.MosaikContext
@@ -35,6 +31,18 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
 
     override fun showDialog(dialog: MosaikDialog) {
         dialogHandler.showDialog(dialog)
+    }
+
+    override fun showError(error: Throwable) {
+        if (error is ConnectionException) {
+            showDialog(
+                MosaikDialog(
+                    "Could not reach application. Check your connection and try again.", "OK",
+                    null, null, null
+                )
+            )
+        } else
+            super.showError(error)
     }
 
     override fun pasteToClipboard(text: String) {
@@ -117,14 +125,20 @@ object JsBackendConnector : MosaikBackendConnector {
         url: String,
         referrer: String?
     ): MosaikBackendConnector.AppLoaded {
-        val response: HttpResponse = client.request(url) {
-            method = HttpMethod.Get
-            mosaikContextHeaders.forEach {
-                header(it.key, it.value)
+        val response: HttpResponse? = try {
+            client.request(url) {
+                method = HttpMethod.Get
+                mosaikContextHeaders.forEach {
+                    header(it.key, it.value)
+                }
             }
+        } catch (t: Throwable) {
+            null
         }
 
-        val mosaikApp = MosaikSerializers.parseMosaikAppFromJson(response.readText())
+        val mosaikApp =
+            response?.let { MosaikSerializers.parseMosaikAppFromJson(response.readText()) }
+                ?: NotLoadedApp.getApp(url)
         return MosaikBackendConnector.AppLoaded(mosaikApp, url)
     }
 
@@ -133,7 +147,7 @@ object JsBackendConnector : MosaikBackendConnector {
             method = HttpMethod.Get
         }
 
-        return Json.decodeFromString<MosaikConfiguration>(response.readText())
+        return Json.decodeFromString(response.readText())
     }
 
     override suspend fun fetchAction(
@@ -142,13 +156,17 @@ object JsBackendConnector : MosaikBackendConnector {
         values: Map<String, Any?>,
         referrer: String?
     ): FetchActionResponse {
-        val response: HttpResponse = client.request(makeAbsoluteUrl(baseUrl, url)) {
-            method = HttpMethod.Post
-            mosaikContextHeaders.forEach {
-                header(it.key, it.value)
-                contentType(ContentType.Application.Json)
+        val response: HttpResponse = try {
+            client.request(makeAbsoluteUrl(baseUrl, url)) {
+                method = HttpMethod.Post
+                mosaikContextHeaders.forEach {
+                    header(it.key, it.value)
+                    contentType(ContentType.Application.Json)
+                }
+                body = MosaikSerializers.valuesMapToJson(values)
             }
-            body = MosaikSerializers.valuesMapToJson(values)
+        } catch (t: Throwable) {
+            throw ConnectionException(t)
         }
 
         return MosaikSerializers.parseFetchActionResponseFromJson(response.readText())

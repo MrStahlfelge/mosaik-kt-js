@@ -37,4 +37,13 @@ open class Box : ViewElement(), LayoutElement {
         return childVAlignment[getChildPos(element)]
     }
 
+    fun addChild(
+        child: ViewElement,
+        hAlignment: HAlignment,
+        vAlignment: VAlignment
+    ) {
+        children.add(child)
+        childHAlignment.add(hAlignment)
+        childVAlignment.add(vAlignment)
+    }
 }

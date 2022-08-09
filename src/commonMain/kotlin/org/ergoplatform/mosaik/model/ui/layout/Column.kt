@@ -29,4 +29,9 @@ class Column : LinearLayout() {
         return childWeight[pos]
     }
 
+    fun addChild(child: ViewElement, alignment: HAlignment, weight: Int) {
+        children.add(child)
+        childAlignment.add(alignment)
+        childWeight.add(weight)
+    }
 }
