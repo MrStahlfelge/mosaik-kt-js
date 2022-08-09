@@ -65,6 +65,7 @@ abstract class MosaikRuntime(
 
     /**
      * Show error to user. Can be called on background thread
+     * Client code can override to show own error texts and change behaviour.
      */
     open fun showError(error: Throwable) {
         showDialog(
@@ -179,7 +180,10 @@ abstract class MosaikRuntime(
                 withContext(Dispatchers.Main) {
                     runAction(newAction)
                 }
-
+            } catch (ce: ConnectionException) {
+                MosaikLogger.logError("Connection error running Mosaik backend request", ce)
+                // don't raise an error for connection exceptions
+                showError(ce)
             } catch (t: Throwable) {
                 MosaikLogger.logError("Error running Mosaik backend request", t)
                 raiseError(t)
@@ -242,6 +246,10 @@ abstract class MosaikRuntime(
 
                 viewTree.setRootView(mosaikApp)
                 navigatedTo(UrlHistoryEntry(loadAppResponse.appUrl, referrer), mosaikApp.manifest)
+            } catch (ce: ConnectionException) {
+                MosaikLogger.logError("Connection error loading Mosaik app", ce)
+                // do not raise an error
+                showError(ce)
             } catch (t: Throwable) {
                 MosaikLogger.logError("Error loading Mosaik app", t)
                 raiseError(t)

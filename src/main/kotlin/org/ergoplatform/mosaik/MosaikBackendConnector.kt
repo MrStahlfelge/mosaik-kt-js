@@ -10,6 +10,7 @@ import org.ergoplatform.mosaik.model.ViewContent
 interface MosaikBackendConnector {
     /**
      * first load of a Mosaik app. Blocking, call on a background thread
+     * For connection related problems, [ConnectionException] should be thrown
      */
     suspend fun loadMosaikApp(
         url: String,
@@ -18,6 +19,7 @@ interface MosaikBackendConnector {
 
     /**
      * loads an action from Mosaik app. Blocking, call on a background thread
+     * For connection related problems, [ConnectionException] should be thrown
      */
     suspend fun fetchAction(
         url: String, baseUrl: String?,
