@@ -606,7 +606,9 @@ fun MosaikTextField(
             element.enabled,
             element.readOnly,
             rightIconClasses = element.endIcon?.getCssClasses() ?: emptyList(),
-            // TODO element.onEndIconClicked
+            onRightIconClick = element.onEndIconClicked?.let { endClickAction ->
+                { treeElement.runActionFromUserInteraction(endClickAction) }
+            },
             attribs = {
                 when (treeElement.keyboardType) {
                     KeyboardType.Text -> {}

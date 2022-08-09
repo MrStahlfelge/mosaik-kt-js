@@ -228,6 +228,7 @@ fun BulmaInput(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     rightIconClasses: List<String> = emptyList(),
+    onRightIconClick: (() -> Unit)? = null,
     attribs: ((InputAttrsScope<String>) -> Unit)? = null,
 ) {
     Div(attrs = {
@@ -261,6 +262,10 @@ fun BulmaInput(
         if (rightIconClasses.isNotEmpty()) {
             Span(attrs = {
                 classes("icon", "is-small", "is-right")
+                onRightIconClick?.let {
+                    classes("is-clickable")
+                    onClick { onRightIconClick() }
+                }
             }) {
                 I(attrs = {
                     classes(*rightIconClasses.toTypedArray())

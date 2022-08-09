@@ -100,7 +100,8 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     }
 
     override fun scanQrCode(actionId: String) {
-        // TODO
+        // TODO qr code scanner
+        showDialog(MosaikDialog("QR code scanning not supported", "OK", null, null, null))
     }
 
     override fun runTokenInformationAction(action: TokenInformationAction) {
