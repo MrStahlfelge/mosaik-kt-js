@@ -202,17 +202,24 @@ private fun ConnectErgoPayWaitingBlock(addressSelected: MutableState<String?>) {
             requestId
         )
     }
+    val addressRequestSucceeded = remember { mutableStateOf(true) }
 
     LaunchedEffect(requestId) {
         val client = HttpClient()
         val url = ergoPayConfig!!.getAddressForSessionUrl.replace(placeHolderRequestId, requestId)
         while (addressSelected.value == null && isActive) {
             delay(2000)
-            val response: HttpResponse = client.request(url) { method = HttpMethod.Get }
-            if (response.status.isSuccess()) {
-                val mightBeAddress = response.readText()
-                if (mightBeAddress.isNotBlank())
-                    addressSelected.value = mightBeAddress
+            addressRequestSucceeded.value = try {
+                val response: HttpResponse = client.request(url) { method = HttpMethod.Get }
+                if (response.status.isSuccess()) {
+                    val mightBeAddress = response.readText()
+                    if (mightBeAddress.isNotBlank())
+                        addressSelected.value = mightBeAddress
+                    true
+                } else
+                    false
+            } catch (t: Throwable) {
+                false
             }
         }
     }
@@ -253,7 +260,11 @@ private fun ConnectErgoPayWaitingBlock(addressSelected: MutableState<String?>) {
             "is-align-items-center"
         )
     }) {
-        Text("Waiting for you to connect with ErgoPay...")
+        if (addressRequestSucceeded.value)
+            Text("Waiting for you to connect with ErgoPay...")
+        else
+            Text("Could not reach service - check your connection. Retrying...")
+
         BulmaProgressbar(BulmaSize.SMALL, BulmaColor.PRIMARY, attribs = {
             it.style { maxWidth(80.percent) }
         })
