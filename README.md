@@ -3,8 +3,7 @@
 MosaikKtJs is a [Ergo Mosaik](https://github.com/MrStahlfelge/mosaik) executor for web browsers.
 
 You can use it to run your Mosaik dApp UI on the browser. This way, you don't need to write any HTML
-or JS code, but can target users without a Mosaik supporting wallet application or using browser
-extension wallets.
+or JS code, but can target users preferring to use a website or that don't use a wallet application supporting Mosaik.
 
 ## Use it
 
@@ -36,14 +35,14 @@ You will find the compiled version in build/distributions directory.
 
 ### Customize the build
 
-You can customize colors and some of the layout by changing the src/main/resources/custom.scss file
+You can customize colors and some of the layout by changing the [src/main/resources/custom.scss](https://github.com/MrStahlfelge/mosaik-kt-js/blob/master/src/main/resources/custom.scss) file
 before compiling. As MosaikKtJs' interface is built up on [Bulma](https://bulma.io/), you can refer
 to the [Bulma customization doc](https://bulma.io/documentation/customize/variables/).
 
 ## Configuration
 
 For detailed information how to configure the web executor, check out the documentation in the  
-[MosaikConfiguration.kt](blob/master/src/main/kotlin/org/ergoplatform/mosaik/js/MosaikConfiguration.kt)
+[MosaikConfiguration.kt](https://github.com/MrStahlfelge/mosaik-kt-js/blob/master/src/main/kotlin/org/ergoplatform/mosaik/js/MosaikConfiguration.kt)
 file.
 
 ## Differences to the reference executor
@@ -55,12 +54,12 @@ and change your layout accordingly.
 
 Here are some known differences to watch for:
 
-### Row element width
-The default row element width is always max width. You can change by setting `packed=true` on the row.
+### Row group element width
+Under certain cirsumstances, row group elements expand horizontally when they do not on the reference Mosaik UI. You can suppress this by setting `packed=true` on the row when needed.
 
-### Column content element widths
-Some column elements are not at max width, while they are on the reference executor. Simply work around
+### Column child element widths
+Some column child elements are not at max width, while they are on the reference executor. Simply work around
 this by wrapping these elements in a `layout(HAlignment.JUSTIFY)` block.
 
-### Rows and columns width weights
+### Rows and columns with weights
 Behaviour is not always same as on reference executor. Please handle with care.
