@@ -35,6 +35,11 @@ fun main() {
             hashRouter.hashChanged(currentHash.value)
             Unit
         }
+        document.addEventListener("visibilitychange", {
+            if (js("document.visibilityState === 'visible'") as Boolean) {
+                runtime.checkViewTreeValidity()
+            }
+        })
 
         // RegEx pattern from detectmobilebrowsers.com (public domain)
         val pattern =
