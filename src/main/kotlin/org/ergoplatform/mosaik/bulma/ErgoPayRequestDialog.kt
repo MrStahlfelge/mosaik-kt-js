@@ -52,6 +52,7 @@ fun ErgoPayRequestDialog(runtime: JsMosaikRuntime) {
                         { window.navigator.clipboard.writeText(ergoPayAction.url) },
                         "Copy request",
                         Button.ButtonStyle.SECONDARY.toBulmaColor(),
+                        classes = listOf(cssClassHiddenOnMobile),
                     )
                 }
 
@@ -60,7 +61,7 @@ fun ErgoPayRequestDialog(runtime: JsMosaikRuntime) {
                         classes(
                             *LabelStyle.BODY1.toCssClasses().toTypedArray(),
                             HAlignment.CENTER.toTextAlignmentCssClass(),
-                            "is-hidden-mobile"
+                            cssClassHiddenOnMobile
                         )
                     }) {
                         Text("or scan the QR code:")

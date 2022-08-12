@@ -392,3 +392,5 @@ enum class BulmaSize {
     MEDIUM,
     LARGE
 }
+
+const val cssClassHiddenOnMobile = "is-hidden-mobile"

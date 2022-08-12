@@ -237,6 +237,7 @@ private fun ConnectErgoPayWaitingBlock(addressSelected: MutableState<String?>) {
             { window.navigator.clipboard.writeText(ergoPayUrl) },
             "Copy request",
             Button.ButtonStyle.SECONDARY.toBulmaColor(),
+            classes = listOf(cssClassHiddenOnMobile),
         )
     }
 
@@ -244,7 +245,7 @@ private fun ConnectErgoPayWaitingBlock(addressSelected: MutableState<String?>) {
         P(attrs = {
             classes(
                 HAlignment.CENTER.toTextAlignmentCssClass(),
-                "is-hidden-mobile"
+                cssClassHiddenOnMobile
             )
         }) {
             Text("or scan the QR code:")
