@@ -467,6 +467,9 @@ private fun MosaikRow(
                 fillMaxWidth()  // TODO check could mess up when row is child of a row
             }
         }
+        if (element.spacing != Padding.NONE) {
+            it.style { gap(element.spacing.toCssNumeric()) }
+        }
     }) {
         val childrenWithWeightAndAlignment: List<Triple<TreeElement, Int, VAlignment>> =
             treeElement.children.map { childElement ->
@@ -528,7 +531,12 @@ fun MosaikColumn(
 
     BulmaContainer(classes.toMutableList().apply {
         addAll(listOf("is-flex", "is-flex-direction-column", "is-flex-wrap-nowrap"))
-    }, attribs) {
+    }, attribs = {
+        if (element.spacing != Padding.NONE) {
+            it.style { gap(element.spacing.toCssNumeric()) }
+        }
+        attribs?.invoke(it)
+    }) {
         childrenWithWeightAndAlignment.forEach { (childElement, weight, hAlignment) ->
             key(childElement.idOrUuid) {
                 MosaikTreeElement(
@@ -756,6 +764,9 @@ private fun ForegroundColor.toCssClass() =
         ForegroundColor.SECONDARY -> "has-text-grey"
     }
 
+/**
+ * https://bulma.io/documentation/helpers/spacing-helpers/
+ */
 fun Padding.toCssClass(): String =
     when (this) {
         Padding.NONE -> "p-0"
@@ -764,6 +775,19 @@ fun Padding.toCssClass(): String =
         Padding.DEFAULT -> "p-4"
         Padding.ONE_AND_A_HALF_DEFAULT -> "p-5"
         Padding.TWICE -> "p-5" // p-6 is too much
+    }
+
+/**
+ * reflects the values from https://bulma.io/documentation/helpers/spacing-helpers/
+ */
+fun Padding.toCssNumeric(): CSSNumeric =
+    when (this) {
+        Padding.NONE -> 0.cssRem
+        Padding.QUARTER_DEFAULT -> 0.25.cssRem
+        Padding.HALF_DEFAULT -> 0.5.cssRem
+        Padding.DEFAULT -> 1.cssRem
+        Padding.ONE_AND_A_HALF_DEFAULT -> 1.5.cssRem
+        Padding.TWICE -> 2.cssRem
     }
 
 fun LabelStyle.toCssClasses(): List<String> {

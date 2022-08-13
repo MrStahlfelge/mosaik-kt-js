@@ -11,6 +11,7 @@ class Column : LinearLayout() {
     private val childAlignment: MutableList<HAlignment> = ArrayList()
     private val childWeight: MutableList<Int> = ArrayList()
     override var padding = Padding.NONE
+    var spacing: Padding = Padding.NONE
 
     override fun replaceChild(
         elementToReplace: ViewElement,
