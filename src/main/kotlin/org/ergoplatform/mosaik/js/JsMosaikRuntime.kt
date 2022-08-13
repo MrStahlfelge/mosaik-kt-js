@@ -80,8 +80,11 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
 
     override var preferFiatInput: Boolean = true
 
+    private val base58Pattern = Regex("^[A-HJ-NP-Za-km-z1-9]*\$")
+
     override fun isErgoAddressValid(ergoAddress: String): Boolean {
-        return true // no more validation here
+        // we only do a basic base58 check for addresses here
+        return ergoAddress.isNotBlank() && ergoAddress.matches(base58Pattern)
     }
 
     override fun getErgoAddressLabel(ergoAddress: String): String? {
