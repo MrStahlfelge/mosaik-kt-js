@@ -625,16 +625,16 @@ fun MosaikTextField(
                     KeyboardType.Email -> it.inputMode(InputMode.Email)
                     KeyboardType.Password -> {}
                 }
+
+                if (element.onImeAction != null)
+                    it.onKeyUp {
+                        if (it.key == "Enter") {
+                            treeElement.runActionFromUserInteraction(element.onImeAction)
+                        }
+                    }
+
             }
         )
-
-//        if (element.onImeAction != null) TODO
-//        Modifier.onKeyEvent {
-//            if (it.type == KeyEventType.KeyUp && (it.key == Key.Enter || it.key == Key.NumPadEnter)) {
-//                treeElement.runActionFromUserInteraction(element.onImeAction)
-//                true
-//            } else false
-//        }
     }
 
 }
