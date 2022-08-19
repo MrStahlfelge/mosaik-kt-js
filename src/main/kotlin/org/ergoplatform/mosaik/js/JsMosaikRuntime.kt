@@ -110,6 +110,10 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
         choseAddressState.value = valueId
     }
 
+    override fun onAddressLongPress(address: String) {
+        pasteToClipboard(address)
+    }
+
     override fun scanQrCode(actionId: String) {
         // TODO qr code scanner
         showDialog(MosaikDialog("QR code scanning not supported", "OK", null, null, null))

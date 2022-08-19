@@ -12,6 +12,7 @@ import org.ergoplatform.mosaik.model.ui.input.InputElement
 import org.ergoplatform.mosaik.model.ui.input.TextField
 import org.ergoplatform.mosaik.model.ui.input.WalletChooseButton
 import org.ergoplatform.mosaik.model.ui.layout.Box
+import org.ergoplatform.mosaik.model.ui.text.ErgoAddressLabel
 
 /**
  * the complete tree of [ViewElement]'s and is context.
@@ -259,8 +260,17 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
     /**
      * called when user long pressed an element
      */
-    fun onItemLongClicked(element: TreeElement) {
-        runActionFromUserInteraction(element.element.onLongPressAction)
+    fun onItemLongClicked(element: TreeElement): Boolean {
+        return when (element.element) {
+            is ErgoAddressLabel -> {
+                element.element.text?.let { mosaikRuntime.onAddressLongPress(it) }
+                true
+            }
+            else -> {
+                runActionFromUserInteraction(element.element.onLongPressAction)
+                element.element.onLongPressAction != null
+            }
+        }
     }
 
     fun runActionFromUserInteraction(actionId: String?) {

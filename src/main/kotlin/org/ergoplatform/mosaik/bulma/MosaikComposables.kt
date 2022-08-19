@@ -6,10 +6,7 @@ import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.*
 import org.ergoplatform.mosaik.model.ui.input.*
 import org.ergoplatform.mosaik.model.ui.layout.*
-import org.ergoplatform.mosaik.model.ui.text.Button
-import org.ergoplatform.mosaik.model.ui.text.LabelStyle
-import org.ergoplatform.mosaik.model.ui.text.StyleableTextLabel
-import org.ergoplatform.mosaik.model.ui.text.TruncationType
+import org.ergoplatform.mosaik.model.ui.text.*
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.attributes.InputMode
 import org.jetbrains.compose.web.css.*
@@ -106,6 +103,10 @@ fun MosaikTreeElement(
         if (treeElement.respondsToClick && treeElement.element !is Button) {
             {
                 it.onClick { treeElement.clicked() }
+                it.onContextMenu { event ->
+                    treeElement.longPressed()
+                    event.preventDefault()
+                }
                 attribs?.invoke(it)
             }
         } else attribs
@@ -718,10 +719,21 @@ private fun MosaikLabel(
     attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
 ) {
     val element = treeElement.element as StyleableTextLabel<*>
-    val text = LabelFormatter.getFormattedText(element, treeElement)
+    val text = remember(treeElement.createdAtContentVersion) {
+        LabelFormatter.getFormattedText(element, treeElement)
+    }
+
+    val expandable = (element is ExpandableElement && element.expandOnClick)
+    val expanded = remember { mutableStateOf(false) }
+
+    val maxLines = if (expandable && !expanded.value) 1 else element.maxLines
 
     if (text != null) {
         P(attrs = {
+            if (expandable) {
+                onClick { expanded.value = !expanded.value }
+            }
+
             classes(
                 *element.style.toCssClasses().toTypedArray(),
                 element.textAlignment.toTextAlignmentCssClass(),
@@ -730,12 +742,17 @@ private fun MosaikLabel(
             )
             style {
                 whiteSpace("pre-line")
-                if (element.maxLines >= 1) {
+                if (maxLines >= 1) {
                     overflow("hidden")
                     property("display", "-webkit-box")
-                    property("-webkit-line-clamp", element.maxLines.toString())
+                    property("-webkit-line-clamp", maxLines.toString())
                     property("-webkit-box-orient", "vertical")
                 }
+                // browser do not break single long words but overflow. this can mess up the whole
+                // layout on mobile with ergo addresses. So we tell the browser to break everywhere
+                // in case there is no space or a single line restriction
+                if (maxLines == 1 || !text.contains(' '))
+                    property("word-break", "break-all")
             }
             attribs?.invoke(this)
         }) {

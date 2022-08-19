@@ -25,6 +25,8 @@ abstract class MosaikRuntime(
 
     abstract fun openBrowser(url: String)
 
+    abstract fun onAddressLongPress(address: String)
+
     abstract fun scanQrCode(actionId: String)
 
     fun qrCodeScanned(actionId: String, scannedValue: String) {
