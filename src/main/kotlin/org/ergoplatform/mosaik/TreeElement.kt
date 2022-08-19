@@ -48,6 +48,7 @@ class TreeElement(
             is ErgoAddressChooseButton -> element.value
             is LongTextField -> element.value
             is StringTextField -> element.value
+            is CheckboxLabel -> element.value
             else -> null
         }) else null
 

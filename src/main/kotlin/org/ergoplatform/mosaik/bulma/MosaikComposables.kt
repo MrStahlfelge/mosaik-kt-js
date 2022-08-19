@@ -119,6 +119,9 @@ fun MosaikTreeElement(
             // this also deals with LazyLoadBox
             MosaikBox(treeElement, moreClasses, newAttribs)
         }
+
+        is CheckboxLabel -> MosaikCheckboxLabel(treeElement, moreClasses, newAttribs)
+
         is StyleableTextLabel<*> -> {
             MosaikLabel(treeElement, moreClasses, newAttribs)
         }
@@ -741,6 +744,60 @@ internal fun Button.ButtonStyle.toBulmaColor() =
     }
 
 @Composable
+private fun MosaikCheckboxLabel(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as CheckboxLabel
+    val state = remember(treeElement.createdAtContentVersion) {
+        println(treeElement.currentValue)
+        mutableStateOf((treeElement.currentValue as Boolean?) ?: false)
+    }
+
+    BulmaField(classes = classes, outerAttrs = attribs) {
+
+        BulmaCheckbox(
+            checked = state.value,
+            onValueChanged = { newVal ->
+                state.value = newVal
+                treeElement.valueChanged(state.value)
+            },
+            enabled = element.enabled,
+            labelAttrs = {
+                applyLabelAttributes(element, element.maxLines)
+                attribs?.invoke(this)
+            },
+            checkBoxAttrs = {
+                classes("m-1")
+            }
+        ) {
+            Text(element.text ?: "")
+        }
+    }
+}
+
+private fun AttrsScope<out HTMLElement>.applyLabelAttributes(
+    element: StyleableTextLabel<*>,
+    maxLines: Int,
+) {
+    classes(
+        *element.style.toCssClasses().toTypedArray(),
+        element.textAlignment.toTextAlignmentCssClass(),
+        element.textColor.toCssClass(),
+    )
+    style {
+        whiteSpace("pre-line")
+        if (maxLines >= 1) {
+            overflow("hidden")
+            property("display", "-webkit-box")
+            property("-webkit-line-clamp", maxLines.toString())
+            property("-webkit-box-orient", "vertical")
+        }
+    }
+}
+
+@Composable
 private fun MosaikLabel(
     treeElement: TreeElement,
     classes: List<String>,
@@ -762,20 +819,11 @@ private fun MosaikLabel(
                 onClick { expanded.value = !expanded.value }
             }
 
-            classes(
-                *element.style.toCssClasses().toTypedArray(),
-                element.textAlignment.toTextAlignmentCssClass(),
-                element.textColor.toCssClass(),
-                *classes.toTypedArray()
-            )
+            classes(*classes.toTypedArray())
+
+            applyLabelAttributes(element, maxLines)
+
             style {
-                whiteSpace("pre-line")
-                if (maxLines >= 1) {
-                    overflow("hidden")
-                    property("display", "-webkit-box")
-                    property("-webkit-line-clamp", maxLines.toString())
-                    property("-webkit-box-orient", "vertical")
-                }
                 // browser do not break single long words but overflow. this can mess up the whole
                 // layout on mobile with ergo addresses. So we tell the browser to break everywhere
                 // in case there is no space or a single line restriction

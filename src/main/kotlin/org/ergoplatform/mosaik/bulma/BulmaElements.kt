@@ -204,7 +204,7 @@ fun BulmaDropDown(
 
 @Composable
 fun BulmaField(
-    label: String?,
+    label: String? = null,
     helpText: String? = null,
     helpColor: BulmaColor = BulmaColor.PRIMARY,
     classes: List<String> = emptyList(),
@@ -307,6 +307,49 @@ private fun BulmaInputType.toInputType(): InputType<String> =
         BulmaInputType.Email -> InputType.Email
         BulmaInputType.Tel -> InputType.Tel
     }
+
+
+/**
+ * https://bulma.io/documentation/form/checkbox/
+ */
+@Composable
+fun BulmaCheckbox(
+    checked: Boolean,
+    onValueChanged: ((Boolean) -> Unit),
+    enabled: Boolean = true,
+    labelAttrs: AttrBuilderContext<HTMLLabelElement>? = null,
+    checkBoxAttrs: AttrBuilderContext<HTMLInputElement>? = null,
+    content: @Composable () -> Unit
+) {
+    Div(attrs = {
+        classes("control")
+    }) {
+
+        Label(attrs = {
+            classes("checkbox")
+
+            if (enabled)
+                onClick { onValueChanged(!checked) }
+
+            if (!enabled)
+                attr("disabled", "")
+
+            labelAttrs?.invoke(this)
+
+        }
+        ) {
+            Input(InputType.Checkbox, attrs = {
+                if (!enabled)
+                    disabled()
+
+                checked(checked)
+
+                checkBoxAttrs?.invoke(this)
+            })
+            content()
+        }
+    }
+}
 
 @Composable
 fun BulmaProgressbar(
