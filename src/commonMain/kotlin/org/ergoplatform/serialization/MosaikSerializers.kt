@@ -10,10 +10,7 @@ import org.ergoplatform.mosaik.model.actions.*
 import org.ergoplatform.mosaik.model.ui.*
 import org.ergoplatform.mosaik.model.ui.input.*
 import org.ergoplatform.mosaik.model.ui.layout.*
-import org.ergoplatform.mosaik.model.ui.text.Button
-import org.ergoplatform.mosaik.model.ui.text.ErgAmountLabel
-import org.ergoplatform.mosaik.model.ui.text.FiatAmountLabel
-import org.ergoplatform.mosaik.model.ui.text.Label
+import org.ergoplatform.mosaik.model.ui.text.*
 
 object MosaikSerializers {
     private val jsonSerializer = Json {
@@ -50,6 +47,8 @@ object MosaikSerializers {
                 subclass(IntegerInputField::class)
                 subclass(Image::class)
                 subclass(Label::class)
+                subclass(ErgoAddressLabel::class)
+                subclass(QrCode::class)
                 subclass(LazyLoadBox::class)
                 subclass(LoadingIndicator::class)
                 subclass(PasswordInputField::class)
