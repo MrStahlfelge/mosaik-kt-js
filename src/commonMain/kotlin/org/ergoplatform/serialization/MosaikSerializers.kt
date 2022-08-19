@@ -47,6 +47,7 @@ object MosaikSerializers {
                 subclass(IntegerInputField::class)
                 subclass(Image::class)
                 subclass(Label::class)
+                subclass(CheckboxLabel::class)
                 subclass(ErgoAddressLabel::class)
                 subclass(QrCode::class)
                 subclass(LazyLoadBox::class)
@@ -55,6 +56,7 @@ object MosaikSerializers {
                 subclass(Row::class)
                 subclass(TextInputField::class)
                 subclass(WalletChooseButton::class)
+                subclass(MarkDown::class)
             }
         }
     }

@@ -20,8 +20,8 @@ class MosaikContext(
     }
 
     companion object {
-        const val LIBRARY_MOSAIK_VERSION = 0
-        const val EXECUTOR_VERSION = "0.5.0"
+        const val LIBRARY_MOSAIK_VERSION = 1
+        const val EXECUTOR_VERSION = "1.0.0"
     }
 
 }

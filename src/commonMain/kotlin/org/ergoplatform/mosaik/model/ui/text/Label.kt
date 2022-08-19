@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @SerialName("Label")
-class Label : StyleableTextLabel<String>() {
+open class Label : StyleableTextLabel<String>() {
     override var text: String? = null
 }
