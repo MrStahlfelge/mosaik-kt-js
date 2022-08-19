@@ -1,8 +1,10 @@
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.browser.document
 import kotlinx.browser.localStorage
 import kotlinx.browser.window
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.ergoplatform.mosaik.bulma.*
 import org.ergoplatform.mosaik.js.HashRouter
@@ -10,6 +12,8 @@ import org.ergoplatform.mosaik.js.JsBackendConnector
 import org.ergoplatform.mosaik.js.JsMosaikRuntime
 import org.ergoplatform.mosaik.model.MosaikContext
 import org.ergoplatform.mosaik.model.MosaikManifest
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.url.URL
 import kotlin.js.RegExp
@@ -98,6 +102,25 @@ fun main() {
         ErgoPayRequestDialog(runtime)
         ConnectWalletDialog(runtime)
         MosaikComposeDialog(dialogHandler)
+        runtime.notificationState.value?.let { notification ->
+            BulmaNotification(
+                attrs = {
+                    style {
+                        position(Position.Fixed)
+                        top(0.px)
+                        right(0.px)
+                    }
+                },
+                classes = listOf("m-2"),
+                color = BulmaColor.INFO,
+            ) {
+                Text(notification)
+            }
+            LaunchedEffect(notification) {
+                delay(2000)
+                runtime.notificationState.value = null
+            }
+        }
     }
 }
 

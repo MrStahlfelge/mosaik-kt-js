@@ -40,6 +40,25 @@ fun BulmaBlock(attrs: AttrBuilderContext<HTMLDivElement>? = null, content: @Comp
     }
 }
 
+/**
+ * https://bulma.io/documentation/elements/notification/
+ */
+@Composable
+fun BulmaNotification(
+    color: BulmaColor? = null,
+    classes: List<String> = emptyList(),
+    attrs: AttrBuilderContext<HTMLDivElement>? = null,
+    content: @Composable () -> Unit
+) {
+    Div(attrs = {
+        classes("notification", *classes.toTypedArray())
+        color?.let { classes(color.toCssClassName()) }
+        attrs?.invoke(this)
+    }) {
+        content()
+    }
+}
+
 @Composable
 fun BulmaBox(attrs: AttrBuilderContext<HTMLDivElement>? = null, content: @Composable () -> Unit) {
     Div(attrs = {

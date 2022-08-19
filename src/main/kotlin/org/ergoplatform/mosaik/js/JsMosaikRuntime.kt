@@ -25,6 +25,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
 
     val ergoPayActionState = mutableStateOf<ErgoPayAction?>(null)
     val choseAddressState = mutableStateOf<String?>(null)
+    val notificationState = mutableStateOf<String?>(null)
 
     override val coroutineScope: CoroutineScope
         get() = MainScope()
@@ -47,6 +48,7 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
 
     override fun pasteToClipboard(text: String) {
         window.navigator.clipboard.writeText(text)
+        notificationState.value = "Copied into clipboard"
     }
 
     override fun runErgoPayAction(action: ErgoPayAction) {
