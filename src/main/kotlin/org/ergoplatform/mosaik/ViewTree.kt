@@ -248,10 +248,12 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
     fun onItemClicked(element: TreeElement) {
         when (element.element) {
             is ErgoAddressChooseButton -> {
-                element.id?.let { mosaikRuntime.showErgoAddressChooser(it) }
+                if (element.element.enabled)
+                    element.id?.let { mosaikRuntime.showErgoAddressChooser(it) }
             }
             is WalletChooseButton -> {
-                element.id?.let { mosaikRuntime.showErgoWalletChooser(it) }
+                if (element.element.enabled)
+                    element.id?.let { mosaikRuntime.showErgoWalletChooser(it) }
             }
             else -> runActionFromUserInteraction(element.element.onClickAction)
         }

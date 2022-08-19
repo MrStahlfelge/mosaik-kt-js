@@ -152,12 +152,9 @@ fun MosaikTreeElement(
 
         is QrCode -> MosaikQrCode(treeElement, moreClasses, newAttribs)
 
-        is ErgoAddressChooseButton -> {
-            MosaikValueChooseButton(treeElement, moreClasses, newAttribs, sizeToParent)
-        }
-        is WalletChooseButton -> {
-            MosaikValueChooseButton(treeElement, moreClasses, newAttribs, sizeToParent)
-        }
+        is StyleableInputButton ->
+            MosaikInputButton(treeElement, moreClasses, newAttribs, sizeToParent)
+
         is HorizontalRule -> {
             MosaikHorizontalRule(treeElement, moreClasses, newAttribs)
         }
@@ -194,39 +191,61 @@ fun MosaikHorizontalRule(
 }
 
 @Composable
-fun MosaikValueChooseButton(
+fun MosaikInputButton(
     treeElement: TreeElement, classes: List<String>,
     attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
     sizeToParent: Boolean,
 ) {
-    val element = treeElement.element
+    val element = treeElement.element as StyleableInputButton
 
     val valueState = treeElement.viewTree.valueState.collectAsState()
 
     // remember this to not fire up any logic (db access etc) to retrieve the label
     val buttonLabel =
-        remember(valueState.value.second[element.id]?.inputValue) { treeElement.currentValueAsString }
+        remember(valueState.value.second[treeElement.element.id]?.inputValue) { treeElement.currentValueAsString }
 
     // we add a little padding to the buttons to match the style on Compose Desktop/Android
     DivWrapper(
         classes.toMutableList().apply { add(Padding.QUARTER_DEFAULT.toCssClass()) },
         attribs
     ) {
-        BulmaButton(
-            treeElement::clicked,
-            buttonLabel,
-            color = Button.ButtonStyle.PRIMARY.toBulmaColor(),
-            enabled = (element as? InputElement)?.enabled ?: true,
-            attrs = {
-                style {
-                    if (sizeToParent) {
-                        fillMaxWidth()
-                    } else {
-                        width(96.px * 3)
+        when (element.style) {
+
+            StyleableInputButton.InputButtonStyle.BUTTON_PRIMARY,
+            StyleableInputButton.InputButtonStyle.BUTTON_SECONDARY -> {
+                BulmaButton(
+                    treeElement::clicked,
+                    buttonLabel,
+                    color = when (element.style) {
+                        StyleableInputButton.InputButtonStyle.BUTTON_PRIMARY -> Button.ButtonStyle.PRIMARY.toBulmaColor()
+                        StyleableInputButton.InputButtonStyle.BUTTON_SECONDARY -> Button.ButtonStyle.SECONDARY.toBulmaColor()
+                        else -> throw IllegalStateException("Unreachable")
+                    },
+                    enabled = element.enabled,
+                    attrs = {
+                        style {
+                            if (sizeToParent) {
+                                fillMaxWidth()
+                            } else {
+                                width(96.px * 3)
+                            }
+                        }
                     }
-                }
+                )
             }
-        )
+
+            StyleableInputButton.InputButtonStyle.ICON_PRIMARY,
+            StyleableInputButton.InputButtonStyle.ICON_SECONDARY -> {
+                BulmaIcon(
+                    IconType.WALLET,
+                    Icon.Size.MEDIUM,
+                    if (!element.enabled) ForegroundColor.SECONDARY
+                    else if (element.style == StyleableInputButton.InputButtonStyle.ICON_PRIMARY) ForegroundColor.PRIMARY
+                    else ForegroundColor.DEFAULT
+                )
+            }
+
+        }
     }
 }
 
@@ -277,27 +296,36 @@ fun MosaikIcon(
     val element = treeElement.element as Icon
 
     DivWrapper(moreClasses, attribs) {
-        Span(attrs = {
-            classes(
-                "icon",
-                when (element.iconSize) {
-                    Icon.Size.SMALL -> "is-small"
-                    Icon.Size.MEDIUM -> "is-medium"
-                    Icon.Size.LARGE -> "is-large"
-                },
-                element.tintColor.toCssClass(),
-            )
-        }) {
-            I(attrs = {
-                val classesList = element.iconType.getCssClasses()
-                classes(*classesList.toTypedArray())
-                when (element.iconSize) {
-                    Icon.Size.SMALL -> null
-                    Icon.Size.MEDIUM -> "mdi-36px"
-                    Icon.Size.LARGE -> "mdi-48px"
-                }?.let { classes(it) }
-            })
-        }
+        BulmaIcon(element.iconType, element.iconSize, element.tintColor)
+    }
+}
+
+@Composable
+private fun BulmaIcon(
+    iconType: IconType,
+    iconSize: Icon.Size,
+    tintColor: ForegroundColor,
+) {
+    Span(attrs = {
+        classes(
+            "icon",
+            when (iconSize) {
+                Icon.Size.SMALL -> "is-small"
+                Icon.Size.MEDIUM -> "is-medium"
+                Icon.Size.LARGE -> "is-large"
+            },
+            tintColor.toCssClass(),
+        )
+    }) {
+        I(attrs = {
+            val classesList = iconType.getCssClasses()
+            classes(*classesList.toTypedArray())
+            when (iconSize) {
+                Icon.Size.SMALL -> null
+                Icon.Size.MEDIUM -> "mdi-36px"
+                Icon.Size.LARGE -> "mdi-48px"
+            }?.let { classes(it) }
+        })
     }
 }
 
