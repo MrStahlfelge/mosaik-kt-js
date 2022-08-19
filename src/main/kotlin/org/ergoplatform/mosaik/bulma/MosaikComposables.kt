@@ -148,6 +148,9 @@ fun MosaikTreeElement(
         is Image -> {
             MosaikImage(treeElement, moreClasses, newAttribs)
         }
+
+        is QrCode -> MosaikQrCode(treeElement, moreClasses, newAttribs)
+
         is ErgoAddressChooseButton -> {
             MosaikValueChooseButton(treeElement, moreClasses, newAttribs, sizeToParent)
         }
@@ -223,6 +226,19 @@ fun MosaikValueChooseButton(
                 }
             }
         )
+    }
+}
+
+@Composable
+fun MosaikQrCode(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as QrCode
+
+    element.content?.let { content ->
+        QRCodeElement(content, classes = classes, attribs = attribs)
     }
 }
 

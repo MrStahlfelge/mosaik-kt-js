@@ -4,14 +4,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.dom.Img
 import org.w3c.dom.Element
+import org.w3c.dom.HTMLElement
 
 @Composable
 fun QRCodeElement(
     text: String,
     qrCodeOptions: QRCodeOptions = QRCodeOptions(),
-) {
+    classes: List<String> = emptyList(),
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)? = null,
+    ) {
     val qrCodeState = remember(text) { mutableStateOf<String?>(null) }
 
     LaunchedEffect(text) {
@@ -22,6 +26,8 @@ fun QRCodeElement(
 
     qrCodeState.value?.let { qrCodeUri ->
         Img(qrCodeUri, attrs = {
+            classes(*classes.toTypedArray())
+            attribs?.invoke(this)
             style {
                 property("object-fit", "contain")
             }
