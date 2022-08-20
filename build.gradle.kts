@@ -37,6 +37,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationVersion")
                 implementation("com.github.MrStahlfelge.kig-decimal:KigDecimal:87932d8b8b")
+                implementation("org.jetbrains:markdown:0.3.1")
             }
         }
 

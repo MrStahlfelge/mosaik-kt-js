@@ -161,6 +161,9 @@ fun MosaikTreeElement(
         is HorizontalRule -> {
             MosaikHorizontalRule(treeElement, moreClasses, newAttribs)
         }
+
+        is MarkDown -> MosaikMarkDown(treeElement, moreClasses, newAttribs)
+
         else -> {
             Div(attrs = {
                 classes(*moreClasses.toTypedArray())
@@ -866,7 +869,7 @@ fun MosaikDropDownList(
     )
 }
 
-private fun ForegroundColor.toCssClass() =
+internal fun ForegroundColor.toCssClass() =
     when (this) {
         ForegroundColor.PRIMARY -> "has-text-primary"
         ForegroundColor.DEFAULT -> "has-text-dark"
