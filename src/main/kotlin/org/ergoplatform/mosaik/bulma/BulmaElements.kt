@@ -94,10 +94,15 @@ fun BulmaButton(
     }
 }
 
-private fun StyleScope.styleTextEllipsis() {
+private fun StyleScope.styleTextEllipsis(maxLines: Int = 1) {
     maxWidth(100.percent)
     overflow("hidden")
-    property("text-overflow", "ellipsis")
+    property("display", "-webkit-box")
+    property("-webkit-line-clamp", maxLines)
+    property("-webkit-box-orient", "vertical")
+
+    if (maxLines == 1)
+        property("word-break", "break-all")
 }
 
 @Composable
@@ -158,7 +163,10 @@ fun BulmaDropDown(
                 }
             }) {
                 Span(attrs = {
-                    style { styleTextEllipsis() }
+                    style {
+                        styleTextEllipsis()
+                        whiteSpace("normal") // needed because bulma sets nowrap
+                    }
                 }) {
                     Text(label)
                 }

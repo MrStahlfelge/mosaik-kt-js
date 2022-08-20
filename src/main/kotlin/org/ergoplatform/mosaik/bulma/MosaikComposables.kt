@@ -233,8 +233,9 @@ fun MosaikInputButton(
                             if (sizeToParent) {
                                 fillMaxWidth()
                             } else {
-                                width(96.px * 3)
+                                minWidth(96.px * 2)
                             }
+                            whiteSpace("normal") // needed because bulma sets to nowrap - this makes p2pk addresses too long
                         }
                     }
                 )
