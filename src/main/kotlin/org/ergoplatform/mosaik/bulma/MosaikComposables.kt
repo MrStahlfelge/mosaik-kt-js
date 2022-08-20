@@ -31,8 +31,8 @@ fun MosaikViewTree(viewTree: ViewTree) {
                 viewTreeRoot,
                 attribs = { atts ->
                     val maxWidth: CSSNumeric? = when (viewTree.targetCanvasDimension) {
-                        MosaikManifest.CanvasDimension.COMPACT_WIDTH -> 500.px
-                        MosaikManifest.CanvasDimension.MEDIUM_WIDTH -> 840.px
+                        MosaikManifest.CanvasDimension.COMPACT_WIDTH -> 640.px
+                        MosaikManifest.CanvasDimension.MEDIUM_WIDTH -> 900.px
                         else -> null
                     }
 
