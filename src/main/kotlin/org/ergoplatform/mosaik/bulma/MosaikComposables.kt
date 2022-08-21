@@ -830,8 +830,8 @@ private fun MosaikLabel(
             style {
                 // browser do not break single long words but overflow. this can mess up the whole
                 // layout on mobile with ergo addresses. So we tell the browser to break everywhere
-                // in case there is no space or a single line restriction
-                if (maxLines == 1 || !text.contains(' '))
+                // in case there is no space in a long word or a single line restriction
+                if (maxLines == 1 || !text.contains(' ') && text.length > 30)
                     property("word-break", "break-all")
             }
             attribs?.invoke(this)
