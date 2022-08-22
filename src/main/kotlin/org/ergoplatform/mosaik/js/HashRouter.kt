@@ -3,6 +3,8 @@ package org.ergoplatform.mosaik.js
 import kotlinx.browser.window
 import org.ergoplatform.mosaik.MosaikLogger
 
+const val paramDelimiter = ';'
+
 class HashRouter(
     private val runtime: JsMosaikRuntime,
 ) {
@@ -15,7 +17,11 @@ class HashRouter(
     }
 
     fun hashChanged(hash: String) {
-        val routeUrl = urlMap.get(hash.lowercase().removePrefix("#")) ?: urlMap[""]
+        val hashWithoutParams = hash.lowercase().removePrefix("#").substringBefore(paramDelimiter)
+        val params = hash.substringAfter(paramDelimiter, "")
+            .let { "?" + it.replace(paramDelimiter, '&') }
+
+        val routeUrl = (urlMap.get(hashWithoutParams) ?: urlMap[""])?.let { it + params }
 
         routeUrl?.let {
             MosaikLogger.logDebug("Hash: $hash, current appUrl: ${runtime.appUrl}, new url: $routeUrl")
@@ -26,7 +32,17 @@ class HashRouter(
 
     fun appLoaded(appUrl: String) {
         MosaikLogger.logDebug("appLoaded: $appUrl")
-        val routeHash = urlMap.entries.firstOrNull { it.value == appUrl }?.key
+
+        val appUrlWithoutParams = appUrl.substringBefore('?')
+        val params = appUrl.substringAfter('?', "").let {
+            if (it.isNotBlank())
+                paramDelimiter + it.replace('&', paramDelimiter)
+            else ""
+        }
+
+        val routeHash = urlMap.entries.firstOrNull { it.value == appUrlWithoutParams }?.key?.let {
+            it + params
+        }
         routeHash?.let {
             if (routeHash != window.location.hash)
                 window.location.hash = routeHash
