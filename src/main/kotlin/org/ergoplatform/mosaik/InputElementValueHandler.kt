@@ -189,7 +189,7 @@ class DropDownListInputHandler(
 
     override fun getAsString(currentValue: Any?): String {
         return element.entries[currentValue]
-            ?: mosaikRuntime.formatString(StringConstant.PleaseChoose)
+            ?: element.placeholder ?: mosaikRuntime.formatString(StringConstant.PleaseChoose)
     }
 
     override val keyboardType: KeyboardType

@@ -62,4 +62,4 @@ Some column child elements are not at max width, while they are on the reference
 this by wrapping these elements in a `layout(HAlignment.JUSTIFY)` block.
 
 ### Rows and columns with weights
-Behaviour is not always same as on reference executor. Please handle with care.
+Behaviour is not always same as on reference executor. Please handle with care when you mix multiple children with weights and without weights.

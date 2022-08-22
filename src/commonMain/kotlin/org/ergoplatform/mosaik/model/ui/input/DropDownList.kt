@@ -12,5 +12,6 @@ class DropDownList : ViewElement(), OptionalInputElement {
     override var onValueChangedAction: String? = null
     override var enabled = true
     var entries: Map<String, String> = emptyMap()
+    var placeholder: String? = null
     override var mandatory = true
 }
