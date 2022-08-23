@@ -19,7 +19,7 @@ class HashRouter(
     fun hashChanged(hash: String) {
         val hashWithoutParams = hash.lowercase().removePrefix("#").substringBefore(paramDelimiter)
         val params = hash.substringAfter(paramDelimiter, "")
-            .let { "?" + it.replace(paramDelimiter, '&') }
+            .let { if (it.isNotBlank()) "?" + it.replace(paramDelimiter, '&') else "" }
 
         val routeUrl = (urlMap.get(hashWithoutParams) ?: urlMap[""])?.let { it + params }
 
