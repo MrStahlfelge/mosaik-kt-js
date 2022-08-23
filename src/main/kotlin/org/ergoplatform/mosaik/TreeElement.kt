@@ -4,6 +4,8 @@ import org.ergoplatform.mosaik.model.ui.ViewElement
 import org.ergoplatform.mosaik.model.ui.ViewGroup
 import org.ergoplatform.mosaik.model.ui.input.*
 import org.ergoplatform.mosaik.model.ui.text.ErgoAddressLabel
+import org.ergoplatform.mosaik.model.ui.text.ExpandableElement
+import org.ergoplatform.mosaik.model.ui.text.TokenLabel
 import kotlin.random.Random
 
 /**
@@ -63,7 +65,8 @@ class TreeElement(
     val respondsToClick: Boolean get() =
         element.onClickAction != null || element.onLongPressAction != null
                 || element is WalletChooseButton || element is ErgoAddressChooseButton
-                || element is ErgoAddressLabel
+                || element is ErgoAddressLabel || element is TokenLabel
+                || element is ExpandableElement
 
     override fun equals(other: Any?): Boolean {
         return if (other is TreeElement) {

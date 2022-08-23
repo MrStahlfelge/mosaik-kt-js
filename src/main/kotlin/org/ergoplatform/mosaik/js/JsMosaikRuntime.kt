@@ -121,8 +121,9 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
         showDialog(MosaikDialog("QR code scanning not supported", "OK", null, null, null))
     }
 
-    override fun runTokenInformationAction(action: TokenInformationAction) {
-        openBrowser("https://explorer.ergoplatform.com/en/token/${action.tokenId}")
+    override fun runTokenInformationAction(tokenId: String) {
+        // TODO make configurable
+        openBrowser("https://explorer.ergoplatform.com/en/token/$tokenId")
     }
 }
 

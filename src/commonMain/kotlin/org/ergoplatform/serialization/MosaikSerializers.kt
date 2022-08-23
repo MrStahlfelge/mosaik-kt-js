@@ -47,6 +47,7 @@ object MosaikSerializers {
                 subclass(IntegerInputField::class)
                 subclass(Image::class)
                 subclass(Label::class)
+                subclass(TokenLabel::class)
                 subclass(CheckboxLabel::class)
                 subclass(ErgoAddressLabel::class)
                 subclass(QrCode::class)

@@ -124,7 +124,7 @@ abstract class MosaikRuntime(
                     runErgoPayAction(action)
                 }
                 is TokenInformationAction -> {
-                    runTokenInformationAction(action)
+                    runTokenInformationAction(action.tokenId)
                 }
                 is ErgoAuthAction -> {
                     runErgoAuthAction(action)
@@ -145,7 +145,7 @@ abstract class MosaikRuntime(
         loadMosaikApp(appUrl!!)
     }
 
-    abstract fun runTokenInformationAction(action: TokenInformationAction)
+    abstract fun runTokenInformationAction(tokenId: String)
 
     abstract fun runErgoPayAction(action: ErgoPayAction)
 

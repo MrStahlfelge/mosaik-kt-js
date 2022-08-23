@@ -13,6 +13,7 @@ import org.ergoplatform.mosaik.model.ui.input.TextField
 import org.ergoplatform.mosaik.model.ui.input.WalletChooseButton
 import org.ergoplatform.mosaik.model.ui.layout.Box
 import org.ergoplatform.mosaik.model.ui.text.ErgoAddressLabel
+import org.ergoplatform.mosaik.model.ui.text.TokenLabel
 
 /**
  * the complete tree of [ViewElement]'s and is context.
@@ -245,32 +246,41 @@ class ViewTree(val mosaikRuntime: MosaikRuntime) {
     /**
      * called when user clicked or tapped an element
      */
-    fun onItemClicked(element: TreeElement) {
-        when (element.element) {
+    fun onItemClicked(treeElement: TreeElement) {
+        val element = treeElement.element
+        when (element) {
             is ErgoAddressChooseButton -> {
-                if (element.element.enabled)
-                    element.id?.let { mosaikRuntime.showErgoAddressChooser(it) }
+                treeElement.id?.let { mosaikRuntime.showErgoAddressChooser(it) }
             }
             is WalletChooseButton -> {
-                if (element.element.enabled)
-                    element.id?.let { mosaikRuntime.showErgoWalletChooser(it) }
+                treeElement.id?.let { mosaikRuntime.showErgoWalletChooser(it) }
             }
-            else -> runActionFromUserInteraction(element.element.onClickAction)
+            is TokenLabel -> {
+                if (element.onClickAction != null)
+                    runActionFromUserInteraction(element.onClickAction)
+                else
+                    mosaikRuntime.runTokenInformationAction(element.tokenId)
+            }
+            else -> runActionFromUserInteraction(element.onClickAction)
         }
     }
 
     /**
      * called when user long pressed an element
      */
-    fun onItemLongClicked(element: TreeElement): Boolean {
-        return when (element.element) {
+    fun onItemLongClicked(treeElement: TreeElement): Boolean {
+        val element = treeElement.element
+        return when (element) {
             is ErgoAddressLabel -> {
-                element.element.text?.let { mosaikRuntime.onAddressLongPress(it) }
+                if (element.onLongPressAction == null)
+                    element.text?.let { mosaikRuntime.onAddressLongPress(it) }
+                else
+                    runActionFromUserInteraction(element.onLongPressAction)
                 true
             }
             else -> {
-                runActionFromUserInteraction(element.element.onLongPressAction)
-                element.element.onLongPressAction != null
+                runActionFromUserInteraction(element.onLongPressAction)
+                element.onLongPressAction != null
             }
         }
     }

@@ -87,22 +87,26 @@ fun BulmaButton(
         attrs?.invoke(this)
     }) {
         Span(attrs = {
-            style { styleTextEllipsis() }
+            style { styleTextEllipsis(text.shouldWrapEverywhere()) }
         }) {
             Text(text)
         }
     }
 }
 
-private fun StyleScope.styleTextEllipsis(maxLines: Int = 1) {
+fun String.shouldWrapEverywhere() = !contains(' ') && length > 30
+
+fun StyleScope.wrapEverywhere() = property("word-break", "break-all")
+
+private fun StyleScope.styleTextEllipsis(mayBreakAll: Boolean, maxLines: Int = 1) {
     maxWidth(100.percent)
     overflow("hidden")
     property("display", "-webkit-box")
     property("-webkit-line-clamp", maxLines)
     property("-webkit-box-orient", "vertical")
 
-    if (maxLines == 1)
-        property("word-break", "break-all")
+    if (maxLines == 1 && mayBreakAll)
+        wrapEverywhere()
 }
 
 @Composable
@@ -164,7 +168,7 @@ fun BulmaDropDown(
             }) {
                 Span(attrs = {
                     style {
-                        styleTextEllipsis()
+                        styleTextEllipsis(label.shouldWrapEverywhere())
                         whiteSpace("normal") // needed because bulma sets nowrap
                     }
                 }) {
@@ -200,6 +204,10 @@ fun BulmaDropDown(
                         onClick {
                             activeState.value = false
                             onItemClicked(idx)
+                        }
+                        style {
+                            styleTextEllipsis(item.shouldWrapEverywhere())
+                            whiteSpace("normal") // needed because bulma sets nowrap
                         }
                     }) {
                         Text(item)

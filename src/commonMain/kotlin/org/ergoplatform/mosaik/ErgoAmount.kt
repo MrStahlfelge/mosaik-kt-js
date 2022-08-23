@@ -43,7 +43,7 @@ class ErgoAmount(val nanoErgs: Long) {
         else numAsString
     }
 
-    fun toBigDecimal() = nanoErgs.toBigDecimal().movePointLeft(nanoPowerOfTen)
+    fun toBigDecimal() = nanoErgs.toString().toBigDecimal().movePointLeft(nanoPowerOfTen)
 
     /**
      * @return double amount, only for representation purposes because double has floating point issues

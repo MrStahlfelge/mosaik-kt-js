@@ -1,6 +1,7 @@
 package org.ergoplatform.mosaik.bulma
 
 import androidx.compose.runtime.*
+import mikhaylutsyury.kigdecimal.toBigDecimal
 import org.ergoplatform.mosaik.*
 import org.ergoplatform.mosaik.model.MosaikManifest
 import org.ergoplatform.mosaik.model.ui.*
@@ -125,6 +126,9 @@ fun MosaikTreeElement(
         is StyleableTextLabel<*> -> {
             MosaikLabel(treeElement, moreClasses, newAttribs)
         }
+
+        is TokenLabel -> MosaikTokenLabel(treeElement, moreClasses, newAttribs)
+
         is Column -> {
             MosaikColumn(treeElement, moreClasses, newAttribs)
         }
@@ -782,14 +786,17 @@ private fun MosaikCheckboxLabel(
 }
 
 private fun AttrsScope<out HTMLElement>.applyLabelAttributes(
-    element: StyleableTextLabel<*>,
+    element: StyleableLabel,
     maxLines: Int,
 ) {
     classes(
         *element.style.toCssClasses().toTypedArray(),
-        element.textAlignment.toTextAlignmentCssClass(),
         element.textColor.toCssClass(),
     )
+
+    if (element is StyleableTextLabel<*>)
+        classes(element.textAlignment.toTextAlignmentCssClass())
+
     style {
         whiteSpace("pre-line")
         if (maxLines >= 1) {
@@ -799,6 +806,34 @@ private fun AttrsScope<out HTMLElement>.applyLabelAttributes(
             property("-webkit-box-orient", "vertical")
         }
     }
+}
+
+@Composable
+private fun MosaikTokenLabel(
+    treeElement: TreeElement,
+    classes: List<String>,
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)?,
+) {
+    val element = treeElement.element as TokenLabel
+    val tokenName = element.tokenName ?: element.tokenId
+    val decimals = element.decimals
+
+    val text = remember(treeElement.createdAtContentVersion, tokenName, decimals) {
+        (element.amount?.let { amount ->
+            amount.toString().toBigDecimal().movePointLeft(decimals).toPlainString() + " "
+        } ?: "") + tokenName
+    }
+
+    Span(attrs = {
+        classes(*classes.toTypedArray())
+        applyLabelAttributes(element, 1)
+        if (text.shouldWrapEverywhere())
+            style { wrapEverywhere() }
+        attribs?.invoke(this)
+    }) {
+        Text(text)
+    }
+
 }
 
 @Composable
@@ -831,8 +866,8 @@ private fun MosaikLabel(
                 // browser do not break single long words but overflow. this can mess up the whole
                 // layout on mobile with ergo addresses. So we tell the browser to break everywhere
                 // in case there is no space in a long word or a single line restriction
-                if (maxLines == 1 || !text.contains(' ') && text.length > 30)
-                    property("word-break", "break-all")
+                if (maxLines == 1 || text.shouldWrapEverywhere())
+                    wrapEverywhere()
             }
             attribs?.invoke(this)
         }) {
