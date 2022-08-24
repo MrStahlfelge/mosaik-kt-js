@@ -25,7 +25,7 @@ fun MosaikViewTree(viewTree: ViewTree) {
 
         // the view root should be scrollable if it is a column, otherwise it will fill
         // the max height
-        val scrollable = viewTreeRoot.element is Column
+        val positionAtTop = viewTreeRoot.element is Column
 
         val content: @Composable (subStyle: ((StyleScope) -> Unit)?) -> Unit = { subStyle ->
             MosaikTreeElement(
@@ -40,7 +40,10 @@ fun MosaikViewTree(viewTree: ViewTree) {
                     atts.style {
                         maxWidth?.let {
                             maxWidth(maxWidth)
-                            property("margin", "0 auto") // center horizontally
+                            if (positionAtTop)
+                                property("margin", "0 auto") // center horizontally
+                            else
+                                property("margin", "auto") // center
                         }
                         subStyle?.invoke(this)
                     }
@@ -49,7 +52,7 @@ fun MosaikViewTree(viewTree: ViewTree) {
             )
         }
 
-        if (!scrollable) {
+        if (!positionAtTop) {
             DivWrapper(emptyList(), attribs = {
                 it.style {
                     position(Position.Absolute)
@@ -58,7 +61,6 @@ fun MosaikViewTree(viewTree: ViewTree) {
                     top(0.px)
                     left(0.px)
                     right(0.px)
-                    justifyContent(JustifyContent.Center)
                     flexDirection(FlexDirection.Column)
                 }
             }) {
