@@ -327,11 +327,6 @@ fun ConnectBrowserWalletSection(
             enabled = remember { BrowserWallet.isBrowserWalletInstalled() }
         )
     }
-
-    // TODO hint to which wallet to use
-//    BulmaBlock {
-//
-//    }
 }
 
 private enum class ConnectionMode {
