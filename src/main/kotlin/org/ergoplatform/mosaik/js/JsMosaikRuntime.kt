@@ -23,6 +23,8 @@ import org.ergoplatform.serialization.MosaikSerializers
 class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     MosaikRuntime(JsBackendConnector) {
 
+    var mosaikConfig: MosaikConfiguration? = null
+
     val ergoPayActionState = mutableStateOf<ErgoPayAction?>(null)
     val choseAddressState = mutableStateOf<String?>(null)
     val notificationState = mutableStateOf<String?>(null)
@@ -122,8 +124,11 @@ class JsMosaikRuntime(private val dialogHandler: MosaikComposeDialogHandler) :
     }
 
     override fun runTokenInformationAction(tokenId: String) {
-        // TODO make configurable
-        openBrowser("https://explorer.ergoplatform.com/en/token/$tokenId")
+        openBrowser(
+            (mosaikConfig?.tokenDetailsUrl
+                ?: "https://explorer.ergoplatform.com/en/token/%TOKENID%")
+                .replace("%TOKENID%", tokenId)
+        )
     }
 }
 

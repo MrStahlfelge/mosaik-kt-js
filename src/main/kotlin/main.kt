@@ -31,6 +31,7 @@ fun main() {
             (URL("mosaikconfig.json", document.location.toString())).href
         )
         hashRouter.setConfig(config)
+        runtime.mosaikConfig = config
 
         val currentHash = mutableStateOf(window.location.hash)
 

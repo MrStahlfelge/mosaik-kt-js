@@ -1,11 +1,14 @@
 {
-   "starturl": "http://127.0.0.1:8081/appselect",
-   "chooseWalletErgoPay": {
-        "getAddressForSessionUrl": "https://api.tokenjay.app/getUserAddress/#RID#",
-        "ergoPaySetAddressUrl": "ergopay://api.tokenjay.app/setAddress/#RID#/#P2PK_ADDRESS#"
-   },
-   "routes": {
+  "starturl": "http://127.0.0.1:8081/appselect",
+  "chooseWalletErgoPay": {
+    "getAddressForSessionUrl": "https://api.tokenjay.app/getUserAddress/#RID#",
+    "ergoPaySetAddressUrl": "ergopay://api.tokenjay.app/setAddress/#RID#/#P2PK_ADDRESS#",
+    "hintMarkDown": "Connect with ErgoPay.\n\n[Find an ErgoPay compatible wallet](https://ergoplatform.org/en/get-erg/#Wallets)"
+  },
+  "browserWalletHintMarkDown": "Connect to a browser extension wallet to set your Ergo address.\n\n[Find a dApp connector browser wallet](https://ergoplatform.org/en/get-erg/#Wallets)",
+  "invokeErgoPayHintMarkDown": "Complete the action with an ErgoPay compatible wallet.\n\n[Find an ErgoPay compatible wallet](https://ergoplatform.org/en/get-erg/#Wallets)",
+  "routes": {
     "actions": "http://127.0.0.1:8081/actions",
     "viewelements": "http://127.0.0.1:8081/viewelements"
-   }
+  }
 }

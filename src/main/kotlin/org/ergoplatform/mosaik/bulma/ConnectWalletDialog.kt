@@ -22,11 +22,13 @@ import org.ergoplatform.mosaik.model.ui.input.WalletChooseButton
 import org.ergoplatform.mosaik.model.ui.layout.HAlignment
 import org.ergoplatform.mosaik.model.ui.text.Button
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
+import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Br
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.P
 import org.jetbrains.compose.web.dom.Text
+import org.w3c.dom.HTMLDivElement
 import kotlin.math.max
 
 @Composable
@@ -135,7 +137,7 @@ private fun ConnectManuallySection(
 ) {
     val errorState = remember { mutableStateOf(false) }
 
-    BulmaBlock {
+    BulmaBlock(attrs = { addIntroTextClasses() }) {
         Text("Please enter or paste your Ergo wallet address here.")
     }
 
@@ -176,7 +178,7 @@ fun ConnectErgoPaySection(
         ConnectErgoPayWaitingBlock(addressSelected)
 
     } else {
-        BulmaBlock(attrs = { classes(HAlignment.CENTER.toTextAlignmentCssClass()) }) {
+        BulmaBlock(attrs = { addIntroTextClasses() }) {
             Text("Selected address: ${addressSelected.value}")
 
             Div(attrs = {
@@ -191,6 +193,13 @@ fun ConnectErgoPaySection(
         }
 
     }
+}
+
+private fun AttrsScope<HTMLDivElement>.addIntroTextClasses() {
+    classes(
+        HAlignment.CENTER.toTextAlignmentCssClass(),
+        *LabelStyle.BODY1.toCssClasses().toTypedArray()
+    )
 }
 
 @Composable
@@ -224,8 +233,12 @@ private fun ConnectErgoPayWaitingBlock(addressSelected: MutableState<String?>) {
         }
     }
 
-    BulmaBlock(attrs = { classes(HAlignment.CENTER.toTextAlignmentCssClass()) }) {
-        Text("Connect with ErgoPay")
+    BulmaBlock(attrs = { addIntroTextClasses() }) {
+        if (ergoPayConfig?.hintMarkDown != null) {
+            MarkDown(ergoPayConfig!!.hintMarkDown!!, HAlignment.CENTER)
+        } else {
+            Text("Connect with ErgoPay")
+        }
     }
 
     Div(attrs = {
@@ -278,8 +291,11 @@ fun ConnectBrowserWalletSection(
     addressSelected: MutableState<String?>,
 ) {
 
-    BulmaBlock(attrs = { classes(HAlignment.CENTER.toTextAlignmentCssClass()) }) {
-        Text("Connect to a browser extension wallet to set your Ergo address.")
+    BulmaBlock(attrs = { addIntroTextClasses() }) {
+        if (runtime.mosaikConfig?.browserWalletHintMarkDown != null)
+            MarkDown(runtime.mosaikConfig!!.browserWalletHintMarkDown!!, HAlignment.CENTER)
+        else
+            Text("Connect to a browser extension wallet to set your Ergo address.")
     }
 
     Div(attrs = {

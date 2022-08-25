@@ -38,8 +38,13 @@ fun ErgoPayRequestDialog(runtime: JsMosaikRuntime) {
                             HAlignment.CENTER.toTextAlignmentCssClass(),
                         )
                     }) {
-                        Text("Complete the action with an ErgoPay compatible wallet.")
-                        // TODO link to wallets
+                        if (runtime.mosaikConfig?.invokeErgoPayHintMarkDown != null)
+                            MarkDown(
+                                runtime.mosaikConfig!!.invokeErgoPayHintMarkDown!!,
+                                HAlignment.CENTER
+                            )
+                        else
+                            Text("Complete the action with an ErgoPay compatible wallet.")
                     }
                 }
 

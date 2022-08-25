@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import org.ergoplatform.mosaik.TreeElement
 import org.ergoplatform.mosaik.model.ui.ForegroundColor
 import org.ergoplatform.mosaik.model.ui.MarkDown
+import org.ergoplatform.mosaik.model.ui.layout.HAlignment
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
@@ -31,6 +32,16 @@ fun MosaikMarkDown(
     val content = element.content
     val textAlign = element.contentAlignment
 
+    MarkDown(content, textAlign, classes, attribs)
+}
+
+@Composable
+fun MarkDown(
+    content: String,
+    textAlign: HAlignment = HAlignment.START,
+    classes: List<String> = emptyList(),
+    attribs: ((AttrsScope<out HTMLElement>) -> Unit)? = null,
+) {
     val parsedTree = remember(content) {
         val parsedTree = MarkdownParser(GFMFlavourDescriptor()).buildMarkdownTreeFromString(content)
         parsedTree
