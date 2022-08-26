@@ -170,7 +170,7 @@ abstract class MosaikRuntime(
             viewTree.ensureValuesAreCorrect()
 
         val formerJob = connectToServerJob
-        viewTree.uiLocked = true
+        viewTree.lockUi()
         connectToServerJob = coroutineScope.launch(Dispatchers.Default) {
             formerJob?.cancel()
             try {
@@ -204,7 +204,7 @@ abstract class MosaikRuntime(
                 raiseError(t)
             }
 
-            viewTree.uiLocked = false
+            viewTree.unlockUi()
         }
 
     }
@@ -253,7 +253,7 @@ abstract class MosaikRuntime(
      */
     open fun loadMosaikApp(url: String, referrer: String? = null) {
         val formerJob = connectToServerJob
-        viewTree.uiLocked = true
+        viewTree.lockUi()
         connectToServerJob = coroutineScope.launch(Dispatchers.Default) {
             formerJob?.cancel()
             try {
@@ -278,7 +278,7 @@ abstract class MosaikRuntime(
                 if (isActive) appNotLoadedError(url, t)
             }
 
-            viewTree.uiLocked = false
+            viewTree.unlockUi()
         }
     }
 
