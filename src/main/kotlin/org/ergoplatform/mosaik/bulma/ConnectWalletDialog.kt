@@ -24,10 +24,7 @@ import org.ergoplatform.mosaik.model.ui.text.Button
 import org.ergoplatform.mosaik.model.ui.text.LabelStyle
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Br
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.P
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLDivElement
 import kotlin.math.max
 
@@ -179,7 +176,12 @@ fun ConnectErgoPaySection(
 
     } else {
         BulmaBlock(attrs = { addIntroTextClasses() }) {
-            Text("Selected address: ${addressSelected.value}")
+            Text("Selected address:")
+            Div(attrs = {
+                style { wrapEverywhere() }
+            }) {
+                Text(addressSelected.value ?: "")
+            }
 
             Div(attrs = {
                 classes("buttons", "is-centered")
