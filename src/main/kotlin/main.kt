@@ -16,6 +16,7 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.url.URL
+import kotlin.js.Date
 import kotlin.js.RegExp
 import kotlin.math.max
 
@@ -75,7 +76,8 @@ fun main() {
                         window.outerWidth
                     ) > 600
                 ) MosaikContext.Platform.TABLET
-                else MosaikContext.Platform.PHONE
+                else MosaikContext.Platform.PHONE,
+                Date().getTimezoneOffset() * -1,
             )
         )
 

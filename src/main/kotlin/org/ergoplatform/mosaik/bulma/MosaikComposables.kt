@@ -721,7 +721,7 @@ private fun MosaikButton(
             MosaikLogger.logWarning("TruncationType ignored for button, not supported by this implementation")
     }
 
-    // we add a little padding to the buttons to match the style on Compose Desktop/Android
+    // we add a little padding to the buttons to match the style on Compose Desktop
     DivWrapper(
         classes.toMutableList().apply { add(Padding.QUARTER_DEFAULT.toCssClass()) },
         attribs

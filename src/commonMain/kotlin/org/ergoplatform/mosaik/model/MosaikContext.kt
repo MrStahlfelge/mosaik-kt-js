@@ -13,7 +13,8 @@ class MosaikContext(
     val language: String,
     val walletAppName: String,
     val walletAppVersion: String,
-    val walletAppPlatform: Platform
+    val walletAppPlatform: Platform,
+    val timeZone: Int,
 ) {
     enum class Platform {
         DESKTOP, TABLET, PHONE
@@ -21,7 +22,7 @@ class MosaikContext(
 
     companion object {
         const val LIBRARY_MOSAIK_VERSION = 1
-        const val EXECUTOR_VERSION = "1.0.0"
+        const val EXECUTOR_VERSION = "1.0.2"
     }
 
 }
