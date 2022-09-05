@@ -263,6 +263,12 @@ abstract class MosaikRuntime(
                     appManifest = mosaikApp.manifest
 
                     viewTree.setRootView(mosaikApp)
+                    mosaikApp.manifest.onAppLoadedAction?.let { loadActionId ->
+                        val action = viewTree.getAction(loadActionId)
+                        if (action != null && action is ChangeSiteAction)
+                            runAction(action)
+                    }
+
                     navigatedTo(
                         UrlHistoryEntry(loadAppResponse.appUrl, referrer),
                         mosaikApp.manifest

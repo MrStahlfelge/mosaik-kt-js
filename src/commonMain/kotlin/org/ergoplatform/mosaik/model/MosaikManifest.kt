@@ -17,6 +17,8 @@ class MosaikManifest(
     var appDescription: String? = null
     var iconUrl: String? = null
     var errorReportUrl: String? = null
+    var onAppLoadedAction: String? = null
+    var onResizeAction: String? = null
 
     enum class CanvasDimension {
         COMPACT_WIDTH,
