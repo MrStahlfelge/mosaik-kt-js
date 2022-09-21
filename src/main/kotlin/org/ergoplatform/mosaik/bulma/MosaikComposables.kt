@@ -170,6 +170,8 @@ fun MosaikTreeElement(
 
         is MarkDown -> MosaikMarkDown(treeElement, moreClasses, newAttribs)
 
+        is Grid -> MosaikGrid(treeElement, moreClasses, newAttribs)
+
         else -> {
             Div(attrs = {
                 classes(*moreClasses.toTypedArray())
@@ -291,6 +293,7 @@ fun MosaikImage(
                 Image.Size.SMALL -> 64.px
                 Image.Size.MEDIUM -> 128.px
                 Image.Size.LARGE -> 256.px
+                Image.Size.XXL -> 512.px
             }
             width(cssSizeValue)
             height(cssSizeValue)
@@ -501,7 +504,7 @@ private fun MosaikBox(
     }
 }
 
-private fun StyleScope.fillMaxWidth() {
+internal fun StyleScope.fillMaxWidth() {
     width(100.percent)
     boxSizing("border-box")
 }

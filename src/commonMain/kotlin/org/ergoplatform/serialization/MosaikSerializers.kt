@@ -58,6 +58,7 @@ object MosaikSerializers {
                 subclass(TextInputField::class)
                 subclass(WalletChooseButton::class)
                 subclass(MarkDown::class)
+                subclass(Grid::class)
             }
         }
     }

@@ -10,6 +10,6 @@ class Image : ViewElement() {
     var size = Size.MEDIUM
 
     enum class Size {
-        SMALL, MEDIUM, LARGE
+        SMALL, MEDIUM, LARGE, XXL
     }
 }

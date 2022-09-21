@@ -9,6 +9,7 @@
   "invokeErgoPayHintMarkDown": "Complete the action with an ErgoPay compatible wallet.\n\n[Find an ErgoPay compatible wallet](https://ergoplatform.org/en/get-erg/#Wallets)",
   "routes": {
     "actions": "http://127.0.0.1:8081/actions",
-    "viewelements": "http://127.0.0.1:8081/viewelements"
+    "viewelements": "http://127.0.0.1:8081/viewelements",
+    "grid": "http://127.0.0.1:8081/viewelements/grid"
   }
 }

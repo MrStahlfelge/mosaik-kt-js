@@ -63,3 +63,6 @@ this by wrapping these elements in a `layout(HAlignment.JUSTIFY)` block.
 
 ### Rows and columns with weights
 Behaviour is not always same as on reference executor. Please handle with care when you mix multiple children with weights and without weights.
+
+### Box size
+The first child element defines the size of the box, while on other platforms the biggest element defines the size
