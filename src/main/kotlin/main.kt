@@ -97,6 +97,7 @@ fun main() {
         manifestState.value = it
         document.title = it.appName
         runtime.appUrl?.let { hashRouter.appLoaded(it) }
+        window.scrollTo(0.0, 0.0)
     }
 
     require("./custom.scss")
