@@ -314,7 +314,9 @@ abstract class MosaikRuntime(
      * an error that is shown to user and reported to the error report url
      */
     open fun raiseError(t: Throwable, silent: Boolean = false) {
-        // TODO report error to error report url
+        appManifest?.errorReportUrl?.let { errorUrl ->
+            coroutineScope.launch(Dispatchers.Default) { backendConnector.reportError(errorUrl, appUrl!!, t) }
+        }
 
         if (!silent)
             showError(t)

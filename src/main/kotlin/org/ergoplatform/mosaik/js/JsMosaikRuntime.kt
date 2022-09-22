@@ -207,6 +207,21 @@ object JsBackendConnector : MosaikBackendConnector {
         return MosaikSerializers.parseViewContentFromJson(response.readText())
     }
 
+    override suspend fun reportError(reportUrl: String, appUrl: String, t: Throwable) {
+        try {
+            client.request<Unit>(reportUrl) {
+                method = HttpMethod.Post
+                mosaikContextHeaders.forEach {
+                    header(it.key, it.value)
+                    contentType(ContentType.Application.Json)
+                }
+                body = t.stackTraceToString()
+            }
+        } catch (t: Throwable) {
+            // ignore it
+        }
+    }
+
     private lateinit var mosaikContextHeaders: Map<String, String?>
 
     fun setContextHeaders(context: MosaikContext) {

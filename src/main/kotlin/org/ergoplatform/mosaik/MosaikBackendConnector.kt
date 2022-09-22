@@ -36,5 +36,10 @@ interface MosaikBackendConnector {
         referrer: String
     ): ViewContent
 
+    /**
+     * reports an error to the given url
+     */
+    suspend fun reportError(reportUrl: String, appUrl: String, t: Throwable)
+
     data class AppLoaded(val mosaikApp: MosaikApp, val appUrl: String)
 }
