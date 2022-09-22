@@ -449,7 +449,14 @@ private fun MosaikBox(
     // All other children are positioned absolute (outside the flow) with top/left/right/bottom
 
     BulmaContainer(classes.toMutableList().apply {
-        addAll(listOf("is-flex", "is-flex-direction-column", "is-flex-wrap-nowrap"))
+        addAll(
+            listOf(
+                "is-flex",
+                "is-flex-direction-column",
+                "is-flex-wrap-nowrap",
+                "is-justify-content-center"
+            )
+        )
     }, attribs = {
         attribs?.invoke(it)
     }) {
@@ -478,6 +485,8 @@ private fun MosaikBox(
                                 left(0.px)
                             else if (childHAlignment == HAlignment.END)
                                 right(0.px)
+                            else
+                                alignSelf(AlignSelf.Center)
 
                             when (element.getChildVAlignment(childElement.element)) {
                                 VAlignment.TOP -> top(0.px)
