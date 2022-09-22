@@ -40,6 +40,12 @@ internal fun MosaikGrid(
 
                 MosaikTreeElement(
                     childElement,
+                    attribs = {
+                        it.style {
+                            fillMaxWidth()
+                            fillMaxHeight()
+                        }
+                    },
                     sizeToParent = true
                 )
 

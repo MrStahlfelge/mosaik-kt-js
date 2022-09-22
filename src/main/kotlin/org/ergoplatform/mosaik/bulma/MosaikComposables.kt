@@ -415,6 +415,8 @@ fun MosaikCard(
             MosaikBox(treeElement, listOf("box"), attribs = {
                 it.style {
                     padding(0.px) // "box" has padding, overwrite it
+                    fillMaxHeight()
+                    fillMaxWidth()
                 }
             })
         }
@@ -515,6 +517,11 @@ private fun MosaikBox(
 
 internal fun StyleScope.fillMaxWidth() {
     width(100.percent)
+    boxSizing("border-box")
+}
+
+internal fun StyleScope.fillMaxHeight() {
+    height(100.percent)
     boxSizing("border-box")
 }
 
