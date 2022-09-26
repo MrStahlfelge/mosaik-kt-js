@@ -345,6 +345,7 @@ private fun BulmaIcon(
     }
 }
 
+// https://pictogrammers.github.io/@mdi/font/5.4.55/
 private fun IconType.getCssClasses(): List<String> =
     listOf(
         "mdi",
@@ -371,6 +372,7 @@ private fun IconType.getCssClasses(): List<String> =
             IconType.SWITCH -> "mdi-repeat"
             IconType.QR_CODE -> "mdi-qrcode"
             IconType.QR_SCAN -> "mdi-qrcode-scan"
+            IconType.SEARCH -> "mdi-magnify"
         }
     )
 
