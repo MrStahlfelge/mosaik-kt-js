@@ -700,7 +700,7 @@ fun MosaikTextField(
                 when (treeElement.keyboardType) {
                     KeyboardType.Text -> {}
                     KeyboardType.Number -> it.inputMode(InputMode.Numeric)
-                    KeyboardType.NumberDecimal -> it.inputMode(InputMode.Numeric)
+                    KeyboardType.NumberDecimal -> it.inputMode(InputMode.Decimal)
                     KeyboardType.Email -> it.inputMode(InputMode.Email)
                     KeyboardType.Password -> {}
                 }
